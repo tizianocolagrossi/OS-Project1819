@@ -36,7 +36,7 @@ HEADERS=
 
 # the file below contains the actual rules
 
-include ../avr_common/avr.mk
+include avr_common/avr.mk
 
 # !!!!!!!!!!!!!!!! MODIFY HERE !!!!!!!!!!!!!!!! 
 
