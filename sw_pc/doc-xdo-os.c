@@ -2,6 +2,9 @@
  * documentazione funzioni xdo utili per il progetto 
  * 
  * OS-prj1819
+ * installare xdo
+ *
+ * apt-get install libxdo-dev
  * 
  */
 
