@@ -6,6 +6,7 @@
 
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
+#define MAX_BUF 256
 
 volatile uint8_t interrupt_occurred=0;
 
@@ -63,7 +64,6 @@ void UART_putString(uint8_t* buf){
   }
 }
 
-#define MAX_BUF 256
 int main(void){
   UART_init();
   UART_putString((uint8_t*)"write PERONI, Virginia will hear you\n");
