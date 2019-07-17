@@ -7,11 +7,28 @@
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
 #define MAX_BUF 256
+#define TIMER_DURATION_MS 100;
 
 volatile uint8_t interrupt_occurred=0;
 
 ISR(TIMER5_COMPA_vect) {
   interrupt_occurred=1;
+}
+
+void TIMER_init(){
+  // configure timer, set the prescaler to 1024
+  TCCR5A = 0;
+  TCCR5B = (1 << WGM52) | (1 << CS50) | (1 << CS52); 
+ 
+  // processor at 16Mhz, prescaler at 1024 -> 16000000/1024 = 15625 counts per second
+  uint16_t ocrval=(uint16_t)(15.625 * TIMER_DURATION_MS);
+  OCR5A = ocrval;
+
+  // clear int
+  cli();
+  TIMSK5 |= (1 << OCIE5A);  // enable the timer interrupt
+  // enable int
+  sei();
 }
 
 void UART_init(void){
@@ -66,7 +83,7 @@ void UART_putString(uint8_t* buf){
 
 int main(void){
   UART_init();
-  UART_putString((uint8_t*)"write PERONI, Virginia will hear you\n");
+  //UART_putString((uint8_t*)"write PERONI, Virginia will hear you\n");
   uint8_t buf[MAX_BUF];
   while(1) {
     UART_getString(buf);
