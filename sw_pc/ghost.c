@@ -19,7 +19,13 @@
  * funzione per printate di debug
  */
 void debugPrint(char *msg, char *val){
-	if(DEBUG) printf("%s %s", msg, val);
+	if(DEBUG) printf("\n%s %s\n", msg, val);
+}
+void debugPrintInt(char *msg, int val){
+	if(DEBUG) printf("\n%s %d\n", msg, val);
+}
+void debugPrintMsg(char *msg){
+	if(DEBUG) printf("\n%s\n", msg);
 }
 
 /*
@@ -65,6 +71,7 @@ int getCmd(char* cmd){
 	characters = getline(&buf,&bufsize,stdin);
 	if(characters != 0){
 		strcpy(cmd, buf);
+		debugPrint("FUN getCmd value >", cmd);
 		free(buf);
 		return 0;
 	}
@@ -79,7 +86,8 @@ int getCmd(char* cmd){
  */
 int splitString(char *str, char **split){
 	int i;
-	for(i = 0; i < MAX_CMD, i++){
+	str = strsep(&str, "\n"); // elimino il carattere \n alla fine preso dalla getline
+	for(i = 0; i < MAX_CMD; i++){
 		split[i] = strsep(&str," ");
 		if(split[i]==NULL) break;
 		if(strlen(split[i])==0) i--;
@@ -90,7 +98,42 @@ int splitString(char *str, char **split){
  * funzione per la gestione dei comandi della shell
  */
 int cmdHandler(char** parsed){
-   //TODO	
+	
+	debugPrintMsg("dentroCmdHandler");
+	
+	int nCmdSupportati=4, i, switchArg=100;
+	char* ListCmd[nCmdSupportati];
+
+   	ListCmd[0]="help";
+   	ListCmd[1]="h";
+   	ListCmd[2]="quit";
+   	ListCmd[3]="exit";
+
+	debugPrintMsg("prima del for");
+	
+   	for(i=0; i<nCmdSupportati; i++ ){
+		debugPrint("parsed[0] in cmdHandler >", parsed[0]);
+		if(strcmp(parsed[0], ListCmd[i])==0){
+			switchArg = i;
+			debugPrintInt("FUN cmdHandler valore della i >", i);
+			break;
+		}
+	}
+	debugPrintMsg("dopo del for");
+
+	switch(switchArg){
+		case 0:
+		case 1:
+			help();
+			return 1; // perche usato dall if che chiama cmdHandler!
+		case 2:
+		case 3:
+			printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
+			exit(0);
+		default:
+			printf("comando non riconosciuto, digit h o help per vedere la guida\n");
+			break;
+	}
 }
 
 /*
@@ -98,16 +141,23 @@ int cmdHandler(char** parsed){
  */
 int parseString(char *str, char** parsed){
 	splitString(str, parsed);
-	if cmdHandler(parsed) return 0;
+	if (cmdHandler(parsed)) return 0;
 	else return 1;
 }
 
 
 
 int main(int argc, char **argv){
+	
+	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
+	int execFlag = 0;
+	
 	init_shell();
-	char inStr[MAX_SIZE];
-	int i = getCmd(inStr);
-	debugPrint("DEBUG CMD IN", inStr);
-	help();
+
+	while(1){
+		if(getCmd(inStr)) continue;
+		execFlag = parseString(inStr, parsedArg);
+		
+	
+	}
 }
