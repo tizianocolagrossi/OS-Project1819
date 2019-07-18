@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_SIZE 50
+#define MAX_SIZE 50 // max caratteri in input
+#define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
 
 /*
@@ -72,6 +73,36 @@ int getCmd(char* cmd){
 		return 1;
 	}
 }
+
+/*
+ * funzione per lo split della tringa in input
+ */
+int splitString(char *str, char **split){
+	int i;
+	for(i = 0; i < MAX_CMD, i++){
+		split[i] = strsep(&str," ");
+		if(split[i]==NULL) break;
+		if(strlen(split[i])==0) i--;
+	}
+}
+
+/*
+ * funzione per la gestione dei comandi della shell
+ */
+int cmdHandler(char** parsed){
+   //TODO	
+}
+
+/*
+ * funzione per il parse della stringa in input
+ */
+int parseString(char *str, char** parsed){
+	splitString(str, parsed);
+	if cmdHandler(parsed) return 0;
+	else return 1;
+}
+
+
 
 int main(int argc, char **argv){
 	init_shell();
