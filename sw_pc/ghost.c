@@ -84,6 +84,7 @@ int getCmd(char* cmd){
 /*
  * funzione per lo split della tringa in input
  */
+ 
 int splitString(char *str, char **split){
 	int i;
 	str = strsep(&str, "\n"); // elimino il carattere \n alla fine preso dalla getline
@@ -97,6 +98,7 @@ int splitString(char *str, char **split){
 /*
  * funzione per la gestione dei comandi della shell
  */
+ 
 int cmdHandler(char** parsed){
 	
 	debugPrintMsg("dentroCmdHandler");
@@ -139,6 +141,7 @@ int cmdHandler(char** parsed){
 /*
  * funzione per il parse della stringa in input
  */
+ 
 int parseString(char *str, char** parsed){
 	splitString(str, parsed);
 	if (cmdHandler(parsed)) return 0;
