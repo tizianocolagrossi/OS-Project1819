@@ -12,6 +12,14 @@
 #include <stdlib.h>
 
 #define MAX_SIZE 50
+#define DEBUG 1
+
+/*
+ * funzione per printate di debug
+ */
+void debugPrint(char *msg){
+	if(DEBUG) printf("%s", msg);
+}
 
 /*
  * scrive a schermo una piccola intro...
@@ -34,14 +42,27 @@ int getCmd(char* cmd){
 	size_t characters;
 
 	buf = (char *)malloc(bufsize * sizeof(char));
-    if( buffer == NULL){
+    if( buf == NULL){
         perror("Unable to allocate buffer");
         exit(1);
     }
+    printf("#> ");
 	characters = getline(&buf,&bufsize,stdin);
-	strcpy(cmd, buf); 
+	if(characters != 0){
+		strcpy(cmd, buf);
+		free(buf);
+		return 0;
+	}
+	else {
+		free(buf);
+		return 1;
+	}
 }
 
 int main(int argc, char **argv){
 	init_shell();
+	char inStr[MAX_SIZE];
+	int i = getCmd(inStr);
+	debugPrint('DEBUG CMD IN', inStr);
+	
 }
