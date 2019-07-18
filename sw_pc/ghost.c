@@ -17,8 +17,8 @@
 /*
  * funzione per printate di debug
  */
-void debugPrint(char *msg){
-	if(DEBUG) printf("%s", msg);
+void debugPrint(char *msg, char *val){
+	if(DEBUG) printf("%s %s", msg, val);
 }
 
 /*
@@ -33,6 +33,20 @@ void init_shell(){
 }
 
 /*
+ * HELP per la shell
+ */
+
+void help(){
+	printf(
+		"\n"
+		"##########################################################################\n"
+		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
+		"\n"
+		"TODO help da scrivere\n\n"
+	);
+}
+
+/*
  * funzione per prendere comandi
  */
 
@@ -43,7 +57,7 @@ int getCmd(char* cmd){
 
 	buf = (char *)malloc(bufsize * sizeof(char));
     if( buf == NULL){
-        perror("Unable to allocate buffer");
+        perror("Impossibile allocare il buffer");
         exit(1);
     }
     printf("#> ");
@@ -63,6 +77,6 @@ int main(int argc, char **argv){
 	init_shell();
 	char inStr[MAX_SIZE];
 	int i = getCmd(inStr);
-	debugPrint('DEBUG CMD IN', inStr);
-	
+	debugPrint("DEBUG CMD IN", inStr);
+	help();
 }
