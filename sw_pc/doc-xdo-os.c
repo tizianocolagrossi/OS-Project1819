@@ -16,8 +16,7 @@
 #include <stdio.h>
 #include <xdo.h>
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
 
 /*  devo creare un istanza del main context  di xdo
 *   per poter usare le funzioni (ogni funzione richiede come
