@@ -5,6 +5,10 @@
  * installare xdo
  *
  * apt-get install libxdo-dev
+ *
+ * compilare
+ * 
+ * gcc test1.c -lxdo -o test1-xdo
  * 
  */
 
