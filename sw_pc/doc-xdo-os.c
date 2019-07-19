@@ -39,7 +39,7 @@ int main(int argc, char **argv){
 * 
 */
 
-	xdo_t * X = xdo_new(NULL);
+	xdo_t * x = xdo_new(NULL);
 
 /*
 *
