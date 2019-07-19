@@ -3,6 +3,7 @@
 
 	extern typedef struct Dito{
 		char char_associato = '';
+		size_t rilevamentoFisico = 0; // 0 no premuto 1 premuto
 		size_t premuto = 0; // 0 no premuto 1 premuto
 	};
 
