@@ -41,6 +41,40 @@ void UART_init(){
 	UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);   /* Enable RX and TX */  
 }
 
+// see page 281+ from atmega2560 datasheet =)
+void ADC_init(){
+	//Prescaler at 128 so we have an 125Khz clock source
+	ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)); 
+	//Auto Trigger Enable: Signal source, in this case is the free-running 
+	ADCSRA |= (1<<ADATE);
+	//ADTS2, ADTS1, ADTS0 set to 0 for free-running mode, MUX5 for input selection
+	ADCSRB &= 0;
+	//Enable bit set to 1 in order to chose the mux input
+	ADCSRB |= (1<<ACME);
+	// REFS1 = 0, ADLAR = 0, MUX[4:0] = 0 for ANALOG-0 input
+	ADMUX &= 0;
+	//Avcc(+5v) as voltage reference
+	ADMUX |= (1<<REFS0);
+	//Power up the ADC
+	ADCSRA |= (1<<ADEN);
+	//Start converting
+	ADCSRA |= (1<<ADSC);
+}
+
+void ADC_init2(){
+	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescalar to 128 - 125KHz sample rate @ 16MHz
+
+   ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
+   ADMUX |= (1 << ADLAR); // Left adjust ADC result to allow easy 8 bit reading
+
+   // No MUX values needed to be changed to use ADC0
+
+   //ADCSRA |= (1 << ADFR);  // Set ADC to Free-Running Mode
+
+   ADCSRA |= (1 << ADEN);  // Enable ADC
+   ADCSRA |= (1 << ADSC);  // Start A2D Conversions
+}
+
 void PORT_init(){
 	// Analog pin 0 is connected to Port F Pin 0 (ADC0) 
 	const uint8_t mask=(1<<0);
@@ -50,11 +84,6 @@ void PORT_init(){
   
 	// we enable pullup resistor on that pin
 	PORTF |= mask;
-}
-
-uint8_t ANALOG_read(){
-	uint8_t value = (uint8_t) (PINF);
-	return value;
 }
 
 void UART_putChar(uint8_t c){
@@ -98,21 +127,34 @@ void UART_putString(uint8_t* buf){
 
 int main(){
 	UART_init();
-	PORT_init();
+	//PORT_init();
 	TIMER_init();
-	uint8_t analog_val;
+	//ADC_init();
+	ADC_init2();
+	int analog_val;
 	//uint8_t buf[MAX_BUF_SIZE];
 	
 	UART_putString((uint8_t*) "Starting program\n");	
 	while(1) {
 		while (! interrupt_occurred);  //busy-wait for interrupt to be triggered
 		// we reset the flag;
-		interrupt_occurred=0;
+		interrupt_occurred = 0;
 		
-		UART_putString((uint8_t*) "Interrupt triggered\n");
-		analog_val = ANALOG_read();
-		uint8_t* print_val = itoa((int)analog_val);
+		UART_putString( (uint8_t*) "Interrupt triggered\n");
+		analog_val = ADCH;
+		/*if(analog_val < 128){
+			UART_putString( (uint8_t*) "IF 1\n");
+		}
+		if(analog_val >= 128){
+			UART_putString( (uint8_t*) "IF 2\n");
+		}*/
+		//UART_putString( (uint8_t*) "VALUE:\n");
+		uint8_t* print_val = (uint8_t*) itoa(analog_val);
+		uint8_t* terminator = print_val;
+		terminator += 8;
+		*terminator = '\0';
 		UART_putString(print_val);
+		UART_putString( (uint8_t*) "\n");
 	}
 }
 
