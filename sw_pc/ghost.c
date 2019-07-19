@@ -53,6 +53,14 @@ void help(){
 	);
 }
 
+void sayHi(char **parsed){
+	if(parsed[1]==NULL){
+		printf("ERRORE: non hai passato l'argomento vedi help per la guida\n");
+	} else{
+		printf("Ciao %s\n", parsed[1]);
+	}
+}
+
 /*
  * funzione per prendere comandi
  */
@@ -103,13 +111,14 @@ int cmdHandler(char** parsed){
 	
 	debugPrintMsg("dentroCmdHandler");
 	
-	int nCmdSupportati=4, i, switchArg=100;
+	int nCmdSupportati=5, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
    	ListCmd[1]="h";
    	ListCmd[2]="quit";
    	ListCmd[3]="exit";
+   	ListCmd[4]="hi";
 
 	debugPrintMsg("prima del for");
 	
@@ -132,6 +141,9 @@ int cmdHandler(char** parsed){
 		case 3:
 			printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
 			exit(0);
+		case 4:
+			sayHi(parsed);
+			break;
 		default:
 			printf("comando non riconosciuto, digit h o help per vedere la guida\n");
 			break;
@@ -145,7 +157,7 @@ int cmdHandler(char** parsed){
 int parseString(char *str, char** parsed){
 	splitString(str, parsed);
 	if (cmdHandler(parsed)) return 0;
-	else return 1;
+	else return 1; 
 }
 
 
@@ -153,13 +165,12 @@ int parseString(char *str, char** parsed){
 int main(int argc, char **argv){
 	
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
-	int execFlag = 0;
 	
 	init_shell();
 
 	while(1){
 		if(getCmd(inStr)) continue;
-		execFlag = parseString(inStr, parsedArg);
+		parseString(inStr, parsedArg);
 		
 	
 	}
