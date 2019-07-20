@@ -1,8 +1,8 @@
-#include <util/delay.h>
+//#include <util/delay.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <avr/io.h>
-
+#include "serial.h"
 //***************************
 //* DEFINE PER BOUD CONTROL *
 //***************************
@@ -18,7 +18,22 @@
 
 void serial_init(void);
 uint8_t serial_read_poll(void);
-uint8_t serial_read(uint8_t* buff);
+uint8_t* serial_read(uint8_t* buff);
+uint8_t value_control(uint8_t min_val, uint8_t max_val);
+void set_finger(void);
+
+uint8_t value_control(uint8_t min_val, uint8_t max_val, uint8_t current_val){
+	
+	if (curren_val >= min_val && current_val <= max_val) return 1
+	else return 0;
+	
+}
+
+void set_finger(void){
+
+	//quando chiamata detta il valore del dito nella struttura "CONTROL"
+
+}
 
 void serial_init(void){
 
@@ -39,22 +54,28 @@ uint8_t serial_read_poll(void){
   	return UDR0;
 }
 
-uint8_t serial_read(uint8_t* buff){
-  
-  uint8_t* b=buff;
-  uint8_t i = 0;
-  while(i < STRING_SIZE){
-    uint8_t c=serial_read_poll();
-    *buff=c;
-    ++buff;
-    ++i;
-    if(c=='\n'){
-      *buff=0;
-      ++buff;
-      return buff-b;
-    }
-  }
+/*uint8_t* serial_read(uint8_t* buf){
+	
+	uint8_t i = 0;
+	uint8_t* hand[5];
+	uint8_t* b0=buf; //beginning of buffer
+  	while(1){
+    	uint8_t c=UART_getChar();
+    	*buf=c;
+    	++buf;
+    	// reading a 0 terminates the string
+    	if (c==0)
+    		return *hand;
+    	//se leggo una virgola avanzo nella stringa
+    	if(c==","){
+			++buf;
+    	}
+    	else {
+			hand[i] = c;
+    	}
+  	}
 }
+*/
  
 int main(void){
 
