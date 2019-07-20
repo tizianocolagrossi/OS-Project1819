@@ -7,14 +7,17 @@
 
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
-#define MAX_BUF_SIZE 10
+#define SERIAL_SIZE 25    //4 digits * 5 fingers + 4 commas + 1 "\0"
+#define MAX_BUF_SIZE 6    //it will store values in [0:1023], so 4 + (1 "\0") cells would be enough
 #define TIMER_DURATION_MS 100
 
 char* itoa (int value, unsigned char * str, int base);
+char *strcat(unsigned char *dest, unsigned char *src);
+char *strncat(unsigned char *dest, unsigned char *src, size_t n);
 volatile uint8_t interrupt_occurred = 0;
 
 ISR(TIMER5_COMPA_vect) {
-	interrupt_occurred=1;
+	interrupt_occurred = 1;
 }
 
 void timer_init(void){
@@ -64,17 +67,21 @@ void adc_init(void){
 
 void adc_init2(void){
 	ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));    //16Mhz/128 = 125Khz the ADC reference clock
-	ADMUX |= (1<<REFS0);  //Voltage reference from Avcc (5v)
+	ADMUX |= (1<<REFS0);  //Voltage reference from Avcc(+5v)
 	ADCSRA |= (1<<ADEN);  //Turn on ADC
 	ADCSRA |= (1<<ADSC);  //Do an initial conversion because this one is the slowest and to ensure that everything is up and running
 }
 
-uint16_t adc_read(void){  //uint8_t channel
-	//ADMUX &= 0xF0;                    //Clear the older channel that was read
-	//ADMUX |= channel;                //Defines the new ADC channel to be read
-	ADCSRA |= (1<<ADSC);                //Starts a new conversion
-	while(ADCSRA & (1<<ADSC));            //Wait until the conversion is done
-	return ADCW;                    //Returns the ADC value of the chosen channel
+uint16_t adc_read(uint8_t channel){
+	//Clear the older channel that was read leaving voltage reference and adjustment invariated
+	ADMUX &= 0xF0;
+	//Defines the new ADC channel to be read
+	ADMUX |= channel;
+	//Starts a new conversion
+	ADCSRA |= (1<<ADSC);
+	//Wait until the conversion is done
+	while(ADCSRA & (1<<ADSC));
+	return ADCW;
 }
 
 void port_init(void){
@@ -134,26 +141,25 @@ int main(void){
 	adc_init();
 	//adc_init2();
 	uint16_t analog_val;
+	uint8_t i;
+	unsigned char serial_buf[SERIAL_SIZE];
 	unsigned char buf[MAX_BUF_SIZE];
-	
 	UART_putString((uint8_t*) "Starting program\n");	
+	
 	while(1) {
 		while (! interrupt_occurred);  //busy-wait for interrupt to be triggered
-		// we reset the flag;
 		interrupt_occurred = 0;
 		
 		UART_putString( (uint8_t*) "Interrupt triggered\n");
-		analog_val = ADCW;
-		/*if(analog_val < 128){
-			UART_putString( (uint8_t*) "IF 1\n");
-		}
-		if(analog_val >= 128){
-			UART_putString( (uint8_t*) "IF 2\n");
-		}*/
-		//UART_putString( (uint8_t*) "VALUE:\n");
-		itoa(analog_val, buf, 10);  // (what to convert, where to write, base)
 		
-		UART_putString(buf);
+		for(i=0; i<5; i++){
+			analog_val = read_adc(i);
+			itoa(analog_val, buf, 10);   // (what to convert, where to write, base)
+			strncat(serial_buf, buf, 4); // (source, dest, max_size)
+			if(i<4) strcat(serial_buf, ",");
+		}
+		
+		UART_putString(serial_buf);
 		UART_putString( (uint8_t*) "\n");
 	}
 }
