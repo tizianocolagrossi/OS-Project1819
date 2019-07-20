@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include "serial.h"
 //***************************
-//* DEFINE PER BOUD CONTROL *
+//* DEFINE PER BAUD CONTROL *
 //***************************
 
 #define MAX_SIZE 10
