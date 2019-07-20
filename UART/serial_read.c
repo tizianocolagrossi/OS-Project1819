@@ -7,6 +7,8 @@
 //* DEFINE PER BOUD CONTROL *
 //***************************
 
+#define MAX_SIZE 10
+#define STRING_SIZE 8
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
 
@@ -38,11 +40,14 @@ uint8_t serial_read_poll(void){
 }
 
 uint8_t serial_read(uint8_t* buff){
+  
   uint8_t* b=buff;
-  while(1){
+  uint8_t i = 0;
+  while(i < STRING_SIZE){
     uint8_t c=serial_read_poll();
     *buff=c;
     ++buff;
+    ++i;
     if(c=='\n'){
       *buff=0;
       ++buff;
@@ -50,3 +55,29 @@ uint8_t serial_read(uint8_t* buff){
     }
   }
 }
+ 
+int main(void){
+
+	serial_init();
+	uint8_t control;
+	uint8_t* buff[MAX_SIZE];
+	
+	printf("*******************************");
+	printf("* ASCOLTO SULLA PORTA SERIALE *");
+	printf("*******************************");
+	
+	while(1){
+		control = serial_read(*buff);
+		if (control > 8 && control <= 0)
+		printf("errore sulla serial_read");	
+	}
+}
+
+
+
+
+
+
+
+
+
