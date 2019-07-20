@@ -9,11 +9,11 @@
 #define MYUBRR (F_CPU/16/BAUD-1)
 #define SERIAL_SIZE 25    //4 digits * 5 fingers + 4 commas + 1 "\0"
 #define MAX_BUF_SIZE 6    //it will store values in [0:1023], so 4 + (1 "\0") cells would be enough
-#define TIMER_DURATION_MS 100
+#define TIMER_DURATION_MS 500
 
 char* itoa (int value, unsigned char * str, int base);
-char *strcat(unsigned char *dest, unsigned char *src);
-char *strncat(unsigned char *dest, unsigned char *src, size_t n);
+//char *strcat(unsigned char *dest, unsigned char *src);
+//char *strncat(unsigned char *dest, unsigned char *src, size_t n);
 volatile uint8_t interrupt_occurred = 0;
 
 ISR(TIMER5_COMPA_vect) {
@@ -53,6 +53,8 @@ void adc_init(void){
 	ADCSRA |= (1<<ADATE);
 	//ADTS2, ADTS1, ADTS0 set to 0 for free-running mode, MUX5 for input selection
 	ADCSRB &= 0;
+	//ADTS0 set to 1 for analog comparator mode instead of free-running
+	ADCSRB |= (1<<ADTS0);
 	//Enable bit set to 1 in order to chose the mux input
 	ADCSRB |= (1<<ACME);
 	// REFS1 = 0, ADLAR = 0, MUX[4:0] = 0 for ANALOG-0 input
@@ -82,17 +84,6 @@ uint16_t adc_read(uint8_t channel){
 	//Wait until the conversion is done
 	while(ADCSRA & (1<<ADSC));
 	return ADCW;
-}
-
-void port_init(void){
-	// Analog pin 0 is connected to Port F Pin 0 (ADC0) 
-	const uint8_t mask=(1<<0);
-
-	// we configure the pin as input, clearing the bit 0
-	DDRF &= ~mask;
-  
-	// we enable pullup resistor on that pin
-	PORTF |= mask;
 }
 
 void UART_putChar(uint8_t c){
@@ -136,7 +127,6 @@ void UART_putString(uint8_t* buf){
 
 int main(void){
 	UART_init();
-	//port_init();
 	timer_init();
 	adc_init();
 	//adc_init2();
@@ -152,10 +142,13 @@ int main(void){
 		
 		UART_putString( (uint8_t*) "Interrupt triggered\n");
 		
+		strcpy(serial_buf, "");
 		for(i=0; i<5; i++){
-			analog_val = read_adc(i);
+			analog_val = adc_read(i);
 			itoa(analog_val, buf, 10);   // (what to convert, where to write, base)
-			strncat(serial_buf, buf, 4); // (source, dest, max_size)
+			//UART_putString(buf);
+			//UART_putString( (uint8_t*) "\n");
+			strncat(serial_buf, buf, 4); // (dest, source, max_size)
 			if(i<4) strcat(serial_buf, ",");
 		}
 		
