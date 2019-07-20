@@ -7,16 +7,17 @@
 
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
-#define MAX_BUF_SIZE 256
-#define TIMER_DURATION_MS 1000
+#define MAX_BUF_SIZE 10
+#define TIMER_DURATION_MS 100
 
+char* itoa (int value, unsigned char * str, int base);
 volatile uint8_t interrupt_occurred = 0;
 
 ISR(TIMER5_COMPA_vect) {
 	interrupt_occurred=1;
 }
 
-void TIMER_init(){
+void timer_init(void){
 	// configure timer, set the prescaler to 1024
 	TCCR5A = 0;
 	TCCR5B = (1 << WGM52) | (1 << CS50) | (1 << CS52); 
@@ -32,7 +33,7 @@ void TIMER_init(){
 	sei();
 }
 
-void UART_init(){
+void UART_init(void){
 	// Set baud rate
 	UBRR0H = (uint8_t)(MYUBRR>>8);
 	UBRR0L = (uint8_t)MYUBRR;
@@ -42,7 +43,7 @@ void UART_init(){
 }
 
 // see page 281+ from atmega2560 datasheet =)
-void ADC_init(){
+void adc_init(void){
 	//Prescaler at 128 so we have an 125Khz clock source
 	ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)); 
 	//Auto Trigger Enable: Signal source, in this case is the free-running 
@@ -61,21 +62,22 @@ void ADC_init(){
 	ADCSRA |= (1<<ADSC);
 }
 
-void ADC_init2(){
-	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescalar to 128 - 125KHz sample rate @ 16MHz
-
-   ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
-   ADMUX |= (1 << ADLAR); // Left adjust ADC result to allow easy 8 bit reading
-
-   // No MUX values needed to be changed to use ADC0
-
-   //ADCSRA |= (1 << ADFR);  // Set ADC to Free-Running Mode
-
-   ADCSRA |= (1 << ADEN);  // Enable ADC
-   ADCSRA |= (1 << ADSC);  // Start A2D Conversions
+void adc_init2(void){
+	ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));    //16Mhz/128 = 125Khz the ADC reference clock
+	ADMUX |= (1<<REFS0);  //Voltage reference from Avcc (5v)
+	ADCSRA |= (1<<ADEN);  //Turn on ADC
+	ADCSRA |= (1<<ADSC);  //Do an initial conversion because this one is the slowest and to ensure that everything is up and running
 }
 
-void PORT_init(){
+uint16_t adc_read(void){  //uint8_t channel
+	//ADMUX &= 0xF0;                    //Clear the older channel that was read
+	//ADMUX |= channel;                //Defines the new ADC channel to be read
+	ADCSRA |= (1<<ADSC);                //Starts a new conversion
+	while(ADCSRA & (1<<ADSC));            //Wait until the conversion is done
+	return ADCW;                    //Returns the ADC value of the chosen channel
+}
+
+void port_init(void){
 	// Analog pin 0 is connected to Port F Pin 0 (ADC0) 
 	const uint8_t mask=(1<<0);
 
@@ -93,7 +95,7 @@ void UART_putChar(uint8_t c){
 	UDR0 = c;
 }
 
-uint8_t UART_getChar(){
+uint8_t UART_getChar(void){
 	// Wait for incoming data, looping on status bit
 	while ( !(UCSR0A & (1<<RXC0)) );
 	// Return the data
@@ -125,14 +127,14 @@ void UART_putString(uint8_t* buf){
 	}
 }
 
-int main(){
+int main(void){
 	UART_init();
-	//PORT_init();
-	TIMER_init();
-	//ADC_init();
-	ADC_init2();
-	int analog_val;
-	//uint8_t buf[MAX_BUF_SIZE];
+	//port_init();
+	timer_init();
+	adc_init();
+	//adc_init2();
+	uint16_t analog_val;
+	unsigned char buf[MAX_BUF_SIZE];
 	
 	UART_putString((uint8_t*) "Starting program\n");	
 	while(1) {
@@ -141,7 +143,7 @@ int main(){
 		interrupt_occurred = 0;
 		
 		UART_putString( (uint8_t*) "Interrupt triggered\n");
-		analog_val = ADCH;
+		analog_val = ADCW;
 		/*if(analog_val < 128){
 			UART_putString( (uint8_t*) "IF 1\n");
 		}
@@ -149,11 +151,9 @@ int main(){
 			UART_putString( (uint8_t*) "IF 2\n");
 		}*/
 		//UART_putString( (uint8_t*) "VALUE:\n");
-		uint8_t* print_val = (uint8_t*) itoa(analog_val);
-		uint8_t* terminator = print_val;
-		terminator += 8;
-		*terminator = '\0';
-		UART_putString(print_val);
+		itoa(analog_val, buf, 10);  // (what to convert, where to write, base)
+		
+		UART_putString(buf);
 		UART_putString( (uint8_t*) "\n");
 	}
 }
