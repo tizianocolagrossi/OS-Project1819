@@ -3,11 +3,12 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include "serial.h"
+
 //***************************
 //* DEFINE PER BAUD CONTROL *
 //***************************
 
-#define MAX_SIZE 10
+#define MAX_SIZE 4
 #define STRING_SIZE 8
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
@@ -17,9 +18,9 @@
 //**********************
 
 void serial_init(void);
-uint8_t serial_read_poll(void);
-uint8_t* serial_read(uint8_t* buff);
-uint8_t value_control(uint8_t min_val, uint8_t max_val);
+uint8_t serial_char(void);
+uint8_t* serial_string(void);
+uint8_t value_control(uint8_t min_val, uint8_t max_val, uint8_t current_val);
 void set_finger(void);
 
 uint8_t value_control(uint8_t min_val, uint8_t max_val, uint8_t current_val){
@@ -31,7 +32,7 @@ uint8_t value_control(uint8_t min_val, uint8_t max_val, uint8_t current_val){
 
 void set_finger(void){
 
-	//quando chiamata detta il valore del dito nella struttura "CONTROL"
+	//quando chiamata setta il valore del dito nella struttura "CONTROL"
 
 }
 
@@ -45,7 +46,7 @@ void serial_init(void){
 
 }
 
-uint8_t serial_read_poll(void){
+uint8_t serial_char(void){
 
 	// controllo lo status bit
 	while ( !(UCSR0A & (1<<RXC0)) );
@@ -54,28 +55,32 @@ uint8_t serial_read_poll(void){
   	return UDR0;
 }
 
-/*uint8_t* serial_read(uint8_t* buf){
+uint8_t* serial_string(void){
 	
 	uint8_t i = 0;
 	uint8_t* hand[5];
-	uint8_t* b0=buf; //beginning of buffer
+	uint8_t* b[MAX_SIZE]; //beginning of buffer
   	while(1){
-    	uint8_t c=UART_getChar();
-    	*buf=c;
-    	++buf;
-    	// reading a 0 terminates the string
-    	if (c==0)
-    		return *hand;
-    	//se leggo una virgola avanzo nella stringa
-    	if(c==","){
-			++buf;
+    	uint8_t c = serial_char();
+    	
+    	if (c =! ","){
+			*b = c;
+			b++;
     	}
-    	else {
-			hand[i] = c;
+    	
+    	else if (c == ",") {
+    		hand[i] = b;
+    		*b = 0;
+    	}
+    	
+    	if(i == 5) i = 0;
+    	
+    	if (c == "\n"){
+    		*b = 0;
     	}
   	}
 }
-*/
+
  
 int main(void){
 
@@ -83,18 +88,15 @@ int main(void){
 	uint8_t control;
 	uint8_t* buff[MAX_SIZE];
 	
-	printf("*******************************");
-	printf("* ASCOLTO SULLA PORTA SERIALE *");
-	printf("*******************************");
+	printf("************************************");
+	printf("* 			CIAO PATATINI 		   *");
+	printf("* QUESTO é IL PROGETTO DI SO 18/19 *");
+	printf("************************************");
 	
 	while(1){
-		control = serial_read(*buff);
-		if (control > 8 && control <= 0)
-		printf("errore sulla serial_read");	
-	}
+		
+	}	
 }
-
-
 
 
 
