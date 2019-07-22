@@ -17,14 +17,14 @@ int port_configure(void){
 
 	int fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
 	
-	if(fd == -1) perrror("cannot open dev/ttyUSB0 port");
+	if(fd == -1) perror("cannot open dev/ttyUSB0 port");
 	
 	else{
 		tcgetattr(fd, &current);//salvo valori correnti porta seriale 
-		cfsetispeed(&options, B19200);//setto baud rate
-		current.c_flag &= ~PARENB; //nessun bit di parità
-        current.c_flag &= ~CSIZE;//
-		current.c_flag |= CS8; //8-bit data
+		cfsetispeed(&current, B19200);//setto baud rate
+		current.c_iflag &= ~PARENB; //nessun bit di parità
+        current.c_iflag &= ~CSIZE;//
+		current.c_iflag |= CS8; //8-bit data
 		current.c_cflag |= CLOCAL | CREAD; //abilito ricevitore porta seriale
 		current.c_cc[VMIN] = 25; //legge 25 caratteri
 		current.c_cc[VTIME] = 0; //wait indefinitely
