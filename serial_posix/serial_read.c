@@ -15,7 +15,7 @@ int port_configure(void){
 
 	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
 	
-	if(fd == -1) perror("cannot open dev/ttyUSB0 port");
+	if(fd == -1) perror("cannot open dev/ttyACM0 port");
 	
 	else{
 		tcgetattr(fd, &current);//salvo valori correnti porta seriale 
@@ -38,14 +38,13 @@ void read_(int fd){
 	char buff[30];
 	int byte_read = 0;
 	
-	printf("entro nel while(1)");
+	printf("entro nel while(1)\n");
 	while (1){
-		printf("read stringa\n");
 		byte_read = read(fd, buff, 25);
 		if (byte_read < 0) perror("error during read process");
 		else if(byte_read == 0) continue;
 		else{
-			printf("%s\n", buff);
+			printf("leggo: %s\n", buff);
 			byte_read = 0;
 		}
 	}
@@ -55,7 +54,6 @@ int main(void){
 	
 	int fd = port_configure();
 	
-	printf("chiamo la read");
 	read_(fd);
 	
 	return 0;
