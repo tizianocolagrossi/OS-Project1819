@@ -15,7 +15,7 @@ struct termios current;
 
 int port_configure(void){
 
-	int fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
+	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY);
 	
 	if(fd == -1) perror("cannot open dev/ttyUSB0 port");
 	
@@ -40,7 +40,7 @@ void read_(int fd){
 	
 	printf("entro nel while(1)");
 	while (1){
-		printf("read stringa");
+		printf("read stringa\n");
 		byte_read = read(fd, &buff, 30);
 		if (byte_read < 0) perror("error during read process");
 		else{
