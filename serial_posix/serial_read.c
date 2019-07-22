@@ -7,26 +7,24 @@
 
 #define MAX_SIZE 10
 #define BAUDRATE B19200
-#define _POSIX_SOURCE 1 /* POSIX compliant source */
-#define FALSE 0
-#define TRUE 1
+
 
 struct termios current;
 
 int port_configure(void){
 
-	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY);
+	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
 	
 	if(fd == -1) perror("cannot open dev/ttyUSB0 port");
 	
 	else{
 		tcgetattr(fd, &current);//salvo valori correnti porta seriale 
 		cfsetispeed(&current, B19200);//setto baud rate
-		current.c_iflag &= ~PARENB; //nessun bit di parità
-        current.c_iflag &= ~CSIZE;//
-		current.c_iflag |= CS8; //8-bit data
-		current.c_cflag |= CLOCAL | CREAD; //abilito ricevitore porta seriale
-		current.c_cc[VMIN] = 25; //legge 25 caratteri
+		current.c_cflag &= ~PARENB; //nessun bit di parità
+        current.c_cflag &= ~CSIZE;//
+		current.c_cflag |= CS8; //8-bit data
+		current.c_cflag |= CREAD; //abilito ricevitore porta seriale
+		current.c_cc[VMIN] = 0; //legge 25 caratteri
 		current.c_cc[VTIME] = 0; //wait indefinitely
 		tcsetattr(fd, TCSANOW, &current);
 		return fd;
@@ -44,7 +42,7 @@ void read_(int fd){
 		byte_read = read(fd, &buff, 30);
 		if (byte_read < 0) perror("error during read process");
 		else{
-			printf("String ricevuta: %s", buff);
+			printf("String ricevuta: %s\n", buff);
 		}
 	}
 }
