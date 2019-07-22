@@ -20,7 +20,9 @@ int port_configure(void){
 	else{
 		tcgetattr(fd, &current);//salvo valori correnti porta seriale 
 		cfsetispeed(&current, B19200);//setto baud rate
+		current.c_iflag &= ~IXOFF; //disabilito input flow control
 		current.c_cflag &= ~PARENB; //nessun bit di parità
+ 		current.c_cflag &= ~CSTOPB; //1 bit di stop
         current.c_cflag &= ~CSIZE;//
 		current.c_cflag |= CS8; //8-bit data
 		current.c_cflag |= CREAD; //abilito ricevitore porta seriale
