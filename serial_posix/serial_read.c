@@ -41,9 +41,10 @@ void read_(int fd){
 		printf("read stringa\n");
 		byte_read = read(fd, buff, 25);
 		if (byte_read < 0) perror("error during read process");
+		else if(byte_read == 0) continue;
 		else{
 			printf("%s\n", buff);
-			byte_reasd = 0;
+			byte_read = 0;
 		}
 	}
 }
