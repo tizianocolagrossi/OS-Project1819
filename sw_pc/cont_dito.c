@@ -9,11 +9,11 @@
 #include <cont_sett_struct.h>
 #include <xdo.h>
 
-#defnine MIGNOLO 's'
-#defnine ANULARE 'w'
-#defnine MEDIO 'a'
-#defnine INDICE 'd'
-#defnine POLLICE 'SPACE'
+#define MIGNOLO 's'
+#define ANULARE 'w'
+#define MEDIO 'a'
+#define INDICE 'd'
+#define POLLICE 'SPACE'
 
 /*
  * crea un istanza di Dito con il carattere associato
@@ -54,7 +54,7 @@ void rilascia(Dito* dito, xdo_t * x){
 
 /*
  * inizializza e restituisce un puntatore al controller
- * con i valodi di default vedi inizio file
+ * con i valori di default vedi inizio file
  */
 Controller* newInitDefaultColtroller(){
 	Controller newController;

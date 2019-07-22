@@ -7,8 +7,9 @@
 
 #define BAUD 19600
 #define MYUBRR (F_CPU/16/BAUD-1)
-#define SERIAL_SIZE 25    //4 digits * 5 fingers + 4 commas + 1 "\0"
 #define MAX_BUF_SIZE 6    //it will store values in [0:1023], so 4 + (1 "\0") cells would be enough
+#define SERIAL_SIZE 25    //4 digits * 5 fingers + 4 commas + 1 "\0"
+
 #define TIMER_DURATION_MS 500
 
 char* itoa (int value, unsigned char * str, int base);
@@ -140,9 +141,8 @@ int main(void){
 		while (! interrupt_occurred);  //busy-wait for interrupt to be triggered
 		interrupt_occurred = 0;
 		
-		UART_putString( (uint8_t*) "Interrupt triggered\n");
-		
-		strcpy(serial_buf, "");
+		//UART_putString( (uint8_t*) "Interrupt triggered\n");
+		strcpy(serial_buf, "");        //reset the output buffer
 		for(i=0; i<5; i++){
 			analog_val = adc_read(i);
 			itoa(analog_val, buf, 10);   // (what to convert, where to write, base)
@@ -153,6 +153,7 @@ int main(void){
 		}
 		
 		UART_putString(serial_buf);
+		UART_putString( (uint8_t*) "\n");
 		UART_putString( (uint8_t*) "\n");
 	}
 }

@@ -78,7 +78,7 @@ int getCmd(char* cmd){
     printf("#> ");
 	characters = getline(&buf,&bufsize,stdin);
 	if(characters != 0){
-		strcpy(cmd, buf);
+		strcpy(cmd, buf);  //TODO Davide suggerisce: dovresti usare strncpy(char* dest, const char* source, size_t n), grisetti piange
 		debugPrint("FUN getCmd value >", cmd);
 		free(buf);
 		return 0;
