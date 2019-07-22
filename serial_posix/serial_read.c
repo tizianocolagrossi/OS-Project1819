@@ -42,7 +42,7 @@ void read_(int fd){
 		byte_read = read(fd, buff, 25);
 		if (byte_read < 0) perror("error during read process");
 		else{
-			printf("%s\n", buff);ù
+			printf("%s\n", buff);
 			byte_reasd = 0;
 		}
 	}
