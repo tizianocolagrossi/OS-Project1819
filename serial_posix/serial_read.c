@@ -39,10 +39,11 @@ void read_(int fd){
 	printf("entro nel while(1)");
 	while (1){
 		printf("read stringa\n");
-		byte_read = read(fd, &buff, 30);
+		byte_read = read(fd, buff, 25);
 		if (byte_read < 0) perror("error during read process");
 		else{
-			printf("String ricevuta: %s\n", buff);
+			printf("%s\n", buff);ù
+			byte_reasd = 0;
 		}
 	}
 }
