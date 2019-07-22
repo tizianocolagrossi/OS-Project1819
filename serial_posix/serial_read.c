@@ -38,9 +38,10 @@ void read_(int fd){
 	char buff[30];
 	int byte_read = 0;
 	
+	printf("entro nel while(1)");
 	while (1){
+		printf("read stringa");
 		byte_read = read(fd, &buff, 30);
-		
 		if (byte_read < 0) perror("error during read process");
 		else{
 			printf("String ricevuta: %s", buff);
@@ -54,7 +55,6 @@ int main(void){
 	
 	printf("chiamo la read");
 	read_(fd);
-	printf("read chiamata, se non ha scritto nulla c'è un problema per dio");
 	
 	return 0;
 }
