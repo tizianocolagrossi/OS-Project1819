@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "cont_sett_struct.h"
 
 #define MAX_SIZE 50 // max caratteri in input
 #define MAX_CMD 10  // max comandi per linea supportati
@@ -27,6 +28,7 @@ void debugPrintInt(char *msg, int val){
 void debugPrintMsg(char *msg){
 	if(DEBUG) printf("\n%s\n", msg);
 }
+
 
 /*
  * scrive a schermo una piccola intro...
@@ -49,7 +51,14 @@ void help(){
 		"##########################################################################\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
 		"\n"
-		"TODO help da scrivere\n\n"
+		"\nComandi riconosciuti\n\n"
+		"controller: stampa lo status del cotroller ONLINE OFFLINE e i settaggi vari\n"
+		"controller -m modifica i settaggi del controller\n"
+		"\tcontroller -m[mignolo|anulare|medio|indice|pollice] [comando associato]\n"
+		"\tESEMPIO: controller -m mignolo w\n"
+		"\til mignolo trigghera il tasto s\n"
+		"\n\n"
+		"start avvia il controller in modo che potra essere usato su altri programmi\n"
 	);
 }
 
@@ -58,6 +67,70 @@ void sayHi(char **parsed){
 		printf("ERRORE: non hai passato l'argomento vedi help per la guida\n");
 	} else{
 		printf("Ciao %s\n", parsed[1]);
+	}
+}
+
+/*
+ * funzione che lancia un thread per il controller
+ */
+void start(){
+	printf("START\n");
+}
+
+/*
+ * funzione per il controllo del controller
+ */
+void controller(char **parsed){
+	int sw1= -1;
+	if( NULL == parsed[1])sw1=0;
+	if( ""   == parsed[1])sw1=1;
+	if( "-m" == parsed[1])sw1=2;
+	switch (sw1){
+		case 0:
+			printf("ERRORE parsed[1] NULL\n");
+		case 1:
+			printf("status del controller\n");
+			break;
+		case 2:
+			if(parsed[2]==NULL||parsed[2]==""){
+				printf("ERRORE devi indicare quale dito devi modificare\n");
+				break;
+			}
+			if(parsed[3]==NULL||parsed[3]==""){
+				printf("ERRORE devi indicare il tasto da associare\n");
+				break;
+			}
+			int sw2 =-1;
+			if("mignolo" ==parsed[2])sw2=0;
+			if("anulare" ==parsed[2])sw2=1;
+			if("medio"   ==parsed[2])sw2=2;
+			if("indice"  ==parsed[2])sw2=3;
+			if("pollice" ==parsed[2])sw2=4;
+			switch (sw2){
+				case 0:
+					printf("MOD mignolo in %c\n", parsed[3][0]);
+					break;
+				case 1:
+					printf("MOD anulare in %c\n", parsed[3][0]);
+					break;
+				case 2:
+					printf("MOD medio in %c\n", parsed[3][0]);
+					break;
+				case 3:
+					printf("MOD indice in %c\n", parsed[3][0]);
+					break;
+				case 4:
+					printf("MOD pollice in %c\n", parsed[3][0]);
+					break;
+				default:
+					printf("%s non rientra tra i valori che puoi inserire\n che sono: mignolo|anulare|medio|indice|pollice", parsed[2]);
+					break;
+				
+			}
+			break;
+		default:
+			printf("comando non riconosiuto\n");
+			break;
 	}
 }
 
@@ -111,7 +184,7 @@ int cmdHandler(char** parsed){
 	
 	debugPrintMsg("dentroCmdHandler");
 	
-	int nCmdSupportati=5, i, switchArg=100;
+	int nCmdSupportati=7, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
@@ -119,6 +192,9 @@ int cmdHandler(char** parsed){
    	ListCmd[2]="quit";
    	ListCmd[3]="exit";
    	ListCmd[4]="hi";
+   	ListCmd[5]="controller";
+   	ListCmd[6]="start";
+   	
 
 	debugPrintMsg("prima del for");
 	
@@ -144,6 +220,12 @@ int cmdHandler(char** parsed){
 		case 4:
 			sayHi(parsed);
 			break;
+		case 5:
+			controller(parsed);
+			break;
+		case 6:
+			start();
+			break;
 		default:
 			printf("comando non riconosciuto, digit h o help per vedere la guida\n");
 			break;
@@ -162,12 +244,16 @@ int parseString(char *str, char** parsed){
 
 
 
+
+
 int main(int argc, char **argv){
 	
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
 	
 	init_shell();
 
+	struct Controller *my_controller = newController();
+	
 	while(1){
 		if(getCmd(inStr)) continue;
 		parseString(inStr, parsedArg);

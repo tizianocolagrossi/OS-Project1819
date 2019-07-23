@@ -1,11 +1,12 @@
+#include <xdo.h>
 #ifndef DITO_H
 #define DITO_H
 
-	extern typedef struct Dito{
-		char char_associato = '';
-		size_t rilevamentoFisico = 0; // 0 no premuto 1 premuto
-		size_t premuto = 0; // 0 no premuto 1 premuto
-	};
+	typedef struct Dito{
+		char char_associato;
+		size_t rilevamentoFisico; // 0 no premuto 1 premuto
+		size_t premuto; // 0 no premuto 1 premuto
+	}Dito;
 
 	Dito* newDito(char charAss);
 	void modCharAssDito(Dito* dito, char newChar);
@@ -17,16 +18,17 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-	extern typedef struct Controller{
-		Dito mignolo = NULL;
-		Dito anulare = NULL;
-		Dito medio   = NULL;
-		Dito indice  = NULL;
-		Dito pollice = NULL;
-	};
+	typedef struct Controller{
+		Dito *mignolo;
+		Dito *anulare;
+		Dito *medio;
+		Dito *indice;
+		Dito *pollice;
+	}Controller;
 
-	Controller* newInitDefaultColtroller();
-	Controller* newInitPersonalizedController(char mignolo,char anulare,char medio,char indice,char pollice);
+	
+	Controller* newController();
+	Controller* newPersController(char mignolo,char anulare,char medio,char indice,char pollice);
 	void printControllerSetting(Controller* cnt);
 	
 #endif
