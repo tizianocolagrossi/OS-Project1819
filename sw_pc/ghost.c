@@ -81,56 +81,42 @@ void start(){
  * funzione per il controllo del controller
  */
 void controller(char **parsed){
-	int sw1= -1;
-	if( NULL == parsed[1])sw1=0;
-	if( ""   == parsed[1])sw1=1;
-	if( "-m" == parsed[1])sw1=2;
-	switch (sw1){
-		case 0:
-			printf("ERRORE parsed[1] NULL\n");
-		case 1:
-			printf("status del controller\n");
-			break;
-		case 2:
-			if(parsed[2]==NULL||parsed[2]==""){
-				printf("ERRORE devi indicare quale dito devi modificare\n");
+	if(parsed[1]==NULL){
+		printf("Controller setting and status\n");
+		return;
+	}
+	if(strcmp(parsed[1],"-m")==0){
+		if(parsed[2]==NULL){
+			printf("devi inserire il dito di cui vuoi modificare il settaggio\n");
+			return;
+		}
+		int sw1 = -1;
+		if(strcmp(parsed[2],"mignolo")==0)sw1=0;
+		if(strcmp(parsed[2],"anulare")==0)sw1=1;
+		if(strcmp(parsed[2],"medio")==0)sw1=2;
+		if(strcmp(parsed[2],"indice")==0)sw1=3;
+		if(strcmp(parsed[2],"pollice")==0)sw1=4;
+		switch (sw1){
+			case 0:
+				printf("TODO EDIT MIGNOLO\n");
 				break;
-			}
-			if(parsed[3]==NULL||parsed[3]==""){
-				printf("ERRORE devi indicare il tasto da associare\n");
+			case 1:
+				printf("TODO EDIT ANULARE\n");
 				break;
-			}
-			int sw2 =-1;
-			if("mignolo" ==parsed[2])sw2=0;
-			if("anulare" ==parsed[2])sw2=1;
-			if("medio"   ==parsed[2])sw2=2;
-			if("indice"  ==parsed[2])sw2=3;
-			if("pollice" ==parsed[2])sw2=4;
-			switch (sw2){
-				case 0:
-					printf("MOD mignolo in %c\n", parsed[3][0]);
-					break;
-				case 1:
-					printf("MOD anulare in %c\n", parsed[3][0]);
-					break;
-				case 2:
-					printf("MOD medio in %c\n", parsed[3][0]);
-					break;
-				case 3:
-					printf("MOD indice in %c\n", parsed[3][0]);
-					break;
-				case 4:
-					printf("MOD pollice in %c\n", parsed[3][0]);
-					break;
-				default:
-					printf("%s non rientra tra i valori che puoi inserire\n che sono: mignolo|anulare|medio|indice|pollice", parsed[2]);
-					break;
-				
-			}
-			break;
-		default:
-			printf("comando non riconosiuto\n");
-			break;
+			case 2:
+				printf("TODO EDIT MEDIO\n");
+				break;
+			case 3:
+				printf("TODO EDIT INDICE\n");
+				break;
+			case 4:
+				printf("TODO EDIT POLLICE\n");
+				break;
+			default:
+				printf("le dita disponibili per modificare i settaggi sono:\n"
+					   "\tmignolo|anulare|medio|indice|pollice\n");
+				break;
+		}
 	}
 }
 
@@ -168,12 +154,15 @@ int getCmd(char* cmd){
  
 int splitString(char *str, char **split){
 	int i;
-	str = strsep(&str, "\n"); // elimino il carattere \n alla fine preso dalla getline
+	int len = strlen(str);
+	str[len-1]='\0'; // elimino il carattere \n alla fine preso dalla getline
+	debugPrint("comando preso>",str);
 	for(i = 0; i < MAX_CMD; i++){
 		split[i] = strsep(&str," ");
 		if(split[i]==NULL) break;
 		if(strlen(split[i])==0) i--;
 	}
+	
 }
 
 /*
