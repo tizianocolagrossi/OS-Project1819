@@ -4,6 +4,7 @@
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include <math.h>    /* For Math's functions */
 
 #define MAX_SIZE 10
 #define BAUDRATE B19200
@@ -60,3 +61,17 @@ int main(void){
 	
 	return 0;
 }
+
+//davide: function to handle the transformation from
+//arduino signal to an acceptable value for the controller
+int signal_to_controller(int min_soglia, int max_soglia, int signal){
+	float ret_val;
+	
+	if(signal < min_soglia) ret_val = min_soglia; 
+	else if(signal > max_soglia) ret_val = max_soglia;
+	
+}
+
+
+
+
