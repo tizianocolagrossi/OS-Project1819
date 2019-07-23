@@ -55,30 +55,26 @@ void read_(int fd){
 }
 
 // michele: function that split string with fingers' values
-int serial_string(void){
+int serial_string(int* buffer){
 	
-	uint8_t i = 0;
-	uint8_t* hand[5];
-	uint8_t* b[MAX_SIZE]; //beginning of buffer
-  	while(1){
-    	uint8_t c = serial_char();
-    	
-    	if (c =! ","){
-			*b = c;
-			b++;
-    	}
-    	
-    	else if (c == ",") {
-    		hand[i] = b;
-    		*b = 0;
-    	}
-    	
-    	if(i == 5) i = 0;
-    	
-    	if (c == "\n"){
-    		*b = 0;
-    	}
-  	}
+	int i = 0, c = 0;
+	int hand[5];
+	int b[MAX_SIZE];
+	
+	while(buffer[i]){
+		
+		char c = buffer[i];
+		
+		if (c != ","){
+			b = strcat(b, buffer[i]);
+		}
+		else {
+			hand[c] = (int)b;
+			c++;
+			b = 0;
+		}
+		i++;
+	}
 }
 
 // michele: function that set right value of every finger in structure
