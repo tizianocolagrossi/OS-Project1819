@@ -135,9 +135,11 @@ int getCmd(char* cmd){
         exit(1);
     }
     printf("#> ");
+// la funzione getline prende i comandi da stdin e indico la dimensione del
+// buffer allocato sopra e l'indirizzo del buffer su cui scrivere    
 	characters = getline(&buf,&bufsize,stdin);
 	if(characters != 0){
-		strcpy(cmd, buf);  //TODO Davide suggerisce: dovresti usare strncpy(char* dest, const char* source, size_t n), grisetti piange
+		strncpy(cmd, buf, characters);
 		debugPrint("FUN getCmd value >", cmd);
 		free(buf);
 		return 0;
