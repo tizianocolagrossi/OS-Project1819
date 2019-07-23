@@ -7,7 +7,7 @@
 #include <termios.h> /* POSIX terminal control definitions */
 #include <math.h>    /* For Math's functions */
 
-#define MAX_SIZE 10
+#define MAX_SIZE 25
 #define BAUDRATE B19200
 
 
