@@ -80,8 +80,9 @@ void start(){
 /*
  * funzione per il controllo del controller
  */
-void controller(char **parsed){
+void controller(char **parsed, Controller *cnt){
 	if(parsed[1]==NULL){
+		printControllerSetting(cnt);
 		printf("Controller setting and status\n");
 		return;
 	}
@@ -125,27 +126,19 @@ void controller(char **parsed){
  */
 
 int getCmd(char* cmd){
-	char *buf;
-	size_t bufsize = MAX_SIZE;
 	size_t characters;
+	size_t bufsize = MAX_SIZE;
 
-	buf = (char *)malloc(bufsize * sizeof(char));
-    if( buf == NULL){
-        perror("Impossibile allocare il buffer");
-        exit(1);
-    }
     printf("#> ");
 // la funzione getline prende i comandi da stdin e indico la dimensione del
 // buffer allocato sopra e l'indirizzo del buffer su cui scrivere    
-	characters = getline(&buf,&bufsize,stdin);
+	characters = getline(&cmd,&bufsize,stdin);
 	if(characters != 0){
-		strncpy(cmd, buf, characters);
+		//strncpy(cmd, buf, characters);
 		debugPrint("FUN getCmd value >", cmd);
-		free(buf);
 		return 0;
 	}
 	else {
-		free(buf);
 		return 1;
 	}
 }
@@ -171,7 +164,7 @@ int splitString(char *str, char **split){
  * funzione per la gestione dei comandi della shell
  */
  
-int cmdHandler(char** parsed){
+int cmdHandler(char** parsed, Controller *cnt){
 	
 	debugPrintMsg("dentroCmdHandler");
 	
@@ -188,9 +181,8 @@ int cmdHandler(char** parsed){
    	
 
 	debugPrintMsg("prima del for");
-	
+	debugPrint("parsed[0] in cmdHandler >", parsed[0]);
    	for(i=0; i<nCmdSupportati; i++ ){
-		debugPrint("parsed[0] in cmdHandler >", parsed[0]);
 		if(strcmp(parsed[0], ListCmd[i])==0){
 			switchArg = i;
 			debugPrintInt("FUN cmdHandler valore della i >", i);
@@ -212,7 +204,7 @@ int cmdHandler(char** parsed){
 			sayHi(parsed);
 			break;
 		case 5:
-			controller(parsed);
+			controller(parsed, cnt);
 			break;
 		case 6:
 			start();
@@ -227,9 +219,9 @@ int cmdHandler(char** parsed){
  * funzione per il parse della stringa in input
  */
  
-int parseString(char *str, char** parsed){
+int parseString(char *str, char** parsed, Controller *cnt){
 	splitString(str, parsed);
-	if (cmdHandler(parsed)) return 0;
+	if (cmdHandler(parsed, cnt)) return 0;
 	else return 1; 
 }
 
@@ -242,12 +234,11 @@ int main(int argc, char **argv){
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
 	
 	init_shell();
-
-	struct Controller *my_controller = newController();
+	Controller *my_controller = newController();
 	
 	while(1){
 		if(getCmd(inStr)) continue;
-		parseString(inStr, parsedArg);
+		parseString(inStr, parsedArg, my_controller);
 		
 	
 	}
