@@ -25,21 +25,21 @@ int port_configure(void){
 		fcntl(fd, F_SETFL, 0); // ho aggiunto solo questo ma mannaggia alla madonna seriale non ha senso 
 		tcgetattr(fd, &current);//salvo valori correnti porta seriale 
 		cfsetispeed(&current, B19200);//setto baud rate
-		current.c_iflag &= ~IXOFF; //disabilito input flow control
+		current.c_iflag &= ~IXOFF; //disabilito hw input flow control
 		current.c_cflag &= ~PARENB; //nessun bit di parità
  		current.c_cflag &= ~CSTOPB; //1 bit di stop
         current.c_cflag &= ~CSIZE;//
 		current.c_cflag |= CS8; //8-bit data
 		current.c_cflag |= ( CLOCAL | CREAD ); //abilito ricevitore porta seriale
-		current.c_cc[VMIN] = 0; //legge 25 caratteri
-		current.c_cc[VTIME] = 0; //wait indefinitely
+		current.c_cc[VMIN] = 0; //
+		current.c_cc[VTIME] = 0; // se VTIME & VMIN sono == 0 la read funzionerà in polling
 		tcsetattr(fd, TCSANOW, &current);
 	}
 	return fd;
 }
 
 
-//davide: function to read from the serial
+//davide: function to read from the serial port
 void read_(int fd){
 	int i;
 	char buf[26];
@@ -73,7 +73,7 @@ int serial_string(int* buffer){
 		char c = buffer[i];
 		
 		if (c != ","){
-			b = strcat(b, buffer[i]);
+			b = strncat(b, buffer[i]);
 		}
 		else {
 			hand[c] = (int)b;
