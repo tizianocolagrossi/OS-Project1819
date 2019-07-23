@@ -13,6 +13,8 @@
 
 struct termios current;
 
+// michele: function to set the right bit in termios structure
+// to enable the comunication throught the serial port
 int port_configure(void){
 
 	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
@@ -59,6 +61,50 @@ void read_(int fd){
 	}
 }
 
+// michele: function that split string with fingers' values
+int serial_string(void){
+	
+	uint8_t i = 0;
+	uint8_t* hand[5];
+	uint8_t* b[MAX_SIZE]; //beginning of buffer
+  	while(1){
+    	uint8_t c = serial_char();
+    	
+    	if (c =! ","){
+			*b = c;
+			b++;
+    	}
+    	
+    	else if (c == ",") {
+    		hand[i] = b;
+    		*b = 0;
+    	}
+    	
+    	if(i == 5) i = 0;
+    	
+    	if (c == "\n"){
+    		*b = 0;
+    	}
+  	}
+}
+
+// michele: function that set right value of every finger in structure
+void set_finger(void){
+
+	//quando chiamata setta il valore del dito nella struttura "CONTROL"
+
+}
+
+// michele: function that control if analog values sent by arduino
+// are in a range that was set by user 
+int value_control(int min_val, int max_val, int current_val){
+	
+	if (curren_val >= min_val && current_val <= max_val) return 1
+	else return 0;
+	
+}
+
+
 int main(void){
 	
 	int fd = port_configure();
@@ -72,15 +118,15 @@ int main(void){
 	return 0;
 }
 
-//davide: function to handle the transformation from
-//arduino signal to an acceptable value for the controller
+/*davide: function to handle the transformation from
+  arduino signal to an acceptable value for the controller
 int signal_to_controller(int min_soglia, int max_soglia, int signal){
 	float ret_val;
 	
 	if(signal < min_soglia) ret_val = min_soglia; 
 	else if(signal > max_soglia) ret_val = max_soglia;
 	
-}
+}*/
 
 
 
