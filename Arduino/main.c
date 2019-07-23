@@ -135,7 +135,7 @@ int main(void){
 	uint8_t i;
 	unsigned char serial_buf[SERIAL_SIZE];
 	unsigned char buf[MAX_BUF_SIZE];
-	UART_putString((uint8_t*) "Starting program\n");	
+	//UART_putString((uint8_t*) "Starting program\n");	
 	
 	while(1) {
 		while (! interrupt_occurred);  //busy-wait for interrupt to be triggered
@@ -153,8 +153,7 @@ int main(void){
 		}
 		
 		UART_putString(serial_buf);
-		UART_putString( (uint8_t*) "\n");
-		UART_putString( (uint8_t*) "\n");
+		UART_putString( (uint8_t*) "-");
 	}
 }
 

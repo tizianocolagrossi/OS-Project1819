@@ -1,4 +1,5 @@
 #include <stdio.h>   /* Standard input/output definitions */
+#include <stdlib.h>  /* For exit and allocation */
 #include <string.h>  /* String function definitions */
 #include <unistd.h>  /* UNIX standard function definitions */
 #include <fcntl.h>   /* File control definitions */
@@ -14,7 +15,7 @@ struct termios current;
 
 int port_configure(void){
 
-	int fd = open("/dev/ttyS4", O_RDWR | O_NOCTTY);
+	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
 	
 	if(fd == -1) perror("cannot open dev/ttyACM0 port");
 	
@@ -31,32 +32,42 @@ int port_configure(void){
 		current.c_cc[VMIN] = 0; //legge 25 caratteri
 		current.c_cc[VTIME] = 0; //wait indefinitely
 		tcsetattr(fd, TCSANOW, &current);
-		return fd;
 	}
+	return fd;
 }
 
+
+//davide: function to read from the serial
 void read_(int fd){
-	
-	char buff[30];
+	int i;
+	char buf[26];
 	int byte_read = 0;
 	
-	printf("entro nel while(1)\n");
-	while (1){
-		byte_read = read(fd, buff, 25);
-		if (byte_read < 0) perror("error during read process");
-		else if(byte_read == 0) continue;
-		else{
-			printf("leggo: %s\n", buff);
-			byte_read = 0;
+	byte_read = read(fd, buf, 26);
+	if (byte_read < 0) perror("error during read process");
+	else if(byte_read > 0){
+		printf("HO LETTO %d BYTES\n", byte_read);
+		for(i=0; i<26; i++){
+			char c = buf[i];
+			//davide if c is "-", the string is terminated 
+			if(c == 45) break;
+			//davide: if c is digit or "," acceptable = true
+			int acceptable = (c >= 48 && c <= 57) || c == 44;
+			if(acceptable) printf("%c", c);
 		}
+		printf("\n");
 	}
 }
 
 int main(void){
 	
 	int fd = port_configure();
+	if(!fd) exit(-1);
 	
-	read_(fd);
+	while(1){
+		//reading from serial forever
+		read_(fd);
+	}
 	
 	return 0;
 }
