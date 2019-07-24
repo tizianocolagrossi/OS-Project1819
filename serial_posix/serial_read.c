@@ -64,28 +64,38 @@ void read_(int fd){
 	printf("\n");
 }
 
-/* porcoddio se levi sto commento e non compila te faccio impazzi coi merge mannaggiacristo
+//michele
+int str_len(char* buffer){
+	int i = 0;
+	
+	while(buffer){
+		i++;
+		buffer++;
+	}
+	return i;
+}
 
 // michele: function that split string with fingers' values
-int serial_string(int* buffer){
+int serial_string(char* buffer){
 	
-	int i = 0, c = 0;
+	int i = 0;
 	int hand[5];
-	int b[MAX_SIZE];
+	char* b;
 	
-	while(buffer[i]){
+	// while on buffer string
+	while(buffer){
 		
-		char c = buffer[i];
-		
-		if (c != ","){
-			b = strncat(b, buffer[i]);
+		// if a character in buffer is != from ","
+		if (*buffer != 44){
+			b = strncat(b, buffer, str_len(buffer)); // b is strncat of character in buffer and same b (es b=12 and buffer=3 -> b=123)
 		}
+		// if character in buffer is == "," i cast in integer the value of b (es b=123 -> hand[i] = 123;)
 		else {
-			hand[c] = (int)b;
-			c++;
-			b = 0;
+			hand[i] = (int)*b;
+			b = 0; // i set b = 0 to save next value in buffer
+			i++;
 		}
-		i++;
+		buffer++; // next char in buffer;
 	}
 }
 
@@ -104,9 +114,6 @@ int value_control(int min_val, int max_val, int current_val){
 	else return 0;
 	
 }
-*questa è la fine del cristo di commento, vedi di controllare bene prima di togliere
-*dio scalzo nella valle dei chiodi arrugginiti 
-*/
 
 int main(void){
 	
