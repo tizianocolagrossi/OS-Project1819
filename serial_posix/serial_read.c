@@ -80,13 +80,13 @@ int serial_string(char* buffer){
 	int i = 0;
 	int hand[5];
 	char* b;
-	
+	char len = str_len(buffer);
 	// while on buffer string
 	while(buffer){
 		
 		// if a character in buffer is != from ","
 		if (*buffer != 44){
-			b = strncat(b, buffer, str_len(buffer)); // b is strncat of character in buffer and same b (es b=12 and buffer=3 -> b=123)
+			b = strncat(b, buffer, len); // b is strncat of character in buffer and same b (es b=12 and buffer=3 -> b=123)
 		}
 		// if character in buffer is == "," i cast in integer the value of b (es b=123 -> hand[i] = 123;)
 		else {
