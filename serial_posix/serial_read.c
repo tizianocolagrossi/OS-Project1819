@@ -63,7 +63,7 @@ void read_(int fd){
 	}
 }
 
-//michele
+//michele: dai, si capisce su
 int str_len(char* buffer){
 	int i = 0;
 	
