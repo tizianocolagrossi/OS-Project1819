@@ -76,8 +76,9 @@ void sayHi(char **parsed){
 /*
  * funzione che gestisce il thread (valori virtualizzazione etc)
  */
-void *playCnt(Controller* cnt) { 
-    sleep(1); 
+void *playCnt(void* cnt) { 
+    //sleep(1);
+    printControllerSetting(cnt);
     printf("Thread lanciato wiiiiiii \n"); 
     return NULL; 
 } 
@@ -85,10 +86,10 @@ void *playCnt(Controller* cnt) {
 /*
  * funzione che lancia un thread per il controller
  */
-void start(){
+void start(Controller* cnt){
 	pthread_t thread_id; 
     debugPrintMsg("Sto per lanciare il thread"); 
-    pthread_create(&thread_id, NULL, playCnt, NULL); 
+    pthread_create(&thread_id, NULL, playCnt, cnt); 
     pthread_join(thread_id, NULL); 
     debugPrintMsg("Thread finito\n"); 
 }
@@ -224,7 +225,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 			controller(parsed, cnt);
 			break;
 		case 6:
-			start();
+			start(cnt);
 			break;
 		default:
 			printf("comando non riconosciuto, digit h o help per vedere la guida\n");

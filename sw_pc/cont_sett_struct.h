@@ -20,6 +20,8 @@ typedef struct Controller{
 	xdo_t* xdo;
 }Controller;
 
+void cntXdoFree(Controller* cnt);
+void printControllerSetting(Controller* cnt);
 void Controller_init(Controller* cnt);
 void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss);
 void setElemento(Controller* cnt, enum tipoElemento tipo);
