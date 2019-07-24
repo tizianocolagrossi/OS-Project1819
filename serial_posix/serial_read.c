@@ -61,7 +61,7 @@ void read_(int fd){
 	}
 }
 
-// michele: function that split string with fingers' values
+/* michele: function that split string with fingers' values
 int serial_string(void){
 	
 	uint8_t i = 0;
@@ -99,11 +99,11 @@ void set_finger(void){
 // are in a range that was set by user 
 int value_control(int min_val, int max_val, int current_val){
 	
-	if (curren_val >= min_val && current_val <= max_val) return 1
+	if (current_val >= min_val && current_val <= max_val) return 1
 	else return 0;
 	
 }
-
+*/
 
 int main(void){
 	
