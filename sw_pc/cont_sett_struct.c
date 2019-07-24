@@ -10,6 +10,7 @@
 #include "cont_sett_struct.h"
 #include <xdo.h>
 
+#define DELAY 1
 #define NUM_ELEMENTS 5
 #define MIG 's'
 #define ANU 'w'
@@ -23,7 +24,7 @@
 void premi(Elemento* elem, xdo_t * x){
 	if(elem->premuto == 0){
 		const char * charAss = elem->charAss;
-		xdo_send_keysequence_window_down(x, CURRENTWINDOW, charAss, 100);
+		xdo_send_keysequence_window_down(x, CURRENTWINDOW, charAss, DELAY);
 		elem->premuto = 1;
 	}
 }
@@ -34,12 +35,16 @@ void premi(Elemento* elem, xdo_t * x){
 void rilascia(Elemento* elem, xdo_t * x){
 	if(elem->premuto == 1){
 		const char * charAss = elem->charAss;
-		xdo_send_keysequence_window_up(x, CURRENTWINDOW, charAss, 100);
+		xdo_send_keysequence_window_up(x, CURRENTWINDOW, charAss, DELAY);
 		elem->premuto = 0;
 	}
 }
 
+/*
+ * inizializza il controller 
+ */
 void Controller_init(Controller* cnt) {
+	cnt->xdo = xdo_new(NULL);
 	cnt->elementi = (Elemento*) malloc(NUM_ELEMENTS*sizeof(Elemento));
 	cnt->size = NUM_ELEMENTS;
 	//settaggi di default
@@ -79,6 +84,17 @@ void Controller_init(Controller* cnt) {
 	
 }
 
+/*
+ * libera lo spazio allocato da xdo
+ */
+void cntXdoFree(Controller* cnt){
+	//dio cristo che non liberi un blocco libreria di merda
+	xdo_free(cnt->xdo);
+}
+
+/*
+ * modofica il carattere associato all' elemento
+ */
 void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	printf(
 		"\n"
@@ -94,6 +110,9 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	return;
 }
 
+/*
+ * stampa lo stato del controller
+ */
 void printControllerSetting(Controller* cnt){
 	printf(
 		"\n"
@@ -109,4 +128,38 @@ void printControllerSetting(Controller* cnt){
 		printf("\tl'elemento %d ha il carattere associato %c\n", t, tasto);
 	}
 		
+}
+
+/*
+ * setta lo stato (premuto) di un elemento del controller
+ */
+void setElemento(Controller* cnt, enum tipoElemento tipo){
+	if(cnt->elementi[tipo].statoFisico == 0){
+		cnt->elementi[tipo].statoFisico = 1;
+	}
+}
+
+/*
+ * setta lo stato (rilasciato) di un elemento del controller
+ */
+void resetElemento(Controller* cnt, enum tipoElemento tipo){
+	if(cnt->elementi[tipo].statoFisico == 1){
+		cnt->elementi[tipo].statoFisico = 0;
+	}
+}
+
+/*
+ * controlla lo stato del controller e gestisce la virtualizzazione dei tasti
+ */
+void setState(Controller* cnt){
+	for(int i = 0; cnt->size; i++){
+		Elemento elem = cnt->elementi[i];
+		if(cnt->elementi[i].statoFisico != cnt->elementi[i].premuto){
+			if(cnt->elementi[i].statoFisico == 1){
+				premi(&elem, cnt->xdo);
+			}else{
+				rilascia(&elem, cnt->xdo);
+			}
+		}
+	}
 }

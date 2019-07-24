@@ -7,10 +7,13 @@
  * 
  */
 
+#include "cont_sett_struct.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "cont_sett_struct.h"
+#include <unistd.h> // per la sleep
+#include <pthread.h> 
+
 
 #define MAX_SIZE 50 // max caratteri in input
 #define MAX_CMD 10  // max comandi per linea supportati
@@ -71,10 +74,23 @@ void sayHi(char **parsed){
 }
 
 /*
+ * funzione che gestisce il thread (valori virtualizzazione etc)
+ */
+void *playCnt(Controller* cnt) { 
+    sleep(1); 
+    printf("Thread lanciato wiiiiiii \n"); 
+    return NULL; 
+} 
+
+/*
  * funzione che lancia un thread per il controller
  */
 void start(){
-	printf("START\n");
+	pthread_t thread_id; 
+    debugPrintMsg("Sto per lanciare il thread"); 
+    pthread_create(&thread_id, NULL, playCnt, NULL); 
+    pthread_join(thread_id, NULL); 
+    debugPrintMsg("Thread finito\n"); 
 }
 
 /*
@@ -197,6 +213,8 @@ int cmdHandler(char** parsed, Controller *cnt){
 			return 1; // perche usato dall if che chiama cmdHandler!
 		case 2:
 		case 3:
+			free(cnt->elementi);
+			cntXdoFree(cnt);
 			printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
 			exit(0);
 		case 4:
@@ -226,8 +244,6 @@ int parseString(char *str, char** parsed, Controller *cnt){
 
 
 
-
-
 int main(int argc, char **argv){
 	
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
@@ -236,7 +252,6 @@ int main(int argc, char **argv){
 
 	Controller cnt;
 	Controller_init(&cnt);
-	
 	
 	while(1){
 		if(getCmd(inStr)) continue;
