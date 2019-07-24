@@ -83,7 +83,6 @@ void start(){
 void controller(char **parsed, Controller *cnt){
 	if(parsed[1]==NULL){
 		printControllerSetting(cnt);
-		printf("Controller setting and status\n");
 		return;
 	}
 	if(strcmp(parsed[1],"-m")==0){
@@ -91,27 +90,27 @@ void controller(char **parsed, Controller *cnt){
 			printf("devi inserire il dito di cui vuoi modificare il settaggio\n");
 			return;
 		}
-		int sw1 = -1;
-		if(strcmp(parsed[2],"mignolo")==0)sw1=0;
-		if(strcmp(parsed[2],"anulare")==0)sw1=1;
-		if(strcmp(parsed[2],"medio")==0)sw1=2;
-		if(strcmp(parsed[2],"indice")==0)sw1=3;
-		if(strcmp(parsed[2],"pollice")==0)sw1=4;
+		enum tipoElemento sw1 = -1;
+		if(strcmp(parsed[2],"mignolo")==0)sw1=mignolo;
+		if(strcmp(parsed[2],"anulare")==0)sw1=anulare;
+		if(strcmp(parsed[2],"medio")==0)sw1=medio;
+		if(strcmp(parsed[2],"indice")==0)sw1=indice;
+		if(strcmp(parsed[2],"pollice")==0)sw1=pollice;
 		switch (sw1){
 			case 0:
-				printf("TODO EDIT MIGNOLO\n");
+				editElemCharAss(cnt, mignolo, parsed[3][0]);
 				break;
 			case 1:
-				printf("TODO EDIT ANULARE\n");
+				editElemCharAss(cnt, anulare, parsed[3][0]);
 				break;
 			case 2:
-				printf("TODO EDIT MEDIO\n");
+				editElemCharAss(cnt, medio, parsed[3][0]);
 				break;
 			case 3:
-				printf("TODO EDIT INDICE\n");
+				editElemCharAss(cnt, indice, parsed[3][0]);
 				break;
 			case 4:
-				printf("TODO EDIT POLLICE\n");
+				editElemCharAss(cnt, pollice, parsed[3][0]);
 				break;
 			default:
 				printf("le dita disponibili per modificare i settaggi sono:\n"
@@ -234,11 +233,14 @@ int main(int argc, char **argv){
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
 	
 	init_shell();
-	Controller *my_controller = newController();
+
+	Controller cnt;
+	Controller_init(&cnt);
+	
 	
 	while(1){
 		if(getCmd(inStr)) continue;
-		parseString(inStr, parsedArg, my_controller);
+		parseString(inStr, parsedArg, &cnt);
 		
 	
 	}

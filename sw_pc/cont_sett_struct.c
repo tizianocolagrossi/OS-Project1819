@@ -6,107 +6,107 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "cont_sett_struct.h"
 #include <xdo.h>
 
-#define MIGNOLO 's'
-#define ANULARE 'w'
-#define MEDIO 'a'
-#define INDICE 'd'
-#define POLLICE 'c'
-
-/*
- * crea un istanza di Dito con il carattere associato
- * indicato in charAss
- */
-Dito* newDito(char charAss){
-	Dito nuovoDito;
-	nuovoDito.char_associato=charAss;
-	Dito *nd = &nuovoDito;
-	return nd;
-}
-
-/*
- * modifica il carattere associato ad un dito
- */
-void modCharAssDito(Dito* dito, char newChar){
-	dito->char_associato = newChar;
-}
+#define NUM_ELEMENTS 5
+#define MIG 's'
+#define ANU 'w'
+#define MED 'a'
+#define IND 'd'
+#define POL 'c'
 
 /*
  * preme un dito se non è premuto quando chiamata
  */
-void premi(Dito* dito, xdo_t * x){
-	if(dito->premuto = 0){
-		const char * charAss = &dito->char_associato;
+void premi(Elemento* elem, xdo_t * x){
+	if(elem->premuto == 0){
+		const char * charAss = elem->charAss;
 		xdo_send_keysequence_window_down(x, CURRENTWINDOW, charAss, 100);
-		dito->premuto = 1;
+		elem->premuto = 1;
 	}
 }
 
 /*
  * rilascia un dito se è premuto quando chiamata
  */
-void rilascia(Dito* dito, xdo_t * x){
-	if(dito->premuto = 1){
-		const char * charAss = &dito->char_associato;
+void rilascia(Elemento* elem, xdo_t * x){
+	if(elem->premuto == 1){
+		const char * charAss = elem->charAss;
 		xdo_send_keysequence_window_up(x, CURRENTWINDOW, charAss, 100);
-		dito->premuto = 0;
+		elem->premuto = 0;
 	}
 }
 
-/*
- * inizializza e restituisce un puntatore al controller
- * con i valori di default vedi inizio file
- */
-Controller* newController(){
-	Controller newController;
-	newController.mignolo = newDito(MIGNOLO);
-	newController.anulare = newDito(ANULARE);
-	newController.medio   = newDito(MEDIO);
-	newController.indice  = newDito(INDICE);
-	newController.pollice = newDito(POLLICE);
-	Controller *nc = &newController;
-	return nc;
+void Controller_init(Controller* cnt) {
+	cnt->elementi = (Elemento*) malloc(NUM_ELEMENTS*sizeof(Elemento));
+	cnt->size = NUM_ELEMENTS;
+	//settaggi di default
+	// 0 mignolo
+	// 1 anulare
+	// 2 medio
+	// 3 indice
+	// 4 pollice
+
+	for(int i = 0; i<NUM_ELEMENTS; i++){
+		cnt->elementi[i].premuto=0;
+		cnt->elementi[i].statoFisico=0;
+		switch(i){
+			case 0:
+				cnt->elementi[i].tipo = mignolo;
+				cnt->elementi[i].charAss = MIG;
+				break;
+			case 1:
+				cnt->elementi[i].tipo = anulare;
+				cnt->elementi[i].charAss = ANU;
+				break;
+			case 2:
+				cnt->elementi[i].tipo = medio;
+				cnt->elementi[i].charAss = MED;
+				break;
+			case 3:
+				cnt->elementi[i].tipo = indice;
+				cnt->elementi[i].charAss = IND;
+				break;
+			case 4:
+				cnt->elementi[i].tipo = pollice;
+				cnt->elementi[i].charAss = POL;
+				break;
+		}
+	}
+	
+	
 }
 
-/*
- * inizializza e restituisce un puntatore al controller
- * con valori personalizzati
- */
-Controller* newPersController(char mig,char anu,char med,char ind,char pol){
-	Controller newController;
-	newController.mignolo = newDito(mig);
-	newController.anulare = newDito(anu);
-	newController.medio   = newDito(med);
-	newController.indice  = newDito(ind);
-	newController.pollice = newDito(pol);
-	Controller *nc = &newController;
-	return nc;
+void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
+	printf(
+		"\n"
+		"##########################################################################\n"
+		"CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER\n"
+	);
+	if(cnt->elementi[tipo].charAss == newCharAss){
+		printf("\n\tzi non me fa fa cose inutili il carattere è gia impostato\n\n");
+		return;
+	}
+	cnt->elementi[tipo].charAss = newCharAss;
+	printf("\tnuovo carattere impostato per l'elemento %d > %c\n", tipo, cnt->elementi[tipo].charAss);
+	return;
 }
 
-/*
- * stampa i settaggi del contoller
- */
 void printControllerSetting(Controller* cnt){
-
-printf("       _.-._     \n"
-       "     /|%c|%c|%c|_   \n"
-       "     || | | |%c|  \n"
-       "     || | | | |  \n"
-       "    _||     ` |  \n"
-       "   \\`\       ;  \n"
-       "    \\%c       |  \n"
-       "     \\      /   \n"
-       "     | |    |    \n"
-       "     | |    |    \n",
-       cnt->indice->char_associato,
-       cnt->medio->char_associato,
-       cnt->anulare->char_associato,
-       cnt->mignolo->char_associato,
-       cnt->pollice->char_associato);
-
+	printf(
+		"\n"
+		"##########################################################################\n"
+		"CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CO\n"
+	);
+	printf("\t0=mignolo, 1=anulare, 2=medio, 3=indice, 4=pollice\n");
+	for(int i = 0; i<NUM_ELEMENTS; i++){
+		char tasto;
+		enum tipoElemento t;
+		tasto = cnt->elementi[i].charAss;
+		t = cnt->elementi[i].tipo;
+		printf("\tl'elemento %d ha il carattere associato %c\n", t, tasto);
+	}
+		
 }
-
-
-
