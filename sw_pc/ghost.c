@@ -75,6 +75,39 @@ void sayHi(char **parsed){
 
 /*
  * funzione che gestisce il thread (valori virtualizzazione etc)______________________________________________________________________
+ * ###################################################################################################################################
+ * MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MIC
+ *
+ * le funzioni che te servono:
+ * void setElemento(Controller* cnt, enum tipoElemento tipo);
+ * void resetElemento(Controller* cnt, enum tipoElemento tipo);
+ * void setState(Controller* cnt);
+ *
+ * cnt è quello che ti passo nella funzione void *playCnt(void* cnt <QUESTO QUA)
+ * enum tipoElemento tipo è > enum tipoElemento{mignolo, anulare, medio, indice, pollice};
+ * quindi se vuoi settare im mignolo attivo fai
+ * 		setElemento(cnt, mignolo);
+ * idem se vuoi resettarlo (ovvero rilasciare il tasto associato)
+ * 		resetElemento(cnt, mignolo);
+ * cosa importante è che alla fine te lanci la funzione setState(cnt);
+ * perche serve per rendere effettive le modifiche che te hai fatto alla struttura
+ * ovvero serve per virtualizzare il premere dei tasti della tastiera
+ * esempio:
+ * 		leggi da seriale;
+ * 
+ * 		setElemento(cnt, mignolo);
+ * 		setElemento(cnt, pollice);
+ * 		resetElemento(cnt, indice);
+ * 		resetElemento(cnt, medio);
+ * 		resetElemento(cnt, anulare);
+ * 
+ * 		setState(cnt);
+ *
+ * 		ripeti poi per ogni volta che ricevi dati
+ *
+ * puoi anche non settare o resettare tutte le dita insieme puoi anche solo modificare le dita che cambiano
+ * ovvero non è necessario che imposti ogni volta lo stato di ogni dito, il dito mantiene lo stato che ha fino
+ * a che non lo cambi te		
  */
 void *playCnt(void* cnt) {
 	while(1){
@@ -82,6 +115,15 @@ void *playCnt(void* cnt) {
 	}
     return NULL; 
 } 
+/*
+ * funzione che resetta lo stato a tutti i tasti del controller
+ */
+void clearCnt(Controller* cnt){
+	for(int i = 0; i<cnt->size; i++){
+		resetElemento(cnt, i);
+	}
+	setState(cnt);
+}
 
 /*
  * funzione che lancia un thread per il controller
@@ -99,7 +141,9 @@ void start(Controller* cnt){
 void stop(Controller* cnt){
 	pthread_t thread_id = (pthread_t)cnt->t_id;
 	pthread_cancel(thread_id);
-	debugPrintMsg("Thread finito\n"); 
+	debugPrintMsg("Thread finito\n");
+	//per sicurezza rilascia tutti i tasti del controller
+	clearCnt(cnt);
 }
 
 /*
@@ -190,7 +234,9 @@ int splitString(char *str, char **split){
 void quitShell(Controller* cnt){
 	pthread_t id = (pthread_t)cnt->t_id;
 	pthread_cancel(thread_id);
-	pthread_join(id, NULL); 
+	pthread_join(id, NULL);
+	//per sicurezza rilascia tutti i tasti del controller
+	clearCnt(cnt);
 	free(cnt->elementi);
 	cntXdoFree(cnt);
 	printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
