@@ -19,7 +19,7 @@ int port_configure(void){
 
 	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
 	
-	if(fd == -1) perror("cannot open dev/ttyACM0 port");
+	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
 		fcntl(fd, F_SETFL, 0); // ho aggiunto solo questo ma mannaggia alla madonna seriale non ha senso 
@@ -45,23 +45,22 @@ void read_(int fd){
 	char buf[26];
 	int byte_read = 0;
 	
-	while(byte_read < 21){
-		int br = read(fd, buf + byte_read, 21);
+	while(byte_read < 20){
+		int br = read(fd, buf + byte_read, 1);
 		if (byte_read < 0) perror("error during read process");
 		else if(br > 0){
 			byte_read += br;
-			printf("HO LETTO %d BYTES\n", byte_read);
+			//printf("HO LETTO %d BYTES\n", byte_read);
 		}
 	}
-	for(i=0; i<26; i++){
+	for(i=0; i<20; i++){
 		char c = buf[i];
-		//davide if c is "-", the string is terminated 
-		if(c == 45) break;
+		//davide: if c is "-", the string is terminated 
+		if(c == 45) printf("\n");
 		//davide: if c is digit or "," acceptable = true
 		int acceptable = (c >= 48 && c <= 57) || c == 44;
 		if(acceptable) printf("%c", c);
 	}
-	printf("\n");
 }
 
 //michele
@@ -118,11 +117,12 @@ int value_control(int min_val, int max_val, int current_val){
 int main(void){
 	
 	int fd = port_configure();
-	if(!fd) exit(-1);
+	if(fd<0) exit(-1);
 	
 	while(1){
 		//reading from serial forever
 		read_(fd);
+		//printf("\n");
 	}
 	
 	return 0;
