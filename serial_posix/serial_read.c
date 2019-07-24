@@ -19,7 +19,7 @@ int port_configure(void){
 
 	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
 	
-	if(fd == -1) perror("cannot open dev/ttyACM0 port");
+	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
 		fcntl(fd, F_SETFL, 0); // ho aggiunto solo questo ma mannaggia alla madonna seriale non ha senso 
@@ -45,42 +45,56 @@ void read_(int fd){
 	char buf[26];
 	int byte_read = 0;
 	
-	byte_read = read(fd, buf, 26);
-	if (byte_read < 0) perror("error during read process");
-	else if(byte_read > 0){
-		printf("HO LETTO %d BYTES\n", byte_read);
-		for(i=0; i<26; i++){
-			char c = buf[i];
-			//davide if c is "-", the string is terminated 
-			if(c == 45) break;
-			//davide: if c is digit or "," acceptable = true
-			int acceptable = (c >= 48 && c <= 57) || c == 44;
-			if(acceptable) printf("%c", c);
+	while(byte_read < 20){
+		int br = read(fd, buf + byte_read, 1);
+		if (byte_read < 0) perror("error during read process");
+		else if(br > 0){
+			byte_read += br;
+			//printf("HO LETTO %d BYTES\n", byte_read);
 		}
-		printf("\n");
+	}
+	for(i=0; i<20; i++){
+		char c = buf[i];
+		//davide: if c is "-", the string is terminated 
+		if(c == 45) printf("\n");
+		//davide: if c is digit or "," acceptable = true
+		int acceptable = (c >= 48 && c <= 57) || c == 44;
+		if(acceptable) printf("%c", c);
 	}
 }
 
-// michele: function that split string with fingers' values
-int serial_string(int* buffer){
+//michele: dai, si capisce su
+int str_len(char* buffer){
+	int i = 0;
 	
-	int i = 0, c = 0;
-	int hand[5];
-	int b[MAX_SIZE];
-	
-	while(buffer[i]){
-		
-		char c = buffer[i];
-		
-		if (c != ","){
-			b = strncat(b, buffer[i]);
-		}
-		else {
-			hand[c] = (int)b;
-			c++;
-			b = 0;
-		}
+	while(buffer){
 		i++;
+		buffer++;
+	}
+	return i;
+}
+
+// michele: function that split string with fingers' values
+int serial_string(char* buffer){
+	
+	int i = 0;
+	int hand[5];
+	char* b;
+	char len = str_len(buffer);
+	// while on buffer string
+	while(buffer){
+		
+		// if a character in buffer is != from ","
+		if (*buffer != 44){
+			b = strncat(b, buffer, len); // b is strncat of character in buffer and same b (es b=12 and buffer=3 -> b=123)
+		}
+		// if character in buffer is == "," i cast in integer the value of b (es b=123 -> hand[i] = 123;)
+		else {
+			hand[i] = (int)*b;
+			b = 0; // i set b = 0 to save next value in buffer
+			i++;
+		}
+		buffer++; // next char in buffer;
 	}
 }
 
@@ -95,20 +109,20 @@ void set_finger(void){
 // are in a range that was set by user 
 int value_control(int min_val, int max_val, int current_val){
 	
-	if (curren_val >= min_val && current_val <= max_val) return 1
+	if (current_val >= min_val && current_val <= max_val) return 1;
 	else return 0;
 	
 }
 
-
 int main(void){
 	
 	int fd = port_configure();
-	if(!fd) exit(-1);
+	if(fd<0) exit(-1);
 	
 	while(1){
 		//reading from serial forever
 		read_(fd);
+		//printf("\n");
 	}
 	
 	return 0;
