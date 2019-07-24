@@ -45,22 +45,26 @@ void read_(int fd){
 	char buf[26];
 	int byte_read = 0;
 	
-	byte_read = read(fd, buf, 26);
-	if (byte_read < 0) perror("error during read process");
-	else if(byte_read > 0){
-		printf("HO LETTO %d BYTES\n", byte_read);
-		for(i=0; i<26; i++){
-			char c = buf[i];
-			//davide if c is "-", the string is terminated 
-			if(c == 45) break;
-			//davide: if c is digit or "," acceptable = true
-			int acceptable = (c >= 48 && c <= 57) || c == 44;
-			if(acceptable) printf("%c", c);
+	while(byte_read < 21){
+		int br = read(fd, buf + byte_read, 21);
+		if (byte_read < 0) perror("error during read process");
+		else if(br > 0){
+			byte_read += br;
+			printf("HO LETTO %d BYTES\n", byte_read);
 		}
-		printf("\n");
 	}
+	for(i=0; i<26; i++){
+		char c = buf[i];
+		//davide if c is "-", the string is terminated 
+		if(c == 45) break;
+		//davide: if c is digit or "," acceptable = true
+		int acceptable = (c >= 48 && c <= 57) || c == 44;
+		if(acceptable) printf("%c", c);
+	}
+	printf("\n");
 }
 
+/* porcoddio se levi sto commento e non compila te faccio impazzi coi merge mannaggiacristo
 
 // michele: function that split string with fingers' values
 int serial_string(int* buffer){
@@ -96,11 +100,13 @@ void set_finger(void){
 // are in a range that was set by user 
 int value_control(int min_val, int max_val, int current_val){
 	
-	if (current_val >= min_val && current_val <= max_val) return 1
+	if (current_val >= min_val && current_val <= max_val) return 1;
 	else return 0;
 	
 }
-
+*questa è la fine del cristo di commento, vedi di controllare bene prima di togliere
+*dio scalzo nella valle dei chiodi arrugginiti 
+*/
 
 int main(void){
 	
