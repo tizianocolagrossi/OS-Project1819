@@ -99,8 +99,8 @@ void cntXdoFree(Controller* cnt){
 void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	printf(
 		"\n"
-		"##########################################################################\n"
 		"CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER\n"
+		"OLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT\n"
 	);
 	if(cnt->elementi[tipo].charAss == newCharAss){
 		printf("\n\tzi non me fa fa cose inutili il carattere è gia impostato\n\n");
@@ -117,8 +117,8 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 void printControllerSetting(Controller* cnt){
 	printf(
 		"\n"
-		"##########################################################################\n"
 		"CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CO\n"
+		"ROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTRO\n"
 	);
 	printf("\t0=mignolo, 1=anulare, 2=medio, 3=indice, 4=pollice\n");
 	for(int i = 0; i<NUM_ELEMENTS; i++){

@@ -39,9 +39,25 @@ void debugPrintMsg(char *msg){
  */
 
 void init_shell(){
-	printf("##########################################################################\n");
-	printf("#                     SISTEMI OPERATIVI PRJ SHELL                        #\n");                                                     
-	printf("##########################################################################\n");                                                     
+	printf(
+			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
+			"HELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHE\n"
+			"ELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHEL\n"
+			"LL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL\n"
+			"L SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL \n"
+			" SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL S\n"
+			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
+			"##########################################################################\n"
+			"#                     SISTEMI OPERATIVI PRJ SHELL                        #\n"                                                   
+			"##########################################################################\n"
+			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
+			"HELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHE\n"
+			"ELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHEL\n"
+			"LL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL\n"
+			"L SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL \n"
+			" SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL S\n"
+			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
+			);                                                     
 }
 
 /*
@@ -51,17 +67,24 @@ void init_shell(){
 void help(){
 	printf(
 		"\n"
-		"##########################################################################\n"
+		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
 		"\n"
-		"\nComandi riconosciuti\n\n"
-		"controller: stampa lo status del cotroller ONLINE OFFLINE e i settaggi vari\n"
-		"controller -m modifica i settaggi del controller\n"
-		"\tcontroller -m[mignolo|anulare|medio|indice|pollice] [comando associato]\n"
-		"\tESEMPIO: controller -m mignolo w\n"
-		"\til mignolo trigghera il tasto s\n"
+		"controller\n"
+		"\tscrive su schermo lo stato del controller ATTIVO o INATTIVO\n"
+		"\te scrive la configurazione del controller\n"
+		"\n"
+		"\tcontroller -m [mignolo|anulare|medio|indice|pollice] [newChar]\n"
+		"\tcon newChar il nuovo carattere da associare al dito\n"
 		"\n\n"
 		"start avvia il controller in modo che potra essere usato su altri programmi\n"
+		"stop arresta il funzionamento del controller \n"
+		"\n\n"
+		"quit o exit\n"
+		"\tesce dalla shell\n"
+		"\n\n"
+		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
+		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
 	);
 }
 
@@ -299,7 +322,12 @@ int cmdHandler(char** parsed, Controller *cnt){
 			stop(cnt);
 			break;
 		default:
-			printf("comando non riconosciuto, digit h o help per vedere la guida\n");
+			printf(
+				"CAPO LEGGI QUA SE NON SAI CHE FARE CAPO LEGGI QUA SE NON SAI CHE FARE CAPO\n"
+				"LEGGI QUA SE NON SAI CHE FARE CAPO LEGGI QUA SE NON SAI CHE FARECAPO LEGGI\n"
+				"\ncomando non riconosciuto, digit h o help per vedere la guida\n\n"
+				"##########################################################################\n"
+			);
 			break;
 	}
 }
