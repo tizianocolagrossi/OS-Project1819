@@ -111,6 +111,8 @@ void sayHi(char **parsed){
  */
 void *playCnt(void* cnt) {
 	while(1){
+		//togli sta sleep quando scrivi e fai un po quello che vuoi qua
+		//una funzione nuova che fai su un file esterno un po quello che te pare
 		sleep(3);
 	}
     return NULL; 
