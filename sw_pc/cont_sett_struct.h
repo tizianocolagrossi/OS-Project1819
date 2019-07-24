@@ -1,32 +1,22 @@
-#ifndef DITO_H
-#define DITO_H
+#pragma once
+#include <xdo.h>
 
-	extern typedef struct Dito{
-		char char_associato = '';
-		size_t rilevamentoFisico = 0; // 0 no premuto 1 premuto
-		size_t premuto = 0; // 0 no premuto 1 premuto
-	};
+enum tipoElemento{mignolo, anulare, medio, indice, pollice};
 
-	Dito* newDito(char charAss);
-	void modCharAssDito(Dito* dito, char newChar);
-	void premi(Dito* dito, xdo_t * x);
-	void rilascia(Dito* dito, xdo_t * x);
-	
-#endif
+typedef struct Elemento{
+	int premuto;
+	int statoFisico;
+	char charAss;
+	enum tipoElemento tipo;
+}Elemento;
 
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+void premi(Elemento* dito, xdo_t * x);
+void rilascia(Elemento* dito, xdo_t * x);
 
-	extern typedef struct Controller{
-		Dito mignolo = NULL;
-		Dito anulare = NULL;
-		Dito medio   = NULL;
-		Dito indice  = NULL;
-		Dito pollice = NULL;
-	};
+typedef struct Controller{
+	Elemento* elementi;
+	int size;
+}Controller;
 
-	Controller* newInitDefaultColtroller();
-	Controller* newInitPersonalizedController(char mignolo,char anulare,char medio,char indice,char pollice);
-	void printControllerSetting(Controller* cnt);
-	
-#endif
+void Controller_init(Controller* cnt);
+void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss);

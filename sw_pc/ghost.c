@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "cont_sett_struct.h"
 
 #define MAX_SIZE 50 // max caratteri in input
 #define MAX_CMD 10  // max comandi per linea supportati
@@ -27,6 +28,7 @@ void debugPrintInt(char *msg, int val){
 void debugPrintMsg(char *msg){
 	if(DEBUG) printf("\n%s\n", msg);
 }
+
 
 /*
  * scrive a schermo una piccola intro...
@@ -49,7 +51,14 @@ void help(){
 		"##########################################################################\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
 		"\n"
-		"TODO help da scrivere\n\n"
+		"\nComandi riconosciuti\n\n"
+		"controller: stampa lo status del cotroller ONLINE OFFLINE e i settaggi vari\n"
+		"controller -m modifica i settaggi del controller\n"
+		"\tcontroller -m[mignolo|anulare|medio|indice|pollice] [comando associato]\n"
+		"\tESEMPIO: controller -m mignolo w\n"
+		"\til mignolo trigghera il tasto s\n"
+		"\n\n"
+		"start avvia il controller in modo che potra essere usato su altri programmi\n"
 	);
 }
 
@@ -62,29 +71,73 @@ void sayHi(char **parsed){
 }
 
 /*
+ * funzione che lancia un thread per il controller
+ */
+void start(){
+	printf("START\n");
+}
+
+/*
+ * funzione per il controllo del controller
+ */
+void controller(char **parsed, Controller *cnt){
+	if(parsed[1]==NULL){
+		printControllerSetting(cnt);
+		return;
+	}
+	if(strcmp(parsed[1],"-m")==0){
+		if(parsed[2]==NULL){
+			printf("devi inserire il dito di cui vuoi modificare il settaggio\n");
+			return;
+		}
+		enum tipoElemento sw1 = -1;
+		if(strcmp(parsed[2],"mignolo")==0)sw1=mignolo;
+		if(strcmp(parsed[2],"anulare")==0)sw1=anulare;
+		if(strcmp(parsed[2],"medio")==0)sw1=medio;
+		if(strcmp(parsed[2],"indice")==0)sw1=indice;
+		if(strcmp(parsed[2],"pollice")==0)sw1=pollice;
+		switch (sw1){
+			case 0:
+				editElemCharAss(cnt, mignolo, parsed[3][0]);
+				break;
+			case 1:
+				editElemCharAss(cnt, anulare, parsed[3][0]);
+				break;
+			case 2:
+				editElemCharAss(cnt, medio, parsed[3][0]);
+				break;
+			case 3:
+				editElemCharAss(cnt, indice, parsed[3][0]);
+				break;
+			case 4:
+				editElemCharAss(cnt, pollice, parsed[3][0]);
+				break;
+			default:
+				printf("le dita disponibili per modificare i settaggi sono:\n"
+					   "\tmignolo|anulare|medio|indice|pollice\n");
+				break;
+		}
+	}
+}
+
+/*
  * funzione per prendere comandi
  */
 
 int getCmd(char* cmd){
-	char *buf;
-	size_t bufsize = MAX_SIZE;
 	size_t characters;
+	size_t bufsize = MAX_SIZE;
 
-	buf = (char *)malloc(bufsize * sizeof(char));
-    if( buf == NULL){
-        perror("Impossibile allocare il buffer");
-        exit(1);
-    }
     printf("#> ");
-	characters = getline(&buf,&bufsize,stdin);
+// la funzione getline prende i comandi da stdin e indico la dimensione del
+// buffer allocato sopra e l'indirizzo del buffer su cui scrivere    
+	characters = getline(&cmd,&bufsize,stdin);
 	if(characters != 0){
-		strcpy(cmd, buf);  //TODO Davide suggerisce: dovresti usare strncpy(char* dest, const char* source, size_t n), grisetti piange
+		//strncpy(cmd, buf, characters);
 		debugPrint("FUN getCmd value >", cmd);
-		free(buf);
 		return 0;
 	}
 	else {
-		free(buf);
 		return 1;
 	}
 }
@@ -95,23 +148,26 @@ int getCmd(char* cmd){
  
 int splitString(char *str, char **split){
 	int i;
-	str = strsep(&str, "\n"); // elimino il carattere \n alla fine preso dalla getline
+	int len = strlen(str);
+	str[len-1]='\0'; // elimino il carattere \n alla fine preso dalla getline
+	debugPrint("comando preso>",str);
 	for(i = 0; i < MAX_CMD; i++){
 		split[i] = strsep(&str," ");
 		if(split[i]==NULL) break;
 		if(strlen(split[i])==0) i--;
 	}
+	
 }
 
 /*
  * funzione per la gestione dei comandi della shell
  */
  
-int cmdHandler(char** parsed){
+int cmdHandler(char** parsed, Controller *cnt){
 	
 	debugPrintMsg("dentroCmdHandler");
 	
-	int nCmdSupportati=5, i, switchArg=100;
+	int nCmdSupportati=7, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
@@ -119,11 +175,13 @@ int cmdHandler(char** parsed){
    	ListCmd[2]="quit";
    	ListCmd[3]="exit";
    	ListCmd[4]="hi";
+   	ListCmd[5]="controller";
+   	ListCmd[6]="start";
+   	
 
 	debugPrintMsg("prima del for");
-	
+	debugPrint("parsed[0] in cmdHandler >", parsed[0]);
    	for(i=0; i<nCmdSupportati; i++ ){
-		debugPrint("parsed[0] in cmdHandler >", parsed[0]);
 		if(strcmp(parsed[0], ListCmd[i])==0){
 			switchArg = i;
 			debugPrintInt("FUN cmdHandler valore della i >", i);
@@ -144,6 +202,12 @@ int cmdHandler(char** parsed){
 		case 4:
 			sayHi(parsed);
 			break;
+		case 5:
+			controller(parsed, cnt);
+			break;
+		case 6:
+			start();
+			break;
 		default:
 			printf("comando non riconosciuto, digit h o help per vedere la guida\n");
 			break;
@@ -154,11 +218,13 @@ int cmdHandler(char** parsed){
  * funzione per il parse della stringa in input
  */
  
-int parseString(char *str, char** parsed){
+int parseString(char *str, char** parsed, Controller *cnt){
 	splitString(str, parsed);
-	if (cmdHandler(parsed)) return 0;
+	if (cmdHandler(parsed, cnt)) return 0;
 	else return 1; 
 }
+
+
 
 
 
@@ -168,9 +234,13 @@ int main(int argc, char **argv){
 	
 	init_shell();
 
+	Controller cnt;
+	Controller_init(&cnt);
+	
+	
 	while(1){
 		if(getCmd(inStr)) continue;
-		parseString(inStr, parsedArg);
+		parseString(inStr, parsedArg, &cnt);
 		
 	
 	}
