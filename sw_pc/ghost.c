@@ -74,12 +74,12 @@ void sayHi(char **parsed){
 }
 
 /*
- * funzione che gestisce il thread (valori virtualizzazione etc)
+ * funzione che gestisce il thread (valori virtualizzazione etc)______________________________________________________________________
  */
-void *playCnt(void* cnt) { 
-    //sleep(1);
-    printControllerSetting(cnt);
-    printf("Thread lanciato wiiiiiii \n"); 
+void *playCnt(void* cnt) {
+	while(1){
+		sleep(3);
+	}
     return NULL; 
 } 
 
@@ -89,9 +89,17 @@ void *playCnt(void* cnt) {
 void start(Controller* cnt){
 	pthread_t thread_id; 
     debugPrintMsg("Sto per lanciare il thread"); 
-    pthread_create(&thread_id, NULL, playCnt, cnt); 
-    pthread_join(thread_id, NULL); 
-    debugPrintMsg("Thread finito\n"); 
+    pthread_create(&thread_id, NULL, playCnt, cnt);
+    cnt->t_id = (void*) thread_id;
+}
+
+/*
+ * funzione che ferma il thread per il controller
+ */
+void stop(Controller* cnt){
+	pthread_t thread_id = (pthread_t)cnt->t_id;
+	pthread_cancel(thread_id);
+	debugPrintMsg("Thread finito\n"); 
 }
 
 /*
@@ -177,6 +185,19 @@ int splitString(char *str, char **split){
 }
 
 /*
+ * funzione per chiudere il programma
+ */
+void quitShell(Controller* cnt){
+	pthread_t id = (pthread_t)cnt->t_id;
+	pthread_cancel(thread_id);
+	pthread_join(id, NULL); 
+	free(cnt->elementi);
+	cntXdoFree(cnt);
+	printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
+	exit(0);
+}
+
+/*
  * funzione per la gestione dei comandi della shell
  */
  
@@ -184,7 +205,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 	
 	debugPrintMsg("dentroCmdHandler");
 	
-	int nCmdSupportati=7, i, switchArg=100;
+	int nCmdSupportati=8, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
@@ -194,6 +215,7 @@ int cmdHandler(char** parsed, Controller *cnt){
    	ListCmd[4]="hi";
    	ListCmd[5]="controller";
    	ListCmd[6]="start";
+   	ListCmd[7]="stop";
    	
 
 	debugPrintMsg("prima del for");
@@ -214,10 +236,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 			return 1; // perche usato dall if che chiama cmdHandler!
 		case 2:
 		case 3:
-			free(cnt->elementi);
-			cntXdoFree(cnt);
-			printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
-			exit(0);
+			quitShell(cnt);
 		case 4:
 			sayHi(parsed);
 			break;
@@ -226,6 +245,9 @@ int cmdHandler(char** parsed, Controller *cnt){
 			break;
 		case 6:
 			start(cnt);
+			break;
+		case 7:
+			stop(cnt);
 			break;
 		default:
 			printf("comando non riconosciuto, digit h o help per vedere la guida\n");

@@ -1,6 +1,7 @@
 #pragma once
 #include <xdo.h>
 
+
 enum tipoElemento{mignolo, anulare, medio, indice, pollice};
 
 typedef struct Elemento{
@@ -18,6 +19,7 @@ typedef struct Controller{
 	Elemento* elementi;
 	int size;
 	xdo_t* xdo;
+	void* t_id;
 }Controller;
 
 void cntXdoFree(Controller* cnt);

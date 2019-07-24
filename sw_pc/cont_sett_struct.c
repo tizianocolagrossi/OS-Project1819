@@ -47,6 +47,7 @@ void Controller_init(Controller* cnt) {
 	cnt->xdo = xdo_new(NULL);
 	cnt->elementi = (Elemento*) malloc(NUM_ELEMENTS*sizeof(Elemento));
 	cnt->size = NUM_ELEMENTS;
+	cnt->t_id = NULL;
 	//settaggi di default
 	// 0 mignolo
 	// 1 anulare
