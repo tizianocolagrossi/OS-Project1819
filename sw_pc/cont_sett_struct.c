@@ -17,30 +17,35 @@
 #define MED 'a'
 #define IND 'd'
 #define POL 'c'
+#define SOGLIA 700
+
 
 /*
+ * Tiziano
  * preme un dito se non è premuto quando chiamata
  */
 void premi(Elemento* elem, xdo_t * x){
 	if(elem->premuto == 0){
-		const char * charAss = elem->charAss;
+		const char * charAss =  elem->charAss;
 		xdo_send_keysequence_window_down(x, CURRENTWINDOW, charAss, DELAY);
 		elem->premuto = 1;
 	}
 }
 
 /*
+ * Tiziano
  * rilascia un dito se è premuto quando chiamata
  */
 void rilascia(Elemento* elem, xdo_t * x){
 	if(elem->premuto == 1){
-		const char * charAss = elem->charAss;
+		const char * charAss =  elem->charAss;
 		xdo_send_keysequence_window_up(x, CURRENTWINDOW, charAss, DELAY);
 		elem->premuto = 0;
 	}
 }
 
 /*
+ * Tiziano
  * inizializza il controller 
  */
 void Controller_init(Controller* cnt) {
@@ -48,6 +53,7 @@ void Controller_init(Controller* cnt) {
 	cnt->elementi = (Elemento*) malloc(NUM_ELEMENTS*sizeof(Elemento));
 	cnt->size = NUM_ELEMENTS;
 	cnt->t_id = NULL;
+	cnt->soglia = SOGLIA;
 	//settaggi di default
 	// 0 mignolo
 	// 1 anulare
@@ -86,6 +92,26 @@ void Controller_init(Controller* cnt) {
 }
 
 /*
+ * Tiziano
+ * restituisce il valore della soglia del controller
+ */
+int getSoglia(Controller* cnt){
+	int sgl = cnt->soglia;
+	return sgl;
+}
+/*
+ * Tiziano
+ * restituisce il valore della soglia del controller
+ */
+void setSoglia(Controller* cnt, int newSgl){
+	int sgl = cnt->soglia;
+	if(newSgl != sgl){
+			cnt->soglia = sgl;
+	}
+}
+
+/*
+ * Tiziano
  * libera lo spazio allocato da xdo
  */
 void cntXdoFree(Controller* cnt){
@@ -94,6 +120,7 @@ void cntXdoFree(Controller* cnt){
 }
 
 /*
+ * Tiziano
  * modofica il carattere associato all' elemento
  */
 void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
@@ -112,6 +139,7 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 }
 
 /*
+ * Tiziano
  * stampa lo stato del controller
  */
 void printControllerSetting(Controller* cnt){
@@ -128,10 +156,12 @@ void printControllerSetting(Controller* cnt){
 		t = cnt->elementi[i].tipo;
 		printf("\tl'elemento %d ha il carattere associato %c\n", t, tasto);
 	}
+	printf("\n\tla soglia del controller è impostata a %d\n\n", cnt->soglia);
 		
 }
 
 /*
+ * Tiziano
  * setta lo stato (premuto) di un elemento del controller
  */
 void setElemento(Controller* cnt, enum tipoElemento tipo){
@@ -141,6 +171,7 @@ void setElemento(Controller* cnt, enum tipoElemento tipo){
 }
 
 /*
+ * Tiziano
  * setta lo stato (rilasciato) di un elemento del controller
  */
 void resetElemento(Controller* cnt, enum tipoElemento tipo){
@@ -150,16 +181,16 @@ void resetElemento(Controller* cnt, enum tipoElemento tipo){
 }
 
 /*
+ * Tiziano
  * controlla lo stato del controller e gestisce la virtualizzazione dei tasti
  */
 void setState(Controller* cnt){
 	for(int i = 0; cnt->size; i++){
-		Elemento elem = cnt->elementi[i];
 		if(cnt->elementi[i].statoFisico != cnt->elementi[i].premuto){
 			if(cnt->elementi[i].statoFisico == 1){
-				premi(&elem, cnt->xdo);
+				premi(&(cnt->elementi[i]), cnt->xdo);
 			}else{
-				rilascia(&elem, cnt->xdo);
+				rilascia(&(cnt->elementi[i]), cnt->xdo);
 			}
 		}
 	}
