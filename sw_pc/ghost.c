@@ -21,7 +21,7 @@
 #include <termios.h> /* POSIX terminal control definitions */
 
 
-#define MAX_SIZE 50 // max caratteri in input
+#define MAX_SIZE 150 // max caratteri in input
 #define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
 
@@ -298,7 +298,7 @@ void clearCnt(Controller* cnt){
 	for(int i = 0; i<cnt->size; i++){
 		resetElemento(cnt, i);
 	}
-	//setState(cnt);//################################################################################################################CONTROLLA
+	setState(cnt);
 }
 
 /*
@@ -449,7 +449,7 @@ void quitShell(Controller* cnt){
  
 int cmdHandler(char** parsed, Controller *cnt){
 	debugPrintMsg("dentroCmdHandler");
-	
+	if(parsed[0]==NULL)parsed[0]="";
 	int nCmdSupportati=9, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
