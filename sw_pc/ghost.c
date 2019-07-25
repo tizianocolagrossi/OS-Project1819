@@ -18,8 +18,11 @@
 #define MAX_SIZE 50 // max caratteri in input
 #define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
+#define MIN_SOGL_VAL 600
+#define MAX_SOGL_VAL 900
 
 /*
+ * Tiziano
  * funzione per printate di debug
  */
 void debugPrint(char *msg, char *val){
@@ -34,6 +37,7 @@ void debugPrintMsg(char *msg){
 
 
 /*
+ * Tiziano
  * scrive a schermo una piccola intro...
  * l'ho fatta per stare tranquillo a scrivere
  */
@@ -57,10 +61,12 @@ void init_shell(){
 			"L SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL \n"
 			" SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL S\n"
 			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
+			"\n\n\n"
 			);                                                     
 }
 
 /*
+ * Tiziano
  * HELP per la shell
  */
 
@@ -77,6 +83,8 @@ void help(){
 		"\tcontroller -m [mignolo|anulare|medio|indice|pollice] [newChar]\n"
 		"\tcon newChar il nuovo carattere da associare al dito\n"
 		"\n\n"
+		"\tcontroller -s [valore soglia (intero compreso tra %d e %d)]"
+		"\n\n"
 		"start avvia il controller in modo che potra essere usato su altri programmi\n"
 		"stop arresta il funzionamento del controller \n"
 		"\n\n"
@@ -85,6 +93,7 @@ void help(){
 		"\n\n"
 		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
+		,MIN_SOGL_VAL, MAX_SOGL_VAL
 	);
 }
 
@@ -133,6 +142,7 @@ void sayHi(char **parsed){
  * a che non lo cambi te		
  */
 void *playCnt(void* cnt) {
+	//int soglia = getSoglia(cnt);
 	//puoi scrivere roba anche qua, non so per inizializzare la comunicazione fai te
 	while(1){
 		//togli sta sleep quando scrivi e fai un po quello che vuoi qua
@@ -142,16 +152,18 @@ void *playCnt(void* cnt) {
     return NULL; 
 } 
 /*
+ * Tiziano
  * funzione che resetta lo stato a tutti i tasti del controller
  */
 void clearCnt(Controller* cnt){
 	for(int i = 0; i<cnt->size; i++){
 		resetElemento(cnt, i);
 	}
-	setState(cnt);
+	//setState(cnt);//################################################################################################################CONTROLLA
 }
 
 /*
+ * Tiziano
  * funzione che lancia un thread per il controller
  */
 void start(Controller* cnt){
@@ -162,6 +174,7 @@ void start(Controller* cnt){
 }
 
 /*
+ * Tiziano
  * funzione che ferma il thread per il controller
  */
 void stop(Controller* cnt){
@@ -173,6 +186,7 @@ void stop(Controller* cnt){
 }
 
 /*
+ * Tiziano
  * funzione per il controllo del controller
  */
 void controller(char **parsed, Controller *cnt){
@@ -213,9 +227,24 @@ void controller(char **parsed, Controller *cnt){
 				break;
 		}
 	}
+	if(strcmp(parsed[1],"-s")==0){
+		int val = atoi(parsed[2]);
+		if(val!=0 && val > MIN_SOGL_VAL && val < MAX_SOGL_VAL ){
+			printf(
+				"CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTR\n"
+				"OLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER\n"
+				"\n"
+			);
+			printf("\tsoglia impostata a %d\n",val);
+			
+		}else{
+			printf("\tIl valore deve essere compreso tra %d e %d\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+		}
+	}
 }
 
 /*
+ * Tiziano
  * funzione per prendere comandi
  */
 
@@ -238,6 +267,7 @@ int getCmd(char* cmd){
 }
 
 /*
+ * Tiziano
  * funzione per lo split della tringa in input
  */
  
@@ -255,11 +285,12 @@ int splitString(char *str, char **split){
 }
 
 /*
+ * Tiziano
  * funzione per chiudere il programma
  */
 void quitShell(Controller* cnt){
 	pthread_t id = (pthread_t)cnt->t_id;
-	pthread_cancel(thread_id);
+	pthread_cancel(id);
 	pthread_join(id, NULL);
 	//per sicurezza rilascia tutti i tasti del controller
 	clearCnt(cnt);
@@ -270,6 +301,7 @@ void quitShell(Controller* cnt){
 }
 
 /*
+ * Tiziano
  * funzione per la gestione dei comandi della shell
  */
  
@@ -333,6 +365,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 }
 
 /*
+ * Tiziano
  * funzione per il parse della stringa in input
  */
  
