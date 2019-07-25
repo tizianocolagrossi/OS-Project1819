@@ -74,7 +74,7 @@ void read_(int fd){
 		//davide: if c is digit add it to the string
 		else if(c >= 48 && c <= 57){
 			printf("%c", c);
-			strncat(current_num, c, 1);
+			strncat(current_num, &c, 1);
 		}
 		//davide: if c is a comma add the number to the array, reset the string, increment finger number
 		else if(c == 44){
