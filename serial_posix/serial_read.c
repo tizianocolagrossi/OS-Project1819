@@ -12,6 +12,12 @@
 
 
 struct termios current;
+//davide: global variables to handle data read from serial
+char* current_num = "";
+int current_finger = 0; //0,1,2,3,4
+int hand[5];
+int structure_ready = 0; //it will be set to 1 when hand is filled
+
 
 // michele: function to set the right bit in termios structure
 // to enable the comunication throught the serial port
@@ -55,11 +61,31 @@ void read_(int fd){
 	}
 	for(i=0; i<20; i++){
 		char c = buf[i];
-		//davide: if c is "-", the string is terminated 
-		if(c == 45) printf("\n");
-		//davide: if c is digit or "," acceptable = true
-		int acceptable = (c >= 48 && c <= 57) || c == 44;
-		if(acceptable) printf("%c", c);
+		//davide: if c is "-", the string is terminated
+		//we add the number to the array, reset the string, reset finger number and trigger "structure_ready"
+		if(c == 45) {
+			printf("\n");
+			int value = atoi(current_num);
+			hand[current_finger] = value;
+			current_num = "";
+			current_finger = 0; //return to thumb finger
+			structure_ready = 1;
+		}
+		//davide: if c is digit add it to the string
+		else if(c >= 48 && c <= 57){
+			printf("%c", c);
+			strncat(current_num, c, 1);
+		}
+		//davide: if c is a comma add the number to the array, reset the string, increment finger number
+		else if(c == 44){
+			printf("%c", c);
+			int value = atoi(current_num);
+			hand[current_finger] = value;
+			current_num = "";
+			current_finger++;
+			if(current_finger > 4) current_finger = 0; //just to be sure
+			
+		}
 	}
 }
 
@@ -116,7 +142,14 @@ int main(void){
 	while(1){
 		//reading from serial forever
 		read_(fd);
-		//printf("\n");
+		if(structure_ready){
+			//TODO inviare hand dove serve
+			printf("structure ready\n");
+			for(int i=0; i<5; i++){
+				printf("%d\n", hand[i]);
+			}
+			structure_ready = 0;
+		}
 	}
 	
 	return 0;
