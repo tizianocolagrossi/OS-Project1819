@@ -35,6 +35,73 @@ void debugPrintMsg(char *msg){
 	if(DEBUG) printf("\n%s\n", msg);
 }
 
+/*
+ * Tiziano
+ */
+void test(Controller* cnt, char** parsed){
+		xdo_t * x = cnt->xdo;
+		if(parsed[1]==NULL)return;
+		if(strcmp(parsed[1],"-mSngStrk")==0){
+			printf(
+				"TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST\n"
+			);
+			setElemento(cnt,mignolo);
+			setState(cnt);
+			resetElemento(cnt, mignolo);
+			setState(cnt);
+			setElemento(cnt,anulare);
+			setState(cnt);
+			resetElemento(cnt, anulare);
+			setState(cnt);
+			setElemento(cnt,medio);
+			setState(cnt);
+			resetElemento(cnt, medio);
+			setState(cnt);
+			setElemento(cnt,indice);
+			setState(cnt);
+			resetElemento(cnt, indice);
+			setState(cnt);
+			setElemento(cnt,pollice);
+			setState(cnt);
+			resetElemento(cnt, pollice);
+			setState(cnt);
+		}
+		if(strcmp(parsed[1],"-mLngStrk")==0){
+			printf(
+				"TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST\n"
+			);
+			setElemento(cnt,mignolo);
+			setElemento(cnt,mignolo);
+			setState(cnt);
+			sleep(1);
+			resetElemento(cnt, mignolo);
+			setState(cnt);
+			setElemento(cnt,anulare);
+			setState(cnt);
+			sleep(1);
+			resetElemento(cnt, anulare);
+			setState(cnt);
+			setElemento(cnt,medio);
+			setState(cnt);
+			sleep(1);
+			resetElemento(cnt, medio);
+			setState(cnt);
+			setElemento(cnt,indice);
+			setState(cnt);
+			sleep(1);
+			resetElemento(cnt, indice);
+			setState(cnt);
+			setElemento(cnt,pollice);
+			setState(cnt);
+			sleep(1);
+			resetElemento(cnt, pollice);
+			setState(cnt);
+			printf("\n");
+		}
+		
+		
+
+}
 
 /*
  * Tiziano
@@ -295,6 +362,9 @@ void quitShell(Controller* cnt){
 	pthread_join(id, NULL);
 	//per sicurezza rilascia tutti i tasti del controller
 	clearCnt(cnt);
+	for(int i = 0; i<cnt->size;i++){
+		free(cnt->elementi[i].sAss);
+	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);
 	printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
@@ -307,10 +377,9 @@ void quitShell(Controller* cnt){
  */
  
 int cmdHandler(char** parsed, Controller *cnt){
-	
 	debugPrintMsg("dentroCmdHandler");
 	
-	int nCmdSupportati=8, i, switchArg=100;
+	int nCmdSupportati=9, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
@@ -321,6 +390,8 @@ int cmdHandler(char** parsed, Controller *cnt){
    	ListCmd[5]="controller";
    	ListCmd[6]="start";
    	ListCmd[7]="stop";
+   	ListCmd[8]="test";
+   	
    	
 
 	debugPrintMsg("prima del for");
@@ -353,6 +424,9 @@ int cmdHandler(char** parsed, Controller *cnt){
 			break;
 		case 7:
 			stop(cnt);
+			break;
+		case 8:
+			test(cnt, parsed);
 			break;
 		default:
 			printf(
@@ -394,3 +468,5 @@ int main(int argc, char **argv){
 	
 	}
 }
+
+

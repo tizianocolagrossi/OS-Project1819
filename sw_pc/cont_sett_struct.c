@@ -10,7 +10,7 @@
 #include "cont_sett_struct.h"
 #include <xdo.h>
 
-#define DELAY 1
+#define DELAY 200000
 #define NUM_ELEMENTS 5
 #define MIG 's'
 #define ANU 'w'
@@ -18,31 +18,6 @@
 #define IND 'd'
 #define POL 'c'
 #define SOGLIA 700
-
-
-/*
- * Tiziano
- * preme un dito se non è premuto quando chiamata
- */
-void premi(Elemento* elem, xdo_t * x){
-	if(elem->premuto == 0){
-		const char * charAss =  elem->charAss;
-		xdo_send_keysequence_window_down(x, CURRENTWINDOW, charAss, DELAY);
-		elem->premuto = 1;
-	}
-}
-
-/*
- * Tiziano
- * rilascia un dito se è premuto quando chiamata
- */
-void rilascia(Elemento* elem, xdo_t * x){
-	if(elem->premuto == 1){
-		const char * charAss =  elem->charAss;
-		xdo_send_keysequence_window_up(x, CURRENTWINDOW, charAss, DELAY);
-		elem->premuto = 0;
-	}
-}
 
 /*
  * Tiziano
@@ -64,26 +39,37 @@ void Controller_init(Controller* cnt) {
 	for(int i = 0; i<NUM_ELEMENTS; i++){
 		cnt->elementi[i].premuto=0;
 		cnt->elementi[i].statoFisico=0;
+		cnt->elementi[i].sAss = (char*)malloc(2*sizeof(char));
 		switch(i){
 			case 0:
 				cnt->elementi[i].tipo = mignolo;
 				cnt->elementi[i].charAss = MIG;
+				cnt->elementi[i].sAss[0] = MIG;
+				cnt->elementi[i].sAss[1] = '\0';
 				break;
 			case 1:
 				cnt->elementi[i].tipo = anulare;
 				cnt->elementi[i].charAss = ANU;
+				cnt->elementi[i].sAss[0] = ANU;
+				cnt->elementi[i].sAss[1] = '\0';
 				break;
 			case 2:
 				cnt->elementi[i].tipo = medio;
 				cnt->elementi[i].charAss = MED;
+				cnt->elementi[i].sAss[0] = MED;
+				cnt->elementi[i].sAss[1] = '\0';
 				break;
 			case 3:
 				cnt->elementi[i].tipo = indice;
 				cnt->elementi[i].charAss = IND;
+				cnt->elementi[i].sAss[0] = IND;
+				cnt->elementi[i].sAss[1] = '\0';
 				break;
 			case 4:
 				cnt->elementi[i].tipo = pollice;
 				cnt->elementi[i].charAss = POL;
+				cnt->elementi[i].sAss[0] = POL;
+				cnt->elementi[i].sAss[1] = '\0';
 				break;
 		}
 	}
@@ -134,6 +120,8 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 		return;
 	}
 	cnt->elementi[tipo].charAss = newCharAss;
+	cnt->elementi[tipo].sAss[0] = newCharAss;
+	cnt->elementi[tipo].sAss[1] = '\0';
 	printf("\tnuovo carattere impostato per l'elemento %d > %c\n", tipo, cnt->elementi[tipo].charAss);
 	return;
 }
@@ -185,13 +173,13 @@ void resetElemento(Controller* cnt, enum tipoElemento tipo){
  * controlla lo stato del controller e gestisce la virtualizzazione dei tasti
  */
 void setState(Controller* cnt){
-	for(int i = 0; cnt->size; i++){
-		if(cnt->elementi[i].statoFisico != cnt->elementi[i].premuto){
-			if(cnt->elementi[i].statoFisico == 1){
-				premi(&(cnt->elementi[i]), cnt->xdo);
-			}else{
-				rilascia(&(cnt->elementi[i]), cnt->xdo);
-			}
+	xdo_t * x = cnt->xdo;
+	
+	for(int i = 0; i<cnt->size;i++){
+		if(cnt->elementi[i].statoFisico==1){
+			xdo_send_keysequence_window_down(x, CURRENTWINDOW, cnt->elementi[i].sAss, 0);
+		}else{
+			xdo_send_keysequence_window_up(x, CURRENTWINDOW, cnt->elementi[i].sAss, 0);
 		}
 	}
 }

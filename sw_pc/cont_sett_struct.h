@@ -9,12 +9,10 @@ typedef struct Elemento{
 	int premuto;
 	int statoFisico;
 	char charAss;
+	char *sAss;
 	enum tipoElemento tipo;
 }Elemento;
 
-//Tiziano
-void premi(Elemento* dito, xdo_t * x);
-void rilascia(Elemento* dito, xdo_t * x);
 
 //Tiziano
 typedef struct Controller{
