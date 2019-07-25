@@ -142,6 +142,7 @@ void sayHi(char **parsed){
  * a che non lo cambi te		
  */
 void *playCnt(void* cnt) {
+	int soglia = getSoglia(cnt);
 	//int soglia = getSoglia(cnt);
 	//puoi scrivere roba anche qua, non so per inizializzare la comunicazione fai te
 	while(1){
