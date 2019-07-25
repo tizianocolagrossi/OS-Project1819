@@ -81,6 +81,7 @@ int serial_string(char* buffer){
 	int hand[5];
 	char* b;
 	char len = str_len(buffer);
+	
 	// while on buffer string
 	while(buffer){
 		
@@ -98,18 +99,11 @@ int serial_string(char* buffer){
 	}
 }
 
-// michele: function that set right value of every finger in structure
-void set_finger(void){
-
-	//quando chiamata setta il valore del dito nella struttura "CONTROL"
-
-}
-
 // michele: function that control if analog values sent by arduino
 // are in a range that was set by user 
-int value_control(int min_val, int max_val, int current_val){
+int value_control(int soglia, int current_val){
 	
-	if (current_val >= min_val && current_val <= max_val) return 1;
+	if (current_val >= soglia) return 1;
 	else return 0;
 	
 }
