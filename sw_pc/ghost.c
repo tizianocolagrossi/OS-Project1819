@@ -34,6 +34,7 @@
 
 //michele: struct per inizializzazione porta seriale
 struct termios current;
+//davide: global variables to handle data read from serial
 char* current_num = "";
 int current_finger = 0; //0,1,2,3,4
 int hand[5];
@@ -262,8 +263,7 @@ int port_configure(void){
 	return fd;
 }
 
-//davide: function to read from the serial
-//michele: set finger in the struct 
+//davide: function to read from the serial and set finger in the struct 
 void read_(int fd){
 	int i;
 	char buf[26];
@@ -286,7 +286,7 @@ void read_(int fd){
 			int value = atoi(current_num);
 			hand[current_finger] = value;
 			current_num = "";
-			current_finger = 0; //return to thumb finger
+			current_finger = 0; //restart from thumb finger
 			structure_ready = 1;
 		}
 		//davide: if c is digit add it to the string
