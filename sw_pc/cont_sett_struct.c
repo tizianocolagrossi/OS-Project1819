@@ -91,8 +91,8 @@ int getSoglia(Controller* cnt){
  */
 void setSoglia(Controller* cnt, int newSgl){
 	int sgl = cnt->soglia;
-	if(newSgl != sgl){
-			cnt->soglia = sgl;
+	if(newSgl != sgl){ //michele
+			cnt->soglia = newSgl;
 	}
 }
 

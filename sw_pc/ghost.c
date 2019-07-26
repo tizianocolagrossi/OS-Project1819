@@ -13,31 +13,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> // per la sleep
-#include <pthread.h> 
-//michele
-#include "set_finger.h"
-#include <fcntl.h>   /* File control definitions */
-#include <errno.h>   /* Error number definitions */
-#include <termios.h> /* POSIX terminal control definitions */
-
+#include <pthread.h>
 
 #define MAX_SIZE 150 // max caratteri in input
 #define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
 
 #define MIN_SOGL_VAL 600
-#define MAX_SOGL_VAL 900
+#define MAX_SOGL_VAL 900 
 
 //michele
+#include "set_finger.h"
+#include <fcntl.h>   /* File control definitions */
+#include <errno.h>   /* Error number definitions */
+#include <termios.h> /* POSIX terminal control definitions */
+
 #define MAX_SIZE_ 25
 #define BAUDRATE B19200
 
+
 //michele: struct per inizializzazione porta seriale
 struct termios current;
+char* current_num = "";
+int current_finger = 0; //0,1,2,3,4
+int hand[5];
+int structure_ready = 0; //it will be set to 1 when hand is filled
+
 /*
  * Tiziano
  * funzione per printate di debug
  */
+ 
 void debugPrint(char *msg, char *val){
 	if(DEBUG) printf("\n%s %s\n", msg, val);
 }
@@ -264,15 +270,31 @@ void read_(int fd){
 	}
 	for(i=0; i<20; i++){
 		char c = buf[i];
-		//davide: if c is "-", the string is terminated 
-		if(c == 45) printf("\n");
-		//davide: if c is digit or "," acceptable = true
-		int acceptable = (c >= 48 && c <= 57) || c == 44;
-		if(acceptable) printf("%c", c);
+		//davide: if c is "-", the string is terminated
+		//we add the number to the array, reset the string, reset finger number and trigger "structure_ready"
+		if(c == 45) {
+			printf("\n");
+			int value = atoi(current_num);
+			hand[current_finger] = value;
+			current_num = "";
+			current_finger = 0; //return to thumb finger
+			structure_ready = 1;
+		}
+		//davide: if c is digit add it to the string
+		else if(c >= 48 && c <= 57){
+			printf("%c", c);
+			strncat(current_num, &c, 1);
+		}
+		//davide: if c is a comma add the number to the array, reset the string, increment finger number
+		else if(c == 44){
+			printf("%c", c);
+			int value = atoi(current_num);
+			hand[current_finger] = value;
+			current_num = "";
+			current_finger++;
+			if(current_finger > 4) current_finger = 0; //just to be sure
+		}
 	}
-	
-	//michele: call set finger
-	
 }
 
 void *playCnt(void* cnt) {
@@ -281,13 +303,14 @@ void *playCnt(void* cnt) {
 	
 	int fd = port_configure();
 	if(fd<0) perror("[playCnt]errore nel file descriptor");
-
-	int soglia = getSoglia(cnt);
-	//int soglia = getSoglia(cnt);
+	
 	while(1){
 		//reading from serial forever
 		read_(fd);
-		//printf("\n");
+		if(structure_ready){
+			set_finger(cnt, MIN_SOGL_VAL, hand);
+			structure_ready = 0;
+		}
 	}
 } 
 /*
@@ -367,17 +390,20 @@ void controller(char **parsed, Controller *cnt){
 		}
 	}
 	if(strcmp(parsed[1],"-s")==0){
-		int val = atoi(parsed[2]);
-		if(val!=0 && val > MIN_SOGL_VAL && val < MAX_SOGL_VAL ){
-			printf(
-				"CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTR\n"
-				"OLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER\n"
-				"\n"
-			);
-			printf("\tsoglia impostata a %d\n",val);
+		if(parsed[2] != NULL){
+			int val = atoi(parsed[2]);
+			if(val!=0 && val > MIN_SOGL_VAL && val < MAX_SOGL_VAL ){
+				printf(
+					"CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTR\n"
+					"OLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER\n"
+					"\n"
+				);
+				setSoglia(cnt, val); //michele
+				printf("\tsoglia impostata a %d\n",val);
 			
-		}else{
-			printf("\tIl valore deve essere compreso tra %d e %d\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+			}else{
+				printf("\tIl valore deve essere compreso tra %d e %d\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+			}
 		}
 	}
 }

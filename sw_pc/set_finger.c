@@ -2,6 +2,8 @@
 #include "cont_sett_struct.h"
 
 #include <xdo.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 //michele: dai, si capisce su
 int str_len(char* buffer){
@@ -44,10 +46,17 @@ int serial_string(char* buffer){
 void set_finger(Controller* cnt, int soglia, int* hand){
 	
 	int i = 4;
-	while (i > 0){
+	while (i >= 0){
 		if (*hand >= soglia) {
 			setElemento(cnt, i);
+			printf("[set_finger]dito %d settato\n", i);
+			setState(cnt);
 		}
+		else {
+			resetElemento(cnt, i);
+			setState(cnt);
+		}
+		hand++;
 		i--;
 	}
 }
