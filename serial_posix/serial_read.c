@@ -1,3 +1,4 @@
+//michele
 #include <stdio.h>   /* Standard input/output definitions */
 #include <stdlib.h>  /* For exit and allocation */
 #include <string.h>  /* String function definitions */
@@ -7,11 +8,13 @@
 #include <termios.h> /* POSIX terminal control definitions */
 #include <math.h>    /* For Math's functions */
 
+//michele
 #define MAX_SIZE 25
 #define BAUDRATE B19200
 
-
+//michele
 struct termios current;
+
 //davide: global variables to handle data read from serial
 char* current_num = "";
 int current_finger = 0; //0,1,2,3,4
@@ -154,16 +157,6 @@ int main(void){
 	
 	return 0;
 }
-
-/*davide: function to handle the transformation from
-  arduino signal to an acceptable value for the controller
-int signal_to_controller(int min_soglia, int max_soglia, int signal){
-	float ret_val;
-	
-	if(signal < min_soglia) ret_val = min_soglia; 
-	else if(signal > max_soglia) ret_val = max_soglia;
-	
-}*/
 
 
 
