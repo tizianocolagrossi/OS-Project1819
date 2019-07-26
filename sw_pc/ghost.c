@@ -147,6 +147,8 @@ void init_shell(){
 			"L SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL \n"
 			" SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL S\n"
 			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
+			"\n\n"
+			"Digita \"help\" o \"h\" per ricevere informazioni per l'utilizzo della shell\n"
 			"\n\n\n"
 			);                                                     
 }
@@ -157,35 +159,42 @@ void init_shell(){
  */
 
 void help(){
+	//michele
 	printf(
 		"\n"
-		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
-		"\n"
-		"controller\n"
-		"\tscrive su schermo lo stato del controller ATTIVO o INATTIVO\n"
-		"\te scrive la configurazione del controller\n"
-		"\n"
-		"\tcontroller -m [mignolo|anulare|medio|indice|pollice] [newChar]\n"
-		"\tcon newChar il nuovo carattere da associare al dito\n"
+		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
+		"P HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HEL\n"
 		"\n\n"
-		"\tcontroller -s [valore soglia (intero compreso tra %d e %d)]"
+		"- controller\n"
+		"\tVisualizza stato controller [ATTIVO o NON ATTIVO]\n"
+		"\tVisualizza la configurazione corrente del controller\n"
 		"\n\n"
-		"start avvia il controller in modo che potra essere usato su altri programmi\n"
-		"stop arresta il funzionamento del controller \n"
+		"- controller -m [mignolo|anulare|medio|indice|pollice] [newChar]\n"
+		"\tnewChar -> nuovo carattere da associare al dito in [mignolo|...]\n"
 		"\n\n"
-		"quit o exit\n"
+		"- controller -s [valore soglia (intero compreso tra %d e %d)]\n"
+		"\tSetta il valore minimo [angolo piega] per l'attivazione del tasto\n"
+		"\n\n"
+		"- start\n" 
+		"\tAvvia il controller\n"
+		"\n\n"
+		"- stop\n"
+		"\tarresta il controller\n"
+		"\n\n"
+		"- quit o exit\n"
 		"\tesce dalla shell\n"
 		"\n\n"
-		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
+		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
+		"P HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HEL\n"
 		,MIN_SOGL_VAL, MAX_SOGL_VAL
 	);
 }
 
 void sayHi(char **parsed){
 	if(parsed[1]==NULL){
-		printf("ERRORE: non hai passato l'argomento vedi help per la guida\n");
+		printf("ERRORE: nessun argomento. Consulta la sezione help per la guida\n");
 	} else{
 		printf("Ciao %s\n", parsed[1]);
 	}
@@ -342,7 +351,7 @@ void start(Controller* cnt){
 void stop(Controller* cnt){
 	pthread_t thread_id = (pthread_t)cnt->t_id;
 	pthread_cancel(thread_id);
-	debugPrintMsg("Thread finito\n");
+	debugPrintMsg("Controller fermato\n");
 	//per sicurezza rilascia tutti i tasti del controller
 	clearCnt(cnt);
 }
@@ -394,16 +403,19 @@ void controller(char **parsed, Controller *cnt){
 			int val = atoi(parsed[2]);
 			if(val!=0 && val > MIN_SOGL_VAL && val < MAX_SOGL_VAL ){
 				printf(
-					"CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTR\n"
-					"OLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER\n"
+					"CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CON\n"
+					"TROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTRO\n"
 					"\n"
 				);
 				setSoglia(cnt, val); //michele
-				printf("\tsoglia impostata a %d\n",val);
+				printf("\tsoglia impostata a %d\n\n",val);
 			
 			}else{
 				printf("\tIl valore deve essere compreso tra %d e %d\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
 			}
+		}
+		else{
+			printf("ERRORE: inserire un valore di soglia valido. Consulta la sezione help\n\n");
 		}
 	}
 }

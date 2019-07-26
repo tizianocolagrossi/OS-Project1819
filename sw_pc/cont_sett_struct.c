@@ -134,9 +134,10 @@ void printControllerSetting(Controller* cnt){
 	printf(
 		"\n"
 		"CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CO\n"
-		"ROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTRO\n"
+		"TROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTR\n"
+		"\n\n"
 	);
-	printf("\t0=mignolo, 1=anulare, 2=medio, 3=indice, 4=pollice\n");
+	printf("\t0=mignolo, 1=anulare, 2=medio, 3=indice, 4=pollice\n\n");
 	for(int i = 0; i<NUM_ELEMENTS; i++){
 		char tasto;
 		enum tipoElemento t;
@@ -144,7 +145,7 @@ void printControllerSetting(Controller* cnt){
 		t = cnt->elementi[i].tipo;
 		printf("\tl'elemento %d ha il carattere associato %c\n", t, tasto);
 	}
-	printf("\n\tla soglia del controller è impostata a %d\n\n", cnt->soglia);
+	printf("\n\tla soglia del controller è impostata a %d\n\n\n", cnt->soglia);
 		
 }
 
