@@ -50,13 +50,12 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 		if (*hand >= soglia) {
 			setElemento(cnt, i);
 			printf("[set_finger]dito %d settato\n", i);
-			setState(cnt);
 		}
 		else {
 			resetElemento(cnt, i);
-			setState(cnt);
 		}
 		hand++;
 		i--;
 	}
+	setState(cnt);
 }
