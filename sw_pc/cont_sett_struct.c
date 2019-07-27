@@ -17,7 +17,7 @@
 #define MED 'a'
 #define IND 'd'
 #define POL 'c'
-#define SOGLIA 700
+#define SOGLIA 800
 
 /*
  * Tiziano

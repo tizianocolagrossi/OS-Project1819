@@ -19,7 +19,7 @@
 #define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
 
-#define MIN_SOGL_VAL 600
+#define MIN_SOGL_VAL 800
 #define MAX_SOGL_VAL 900 
 
 //michele
@@ -187,7 +187,7 @@ void help(){
 		"\tesce dalla shell\n"
 		"\n\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
-		"LP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
+		"LP HELP HELP HELP HELP HELP HinteroELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
 		"P HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HEL\n"
 		,MIN_SOGL_VAL, MAX_SOGL_VAL
 	);
@@ -576,8 +576,6 @@ int main(int argc, char **argv){
 	while(1){
 		if(getCmd(inStr)) continue;
 		parseString(inStr, parsedArg, &cnt);
-		
-	
 	}
 }
 
