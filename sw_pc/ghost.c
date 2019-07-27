@@ -35,7 +35,7 @@
 //michele: struct per inizializzazione porta seriale
 struct termios current;
 //davide: global variables to handle data read from serial
-char* current_num = "";
+char current_num[4];
 int current_finger = 0; //0,1,2,3,4
 int hand[5];
 int structure_ready = 0; //it will be set to 1 when hand is filled
@@ -263,48 +263,7 @@ int port_configure(void){
 	return fd;
 }
 
-//davide: function to read from the serial and set finger in the struct 
-void read_(int fd){
-	int i;
-	char buf[26];
-	int byte_read = 0;
-	
-	while(byte_read < 20){
-		int br = read(fd, buf + byte_read, 1);
-		if (byte_read < 0) perror("error during read process");
-		else if(br > 0){
-			byte_read += br;
-			//printf("HO LETTO %d BYTES\n", byte_read);
-		}
-	}
-	for(i=0; i<20; i++){
-		char c = buf[i];
-		//davide: if c is "-", the string is terminated
-		//we add the number to the array, reset the string, reset finger number and trigger "structure_ready"
-		if(c == 45) {
-			printf("\n");
-			int value = atoi(current_num);
-			hand[current_finger] = value;
-			current_num = "";
-			current_finger = 0; //restart from thumb finger
-			structure_ready = 1;
-		}
-		//davide: if c is digit add it to the string
-		else if(c >= 48 && c <= 57){
-			printf("%c", c);
-			strncat(current_num, &c, 1);
-		}
-		//davide: if c is a comma add the number to the array, reset the string, increment finger number
-		else if(c == 44){
-			printf("%c", c);
-			int value = atoi(current_num);
-			hand[current_finger] = value;
-			current_num = "";
-			current_finger++;
-			if(current_finger > 4) current_finger = 0; //just to be sure
-		}
-	}
-}
+
 
 void *playCnt(void* cnt) {
 

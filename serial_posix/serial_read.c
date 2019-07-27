@@ -16,7 +16,7 @@
 struct termios current;
 
 //davide: global variables to handle data read from serial
-char* current_num = "";
+char current_num[4];
 int current_finger = 0; //0,1,2,3,4
 int hand[5];
 int structure_ready = 0; //it will be set to 1 when hand is filled
@@ -59,37 +59,33 @@ void read_(int fd){
 		if (byte_read < 0) perror("error during read process");
 		else if(br > 0){
 			byte_read += br;
-			printf("HO LETTO %d BYTES\n", byte_read);
+			//printf("HO LETTO %d BYTES\n", byte_read);
 		}
 	}
 	for(i=0; i<20; i++){
-		printf("%s\n", buf);
-		printf("%s\n", current_num);
-		strncat(current_num, buf, 1);
-		printf("%s\n", current_num);
 		char c = buf[i];
-		printf("arrivo qui\n");
+
 		//davide: if c is "-", the string is terminated
 		//we add the number to the array, reset the string, reset finger number and trigger "structure_ready"
 		if(c == 45) {
-			printf("\n");
+			//printf("\n");
 			int value = atoi(current_num);
 			hand[current_finger] = value;
-			current_num = "";
+			strcpy(current_num, "");
 			current_finger = 0; //restart from thumb finger
 			structure_ready = 1;
 		}
 		//davide: if c is digit add it to the string
 		else if(c >= 48 && c <= 57){
-			printf("%c", c);
+			//printf("%c", c);
 			strncat(current_num, (buf+i), 1);
 		}
 		//davide: if c is a comma add the number to the array, reset the string, increment finger number
 		else if(c == 44){
-			printf("%c", c);
+			//printf("%c", c);
 			int value = atoi(current_num);
 			hand[current_finger] = value;
-			current_num = "";
+			strcpy(current_num, "");
 			current_finger++;
 			if(current_finger > 4) current_finger = 0; //just to be sure
 			
@@ -146,7 +142,8 @@ int main(void){
 	
 	int fd = port_configure();
 	if(fd<0) exit(-1);
-
+	//set to empty string
+	strcpy(current_num, "");
 	while(1){
 		//reading from serial forever
 		read_(fd);
