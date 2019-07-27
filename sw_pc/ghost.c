@@ -34,6 +34,7 @@
 
 //michele: struct per inizializzazione porta seriale
 struct termios current;
+int vett[5];//debug
 //davide: global variables to handle data read from serial
 char current_num[4];
 int current_finger = 0; //0,1,2,3,4
@@ -308,9 +309,33 @@ void read_(int fd){
 	}
 }
 
-void *playCnt(void* cnt) {
+//michele: funzione di debug per scrittura
+int* debug_(Controller* cnt){
+	
+	sleep(5);
+	int i = 0;
+	while(1){
+		vett[i] = rand() % 999;
+		if(i == 4){
+			set_finger(cnt, MIN_SOGL_VAL, vett);
+			memset(vett, 0, sizeof(vett));
+			i = 0;
+		}
+		else{
+			i++;
+		}
+	}
+}
 
-	//michele: chiamo funzioni per comunicazione seriale
+//michele: thread di debug
+void *playCnt(void* cnt){
+	while(1){
+		debug_(cnt);
+	}
+}
+
+//michele: thread quello buono
+/*void *playCnt(void* cnt) {
 	
 	int fd = port_configure();
 	if(fd<0) perror("[playCnt]errore nel file descriptor");
@@ -320,11 +345,12 @@ void *playCnt(void* cnt) {
 		//reading from serial forever
 		read_(fd);
 		if(structure_ready){
-			set_finger(cnt, MIN_SOGL_VAL, hand);
+			set_finger(cnt, MIN_SOGL_VAL, vett);
 			structure_ready = 0;
 		}
 	}
 } 
+*/
 /*
  * Tiziano
  * funzione che resetta lo stato a tutti i tasti del controller
@@ -414,7 +440,7 @@ void controller(char **parsed, Controller *cnt){
 				printf("\tsoglia impostata a %d\n\n",val);
 			
 			}else{
-				printf("\tIl valore deve essere compreso tra %d e %d\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+				printf("\tIl valore deve essere compreso tra %d e %d\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
 			}
 		}
 		else{
