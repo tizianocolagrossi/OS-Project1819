@@ -328,29 +328,29 @@ int* debug_(Controller* cnt){
 }
 
 //michele: thread di debug
-void *playCnt(void* cnt){
+void *playCnt_(void* cnt){
 	while(1){
-		debug_(cnt);
+		debug_(cnt); 
 	}
 }
 
 //michele: thread quello buono
-/*void *playCnt(void* cnt) {
+void *playCnt(void* cnt) {
 	
 	int fd = port_configure();
-	if(fd<0) perror("[playCnt]errore nel file descriptor");
-	//davide: initialize current_num to empty string
+	if(fd<0) perror("[playCnt] error on file descriptor");
+	//set to empty string
 	strcpy(current_num, "");
 	while(1){
 		//reading from serial forever
 		read_(fd);
 		if(structure_ready){
-			set_finger(cnt, MIN_SOGL_VAL, vett);
+			set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;
 		}
 	}
 } 
-*/
+
 /*
  * Tiziano
  * funzione che resetta lo stato a tutti i tasti del controller
@@ -363,14 +363,25 @@ void clearCnt(Controller* cnt){
 }
 
 /*
- * Tiziano
+ * michele
  * funzione che lancia un thread per il controller
+ * se digitato in aggiunta "-t" lancia il thread di debug
  */
-void start(Controller* cnt){
+void start(Controller* cnt, char **parsed){
+	pthread_t thread_id_; 
 	pthread_t thread_id; 
     debugPrintMsg("Sto per lanciare il thread"); 
-    pthread_create(&thread_id, NULL, playCnt, cnt);
-    cnt->t_id = (void*) thread_id;
+    
+    if (parsed[1] == NULL){
+    	pthread_create(&thread_id, NULL, playCnt, cnt);
+    	cnt->t_id = (void*) thread_id;
+    }
+    
+    else if(strcmp(parsed[1],"-t")==0){
+    	pthread_create(&thread_id, NULL, playCnt_, cnt);
+    	cnt->t_id = (void*) thread_id_;
+    }
+
 }
 
 /*
@@ -405,26 +416,31 @@ void controller(char **parsed, Controller *cnt){
 		if(strcmp(parsed[2],"medio")==0)sw1=medio;
 		if(strcmp(parsed[2],"indice")==0)sw1=indice;
 		if(strcmp(parsed[2],"pollice")==0)sw1=pollice;
-		switch (sw1){
-			case 0:
-				editElemCharAss(cnt, mignolo, parsed[3][0]);
-				break;
-			case 1:
-				editElemCharAss(cnt, anulare, parsed[3][0]);
-				break;
-			case 2:
-				editElemCharAss(cnt, medio, parsed[3][0]);
-				break;
-			case 3:
-				editElemCharAss(cnt, indice, parsed[3][0]);
-				break;
-			case 4:
-				editElemCharAss(cnt, pollice, parsed[3][0]);
-				break;
-			default:
-				printf("le dita disponibili per modificare i settaggi sono:\n"
-					   "\tmignolo|anulare|medio|indice|pollice\n");
-				break;
+		
+		//michele 
+		if(parsed[3] == NULL) printf("\t[USAGE] controller -m [mignolo|anulare|...] [carattere da assegnare]\n\n");
+		else {
+			switch (sw1){
+				case 0:
+					editElemCharAss(cnt, mignolo, parsed[3][0]);
+					break;
+				case 1:
+					editElemCharAss(cnt, anulare, parsed[3][0]);
+					break;
+				case 2:
+					editElemCharAss(cnt, medio, parsed[3][0]);
+					break;
+				case 3:
+					editElemCharAss(cnt, indice, parsed[3][0]);
+					break;
+				case 4:
+					editElemCharAss(cnt, pollice, parsed[3][0]);
+					break;
+				default:
+					printf("le dita disponibili per modificare i settaggi sono:\n"
+						   "\tmignolo|anulare|medio|indice|pollice\n");
+					break;
+			}
 		}
 	}
 	if(strcmp(parsed[1],"-s")==0){
@@ -444,7 +460,7 @@ void controller(char **parsed, Controller *cnt){
 			}
 		}
 		else{
-			printf("ERRORE: inserire un valore di soglia valido. Consulta la sezione help\n\n");
+			printf("\t[USAGE] controller -s [intero tra %d e %d]\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
 		}
 	}
 }
@@ -517,12 +533,13 @@ void quitShell(Controller* cnt){
 int cmdHandler(char** parsed, Controller *cnt){
 	debugPrintMsg("dentroCmdHandler");
 	if(parsed[0]==NULL)parsed[0]="";
-	int nCmdSupportati=9, i, switchArg=100;
+	int nCmdSupportati=10, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
    	ListCmd[1]="h";
    	ListCmd[2]="quit";
+   	ListCmd[9]="q"; //michele: ho aggiunto questo, è più comodo
    	ListCmd[3]="exit";
    	ListCmd[4]="hi";
    	ListCmd[5]="controller";
@@ -550,6 +567,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 			return 1; // perche usato dall if che chiama cmdHandler!
 		case 2:
 		case 3:
+		case 9:
 			quitShell(cnt);
 		case 4:
 			sayHi(parsed);
@@ -558,7 +576,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 			controller(parsed, cnt);
 			break;
 		case 6:
-			start(cnt);
+			start(cnt, parsed);
 			break;
 		case 7:
 			stop(cnt);
