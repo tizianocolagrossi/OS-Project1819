@@ -151,6 +151,8 @@ void init_shell(){
 			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
 			"\n\n"
 			"Digita \"help\" o \"h\" per ricevere informazioni per l'utilizzo della shell\n"
+			"\n\n"
+			"Digita \"quit\" ,\"q\" o \"exit\" per chiuedere la shell\n"
 			"\n\n\n"
 			);                                                     
 }
