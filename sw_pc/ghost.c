@@ -20,8 +20,8 @@
 #define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
 
-#define MIN_SOGL_VAL 800
-#define MAX_SOGL_VAL 900 
+#define MIN_SOGL_VAL 900
+#define MAX_SOGL_VAL 999 
 
 volatile sig_atomic_t termReq = 0; //Flag per terminazione 
 
