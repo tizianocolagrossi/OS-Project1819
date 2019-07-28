@@ -22,6 +22,7 @@
 
 #define MIN_SOGL_VAL 700
 #define MAX_SOGL_VAL 999 
+#define NUM_CALIB_SAMPLES 1000
 
 volatile sig_atomic_t termReq = 0; //Flag per terminazione 
 
@@ -38,11 +39,14 @@ volatile sig_atomic_t termReq = 0; //Flag per terminazione
 //michele: struct per inizializzazione porta seriale
 struct termios current;
 int vett[5];//debug
+
 //davide: global variables to handle data read from serial
 char current_num[4];
 int current_finger = 0; //0,1,2,3,4
 int hand[5];
 int structure_ready = 0; //it will be set to 1 when hand is filled
+int calib_threesholds[5]; //in case of calibration request
+
 
 /*
  * Tiziano
@@ -80,12 +84,26 @@ void test(Controller* cnt, char** parsed){
 			printf(
 				"TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST\n"
 			);
-			for(int i = 0; i<cnt->size;i++){
-				setElemento(cnt,i);
-				setState(cnt);
-				resetElemento(cnt, i);
-				setState(cnt);
-			}
+			setElemento(cnt,mignolo);
+			setState(cnt);
+			resetElemento(cnt, mignolo);
+			setState(cnt);
+			setElemento(cnt,pollice);
+			setState(cnt);
+			resetElemento(cnt, pollice);
+			setState(cnt);
+			setElemento(cnt,anulare);
+			setState(cnt);
+			resetElemento(cnt, anulare);
+			setState(cnt);
+			setElemento(cnt,medio);
+			setState(cnt);
+			resetElemento(cnt, medio);
+			setState(cnt);
+			setElemento(cnt,indice);
+			setState(cnt);
+			resetElemento(cnt, indice);
+			setState(cnt);
 		}
 		if(strcmp(parsed[1],"-mLngStrk")==0){
 			printf(
@@ -253,17 +271,6 @@ int port_configure(void){
 	return fd;
 }
 
-//davide: function to compute average value of given array
-float average(int* array, int size){
-	if(!array || size < 1) return -1;
-	int i:
-	float sum = 0.0;
-	for(i=0; i<size; i++){
-		sum += array[i];
-	}
-	return sum/size;
-}
-
 
 //davide: function to read from the serial port and set fingers in the struct
 void read_(int fd){
@@ -341,39 +348,119 @@ void *playCnt(void* cnt) {
 	int fd = port_configure();
 	//davide: if connection not created, return to shell
 	if(fd<0) {
-		printf("Please verify connection of your controller\n");
-		return;
-	};
-	//davide: set to empty string
+		printf("Please verify connection of your controller");
+		return NULL;
+	}
+	// davide: set to empty string
 	strcpy(current_num, "");
+	//davide: reading from serial forever
 	while(1){
-		//davide: reading from serial forever
 		read_(fd);
 		if(structure_ready){
+			//michele: chiama funzione settaggio dito
 			set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;
 		}
 	}
 }
 
+//davide: function to compute average value of given array
+int average(int* array, int size){
+	if(!array || size < 1) return -1;
+	int i;
+	int sum = 0;
+	for(i=0; i<size; i++){
+		sum += array[i];
+	}
+	return sum/size;
+}
+
 //davide: thread for initial calibration
+//TODO - POSSO CAMBIARE APPROCCIO, FORSE è LEGGERMENTE PIù VELOCE
+//TODO - CHIEDETEMI COME APPENA SPIZZATE LA FUNZIONE CHE VI SPIEGO L'ALTRA OPZIONE
 void *calibration(void){
+	int counter;
+	int min[5];
+	int max[5];
+	int i;
+	
 	int fd = port_configure();
 	//davide: if connection not created, return to shell
 	if(fd<0) {
 		printf("Please verify connection of your controller\n");
-		return;
-	};
+		return NULL;
+	}
+	
+	//davide: allocate a matrix[5 * NUM_CALIB_SAMPLES] and initialize to zero
+	int** calib_matrix = (int**) malloc(sizeof(int*)*5);
+	for(i=0; i<5; i++){
+		calib_matrix[i] = (int*) calloc(NUM_CALIB_SAMPLES, sizeof(int));
+	}
+	
+	//davide: first let's get minimum values
+	counter = 0;
+	
 	//davide: set to empty string
 	strcpy(current_num, "");
-	while(1){
-		//davide: reading from serial forever
+	printf("Please keep you hand opened and firm\n");
+	sleep(2);
+	while(counter < NUM_CALIB_SAMPLES){
+		//davide: read from serial and fill calib_matrix with minimum values
 		read_(fd);
 		if(structure_ready){
-			set_finger(cnt, MIN_SOGL_VAL, hand);
+			for(i=0; i<5; i++){
+				calib_matrix[i][counter] = hand[i];
+			}
+			counter++;
 			structure_ready = 0;
 		}
 	}
+	
+	//davide: get average minimum values for each finger
+	for(i=0; i<5; i++){
+		int val = average(calib_matrix[i], NUM_CALIB_SAMPLES);
+		min[i] = val;
+	}
+	printf("DONE!\n");
+	
+	//davide: restart and get maximum values
+	counter = 0;
+	
+	//davide: reset to empty string, just to be sure
+	strcpy(current_num, "");
+	printf("Please keep you hand close and firm\n");
+	sleep(2);
+	while(counter < NUM_CALIB_SAMPLES){
+		//davide: read from serial and fill calib_matrix with maximum values
+		read_(fd);
+		if(structure_ready){
+			for(i=0; i<5; i++){
+				calib_matrix[i][counter] = hand[i];
+			}
+			counter++;
+			structure_ready = 0;
+		}
+	}
+	
+	//davide: get average maximum values for each finger
+	for(i=0; i<5; i++){
+		int val = average(calib_matrix[i], NUM_CALIB_SAMPLES);
+		max[i] = val;
+	}
+	printf("DONE!\n");
+	
+	//davide: set global variable
+	for(i=0; i<5; i++){
+		int val = (min[i] + max[i]) / 2;
+		calib_threesholds[i] = val;
+	}
+	printf("\n----------CALIBRATION SUCCESFULLY COMPLETED!----------\n");
+	
+	//davide: free allocated memory and return to shell
+	for(i=0; i<5; i++) free(calib_matrix[i]);
+	free(calib_matrix);
+	
+	return NULL;
 }
 
 /*
@@ -432,7 +519,7 @@ void controller(char **parsed, Controller *cnt){
 	}
 	if(strcmp(parsed[1],"-m")==0){
 		if(parsed[2]==NULL){
-			printf("devi inserire il dito di cui vuoi modificare il settaggio\n");
+			printf("\t[USAGE] controller -m [mignolo|anulare|...] [carattere da assegnare]\n\n");
 			return;
 		}
 		enum tipoElemento sw1 = -1;
@@ -462,7 +549,7 @@ void controller(char **parsed, Controller *cnt){
 					editElemCharAss(cnt, pollice, parsed[3][0]);
 					break;
 				default:
-					printf("le dita disponibili per modificare i settaggi sono:\n"
+					printf("Le dita disponibili per modificare i settaggi sono:\n"
 						   "\tmignolo|anulare|medio|indice|pollice\n");
 					break;
 			}
@@ -546,7 +633,8 @@ void quitShell(Controller* cnt){
 	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);
-	printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
+	printf("\tARRIVEDERCI, NON FA DANNI ME RACCOMANDO !");
+	printf("\n\n");
 	exit(0);
 }
 
@@ -564,13 +652,13 @@ int cmdHandler(char** parsed, Controller *cnt){
    	ListCmd[0]="help";
    	ListCmd[1]="h";
    	ListCmd[2]="quit";
-   	ListCmd[9]="q"; //michele: ho aggiunto questo, è più comodo
-   	ListCmd[3]="exit";
-   	ListCmd[4]="hi";
-   	ListCmd[5]="controller";
-   	ListCmd[6]="start";
-   	ListCmd[7]="stop";
-   	ListCmd[8]="test";
+   	ListCmd[3]="q"; //michele: ho aggiunto questo, è più comodo
+   	ListCmd[4]="exit";
+   	ListCmd[5]="hi";
+   	ListCmd[6]="controller";
+   	ListCmd[7]="start";
+   	ListCmd[8]="stop";
+   	ListCmd[9]="test";
    	
    	
 
@@ -592,21 +680,21 @@ int cmdHandler(char** parsed, Controller *cnt){
 			return 1; // perche usato dall if che chiama cmdHandler!
 		case 2:
 		case 3:
-		case 9:
-			quitShell(cnt);
 		case 4:
+			quitShell(cnt);
+		case 5:
 			sayHi(parsed);
 			break;
-		case 5:
+		case 6:
 			controller(parsed, cnt);
 			break;
-		case 6:
+		case 7:
 			start(cnt, parsed);
 			break;
-		case 7:
+		case 8:
 			stop(cnt);
 			break;
-		case 8:
+		case 9:
 			test(cnt, parsed);
 			break;
 		default:

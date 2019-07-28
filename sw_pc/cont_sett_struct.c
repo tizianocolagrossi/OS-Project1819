@@ -12,11 +12,12 @@
 
 #define DELAY 200000
 #define NUM_ELEMENTS 5
+// '1' equivale a spacebar
 #define MIG 's'
 #define ANU 'w'
 #define MED 'a'
 #define IND 'd'
-#define POL 'c'
+#define POL '1'
 #define SOGLIA 800
 
 /*
@@ -39,37 +40,57 @@ void Controller_init(Controller* cnt) {
 	for(int i = 0; i<NUM_ELEMENTS; i++){
 		cnt->elementi[i].premuto=0;
 		cnt->elementi[i].statoFisico=0;
-		cnt->elementi[i].sAss = (char*)malloc(2*sizeof(char));
+		cnt->elementi[i].sAss = (char*)malloc(10*sizeof(char));
 		switch(i){
 			case 0:
 				cnt->elementi[i].tipo = mignolo;
 				cnt->elementi[i].charAss = MIG;
-				cnt->elementi[i].sAss[0] = MIG;
-				cnt->elementi[i].sAss[1] = '\0';
+				if(MIG=='1'){
+					cnt->elementi[i].sAss = "space";
+				}else{
+					cnt->elementi[i].sAss[0] = MIG;
+					cnt->elementi[i].sAss[1] = '\0';
+				}
 				break;
 			case 1:
 				cnt->elementi[i].tipo = anulare;
 				cnt->elementi[i].charAss = ANU;
-				cnt->elementi[i].sAss[0] = ANU;
-				cnt->elementi[i].sAss[1] = '\0';
+				if(ANU=='1'){
+					cnt->elementi[i].sAss = "space";
+				}else{
+					cnt->elementi[i].sAss[0] = ANU;
+					cnt->elementi[i].sAss[1] = '\0';
+				}
 				break;
 			case 2:
 				cnt->elementi[i].tipo = medio;
 				cnt->elementi[i].charAss = MED;
-				cnt->elementi[i].sAss[0] = MED;
-				cnt->elementi[i].sAss[1] = '\0';
+				if(MED=='1'){
+					cnt->elementi[i].sAss = "space";
+				}else{
+					cnt->elementi[i].sAss[0] = MED;
+					cnt->elementi[i].sAss[1] = '\0';
+				}
 				break;
 			case 3:
 				cnt->elementi[i].tipo = indice;
 				cnt->elementi[i].charAss = IND;
-				cnt->elementi[i].sAss[0] = IND;
-				cnt->elementi[i].sAss[1] = '\0';
+				if(IND=='1'){
+					cnt->elementi[i].sAss = "space";
+				}else{
+					cnt->elementi[i].sAss[0] = IND;
+					cnt->elementi[i].sAss[1] = '\0';
+				}
 				break;
 			case 4:
 				cnt->elementi[i].tipo = pollice;
 				cnt->elementi[i].charAss = POL;
-				cnt->elementi[i].sAss[0] = POL;
-				cnt->elementi[i].sAss[1] = '\0';
+				if(POL=='1'){
+					cnt->elementi[i].sAss = "space";
+				}else{
+					cnt->elementi[i].sAss[0] = POL;
+					cnt->elementi[i].sAss[1] = '\0';
+				}
 				break;
 		}
 	}
@@ -120,8 +141,12 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 		return;
 	}
 	cnt->elementi[tipo].charAss = newCharAss;
-	cnt->elementi[tipo].sAss[0] = newCharAss;
-	cnt->elementi[tipo].sAss[1] = '\0';
+	if(newCharAss=='1'){
+		cnt->elementi[tipo].sAss = "space";
+	}else{
+		cnt->elementi[tipo].sAss[0] = newCharAss;
+		cnt->elementi[tipo].sAss[1] = '\0';
+	}
 	printf("\tnuovo carattere impostato per l'elemento %d > %c\n", tipo, cnt->elementi[tipo].charAss);
 	return;
 }
