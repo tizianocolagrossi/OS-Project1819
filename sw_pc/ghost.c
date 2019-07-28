@@ -328,17 +328,18 @@ void *playCnt_(void* cnt){
 void *playCnt(void* cnt) {
 	
 	int fd = port_configure();
-	//davide: if connection not created, return to shell
+	//michele: se capita un errore nella comunicazine seriale continua nella shell
 	if(fd<0) {
-		printf("Please verify connection of your controller\n");
-		return;
-	};
-	//davide: set to empty string
+		printf("Please verify connection of your controller");
+		return NULL;
+	}
+	// davide: set to empty string
 	strcpy(current_num, "");
 	while(1){
 		//davide: reading from serial forever
 		read_(fd);
 		if(structure_ready){
+			//michele: chiama funzione settaggio dito
 			set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;
 		}
@@ -401,7 +402,7 @@ void controller(char **parsed, Controller *cnt){
 	}
 	if(strcmp(parsed[1],"-m")==0){
 		if(parsed[2]==NULL){
-			printf("devi inserire il dito di cui vuoi modificare il settaggio\n");
+			printf("\t[USAGE] controller -m [mignolo|anulare|...] [carattere da assegnare]\n\n");
 			return;
 		}
 		enum tipoElemento sw1 = -1;
@@ -431,7 +432,7 @@ void controller(char **parsed, Controller *cnt){
 					editElemCharAss(cnt, pollice, parsed[3][0]);
 					break;
 				default:
-					printf("le dita disponibili per modificare i settaggi sono:\n"
+					printf("Le dita disponibili per modificare i settaggi sono:\n"
 						   "\tmignolo|anulare|medio|indice|pollice\n");
 					break;
 			}
@@ -515,7 +516,8 @@ void quitShell(Controller* cnt){
 	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);
-	printf("ARRIVEDERCI, NON FA DANNI ME RACCOMANDO !\n");
+	printf("\tARRIVEDERCI, NON FA DANNI ME RACCOMANDO !");
+	printf("\n\n");
 	exit(0);
 }
 
@@ -533,13 +535,13 @@ int cmdHandler(char** parsed, Controller *cnt){
    	ListCmd[0]="help";
    	ListCmd[1]="h";
    	ListCmd[2]="quit";
-   	ListCmd[9]="q"; //michele: ho aggiunto questo, è più comodo
-   	ListCmd[3]="exit";
-   	ListCmd[4]="hi";
-   	ListCmd[5]="controller";
-   	ListCmd[6]="start";
-   	ListCmd[7]="stop";
-   	ListCmd[8]="test";
+   	ListCmd[3]="q"; //michele: ho aggiunto questo, è più comodo
+   	ListCmd[4]="exit";
+   	ListCmd[5]="hi";
+   	ListCmd[6]="controller";
+   	ListCmd[7]="start";
+   	ListCmd[8]="stop";
+   	ListCmd[9]="test";
    	
    	
 
@@ -561,21 +563,21 @@ int cmdHandler(char** parsed, Controller *cnt){
 			return 1; // perche usato dall if che chiama cmdHandler!
 		case 2:
 		case 3:
-		case 9:
-			quitShell(cnt);
 		case 4:
+			quitShell(cnt);
+		case 5:
 			sayHi(parsed);
 			break;
-		case 5:
+		case 6:
 			controller(parsed, cnt);
 			break;
-		case 6:
+		case 7:
 			start(cnt, parsed);
 			break;
-		case 7:
+		case 8:
 			stop(cnt);
 			break;
-		case 8:
+		case 9:
 			test(cnt, parsed);
 			break;
 		default:
