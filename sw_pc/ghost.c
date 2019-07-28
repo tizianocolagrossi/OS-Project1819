@@ -80,12 +80,26 @@ void test(Controller* cnt, char** parsed){
 			printf(
 				"TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST\n"
 			);
-			for(int i = 0; i<cnt->size;i++){
-				setElemento(cnt,i);
-				setState(cnt);
-				resetElemento(cnt, i);
-				setState(cnt);
-			}
+			setElemento(cnt,mignolo);
+			setState(cnt);
+			resetElemento(cnt, mignolo);
+			setState(cnt);
+			setElemento(cnt,pollice);
+			setState(cnt);
+			resetElemento(cnt, pollice);
+			setState(cnt);
+			setElemento(cnt,anulare);
+			setState(cnt);
+			resetElemento(cnt, anulare);
+			setState(cnt);
+			setElemento(cnt,medio);
+			setState(cnt);
+			resetElemento(cnt, medio);
+			setState(cnt);
+			setElemento(cnt,indice);
+			setState(cnt);
+			resetElemento(cnt, indice);
+			setState(cnt);
 		}
 		if(strcmp(parsed[1],"-mLngStrk")==0){
 			printf(
