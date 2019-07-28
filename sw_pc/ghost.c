@@ -20,7 +20,7 @@
 #define MAX_CMD 10  // max comandi per linea supportati
 #define DEBUG 1
 
-#define MIN_SOGL_VAL 900
+#define MIN_SOGL_VAL 700
 #define MAX_SOGL_VAL 999 
 
 volatile sig_atomic_t termReq = 0; //Flag per terminazione 
@@ -253,6 +253,18 @@ int port_configure(void){
 	return fd;
 }
 
+//davide: function to compute average value of given array
+float average(int* array, int size){
+	if(!array || size < 1) return -1;
+	int i:
+	float sum = 0.0;
+	for(i=0; i<size; i++){
+		sum += array[i];
+	}
+	return sum/size;
+}
+
+
 //davide: function to read from the serial port and set fingers in the struct
 void read_(int fd){
 	int i;
@@ -342,7 +354,27 @@ void *playCnt(void* cnt) {
 			structure_ready = 0;
 		}
 	}
-} 
+}
+
+//davide: thread for initial calibration
+void *calibration(void){
+	int fd = port_configure();
+	//davide: if connection not created, return to shell
+	if(fd<0) {
+		printf("Please verify connection of your controller\n");
+		return;
+	};
+	//davide: set to empty string
+	strcpy(current_num, "");
+	while(1){
+		//davide: reading from serial forever
+		read_(fd);
+		if(structure_ready){
+			set_finger(cnt, MIN_SOGL_VAL, hand);
+			structure_ready = 0;
+		}
+	}
+}
 
 /*
  * Tiziano
