@@ -151,7 +151,6 @@ void init_shell(){
  */
 
 void help(){
-	//michele
 	printf(
 		"\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
