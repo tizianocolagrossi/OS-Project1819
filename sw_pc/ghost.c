@@ -328,11 +328,15 @@ void *playCnt_(void* cnt){
 void *playCnt(void* cnt) {
 	
 	int fd = port_configure();
-	if(fd<0) perror("[playCnt] error on file descriptor");
-	//set to empty string
+	//davide: if connection not created, return to shell
+	if(fd<0) {
+		printf("Please verify connection of your controller\n");
+		return;
+	};
+	//davide: set to empty string
 	strcpy(current_num, "");
 	while(1){
-		//reading from serial forever
+		//davide: reading from serial forever
 		read_(fd);
 		if(structure_ready){
 			set_finger(cnt, MIN_SOGL_VAL, hand);
