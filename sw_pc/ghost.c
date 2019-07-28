@@ -9,6 +9,7 @@
 
 //tiziano
 #include "cont_sett_struct.h"
+#include <signal.h> // POSIX signal handler
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +22,8 @@
 
 #define MIN_SOGL_VAL 800
 #define MAX_SOGL_VAL 900 
+
+volatile sig_atomic_t termReq = 0; //Flag per terminazione 
 
 //michele
 #include "set_finger.h"
@@ -57,35 +60,32 @@ void debugPrintMsg(char *msg){
 }
 
 /*
- * Tiziano
+ * Tiziano handler per SIGKILL o SIGINT o SIGTERM
+ * setta un flag che viene controllato sempre dal main 
+ */
+ void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
+	//handler
+	debugPrintMsg("Dentro interrupt handler");
+	termReq = 1;
+}
+
+/*
+ * Tiziano test per il controller
  */
 void test(Controller* cnt, char** parsed){
 		xdo_t * x = cnt->xdo;
 		if(parsed[1]==NULL)return;
+		sleep(3);
 		if(strcmp(parsed[1],"-mSngStrk")==0){
 			printf(
 				"TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST\n"
 			);
-			setElemento(cnt,mignolo);
-			setState(cnt);
-			resetElemento(cnt, mignolo);
-			setState(cnt);
-			setElemento(cnt,anulare);
-			setState(cnt);
-			resetElemento(cnt, anulare);
-			setState(cnt);
-			setElemento(cnt,medio);
-			setState(cnt);
-			resetElemento(cnt, medio);
-			setState(cnt);
-			setElemento(cnt,indice);
-			setState(cnt);
-			resetElemento(cnt, indice);
-			setState(cnt);
-			setElemento(cnt,pollice);
-			setState(cnt);
-			resetElemento(cnt, pollice);
-			setState(cnt);
+			for(int i = 0; i<cnt->size;i++){
+				setElemento(cnt,i);
+				setState(cnt);
+				resetElemento(cnt, i);
+				setState(cnt);
+			}
 		}
 		if(strcmp(parsed[1],"-mLngStrk")==0){
 			printf(
@@ -97,27 +97,15 @@ void test(Controller* cnt, char** parsed){
 			sleep(1);
 			resetElemento(cnt, mignolo);
 			setState(cnt);
-			setElemento(cnt,anulare);
-			setState(cnt);
-			sleep(1);
-			resetElemento(cnt, anulare);
-			setState(cnt);
-			setElemento(cnt,medio);
-			setState(cnt);
-			sleep(1);
-			resetElemento(cnt, medio);
-			setState(cnt);
-			setElemento(cnt,indice);
-			setState(cnt);
-			sleep(1);
-			resetElemento(cnt, indice);
-			setState(cnt);
-			setElemento(cnt,pollice);
-			setState(cnt);
-			sleep(1);
-			resetElemento(cnt, pollice);
-			setState(cnt);
 			printf("\n");
+			for(int i = 1; i<cnt->size; i++){
+				setElemento(cnt,i);
+				setState(cnt);
+				sleep(1);
+				resetElemento(cnt, i);
+				setState(cnt);
+				printf("\n");
+			}
 		}
 		
 		
@@ -609,9 +597,23 @@ int parseString(char *str, char** parsed, Controller *cnt){
 }
 
 
-
+/*
+ * Tiziano: iniziallizzazione shell, struct e int_handler
+ */
 int main(int argc, char **argv){
+
+	struct sigaction act;
+	memset (&act, '\0', sizeof(act));
+	/* Use the sa_sigaction field because the handles has two additional parameters */
+	act.sa_sigaction = &interrupt_handler;
+	/* The SA_SIGINFO flag tells sigaction() to use the sa_sigaction field, not sa_handler. */
+	act.sa_flags = SA_SIGINFO;
 	
+	sigaction(SIGINT, &act, NULL);
+	sigaction(SIGKILL, &act, NULL);
+	sigaction(SIGTERM, &act, NULL);
+	
+    
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
 	
 	init_shell();
@@ -619,10 +621,13 @@ int main(int argc, char **argv){
 	Controller cnt;
 	Controller_init(&cnt);
 	
-	while(1){
+	while(!termReq){
 		if(getCmd(inStr)) continue;
 		parseString(inStr, parsedArg, &cnt);
 	}
+	//Tiziano: se arriva qui è perche ha ricevito il segnale di SIGINT SIGKILL o SIGTERM
+	//	quindi pulisco quello che devo pulire
+	quitShell(&cnt);
 }
 
 
