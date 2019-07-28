@@ -122,7 +122,8 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	cnt->elementi[tipo].charAss = newCharAss;
 	cnt->elementi[tipo].sAss[0] = newCharAss;
 	cnt->elementi[tipo].sAss[1] = '\0';
-	printf("\tnuovo carattere impostato per l'elemento %d > %c\n", tipo, cnt->elementi[tipo].charAss);
+	printf("\tnuovo carattere impostato per l'elemento %d > %c", tipo, cnt->elementi[tipo].charAss);
+	printf("\n\n");
 	return;
 }
 
