@@ -379,7 +379,7 @@ int average(int* array, int size){
 //TODO - POSSO CAMBIARE APPROCCIO, FORSE è LEGGERMENTE PIù VELOCE
 //TODO - CHIEDETEMI COME APPENA SPIZZATE LA FUNZIONE CHE VI SPIEGO L'ALTRA OPZIONE
 //prova
-void *calibration(void){
+void *calibration(){
 	int counter;
 	int min[5];
 	int max[5];
@@ -462,6 +462,18 @@ void *calibration(void){
 	free(calib_matrix);
 	
 	return NULL;
+}
+
+//michele: function that call calibration func 
+//####################################
+//####################################
+//####################################
+//####################################
+//####### TIZIANO#####################
+// da erroe nella free();
+void calib_(){
+	pthread_t thread_id;
+	pthread_create(&thread_id, NULL, calibration, NULL);
 }
 
 /*
@@ -647,7 +659,7 @@ void quitShell(Controller* cnt){
 int cmdHandler(char** parsed, Controller *cnt){
 	debugPrintMsg("dentroCmdHandler");
 	if(parsed[0]==NULL)parsed[0]="";
-	int nCmdSupportati=10, i, switchArg=100;
+	int nCmdSupportati=11, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
@@ -660,6 +672,7 @@ int cmdHandler(char** parsed, Controller *cnt){
    	ListCmd[7]="start";
    	ListCmd[8]="stop";
    	ListCmd[9]="test";
+   	ListCmd[10]="calibrate";
    	
    	
 
@@ -697,6 +710,9 @@ int cmdHandler(char** parsed, Controller *cnt){
 			break;
 		case 9:
 			test(cnt, parsed);
+			break;
+		case 10:
+			calib_();
 			break;
 		default:
 			printf(
