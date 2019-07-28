@@ -378,6 +378,7 @@ int average(int* array, int size){
 //davide: thread for initial calibration
 //TODO - POSSO CAMBIARE APPROCCIO, FORSE è LEGGERMENTE PIù VELOCE
 //TODO - CHIEDETEMI COME APPENA SPIZZATE LA FUNZIONE CHE VI SPIEGO L'ALTRA OPZIONE
+//prova
 void *calibration(void){
 	int counter;
 	int min[5];
