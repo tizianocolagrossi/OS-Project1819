@@ -186,6 +186,9 @@ void help(){
 		"- controller -s [valore soglia (intero compreso tra %d e %d)]\n"
 		"\tSetta il valore minimo [angolo piega] per l'attivazione del tasto\n"
 		"\n\n"
+		"- calibrate\n"
+		"\tInizio processo di calibrazione sensori\n"
+		"\n\n"
 		"- start\n" 
 		"\tAvvia il controller\n"
 		"\n\n"
@@ -355,11 +358,14 @@ void *playCnt(void* cnt) {
 	// davide: set to empty string
 	strcpy(current_num, "");
 	//davide: reading from serial forever
+	
 	while(1){
 		read_(fd);
 		if(structure_ready){
-			//michele: chiama funzione settaggio dito
-			set_finger(cnt, MIN_SOGL_VAL, hand);
+			//michele: se calib_requrest è settato lancio set_finger_()
+			if(calib_request == 1) set_finger_(cnt, calib_threesholds, hand);
+			//michele: altrimenti lancio set_finger()
+			else if(calib_request == 0)set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;
 		}
 	}
@@ -468,13 +474,6 @@ void *calibration(){
 	return NULL;
 }
 
-//michele: function that call calibration func 
-//####################################
-//####################################
-//####################################
-//####################################
-//####### TIZIANO#####################
-// da erroe nella free();
 void calib_(){
 	pthread_t thread_id;
 	printf("entro qua\n");

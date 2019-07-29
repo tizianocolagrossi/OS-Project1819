@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DIM_VETT_MANO 4
+
 //michele: dai, si capisce su
 int str_len(char* buffer){
 	int i = 0;
@@ -45,7 +47,8 @@ int serial_string(char* buffer){
 // are in a range that was set by user 
 void set_finger(Controller* cnt, int soglia, int* hand){
 	
-	int i = 4;
+	int i = DIM_VETT_MANO;
+	hand = hand + 4; //vado alla fine del vettore
 	while (i >= 0){
 		if (*hand >= soglia) {
 			setElemento(cnt, i);
@@ -54,8 +57,30 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 		else {
 			resetElemento(cnt, i);
 		}
-		hand++;
+		hand--;
 		i--;
+	}
+	setState(cnt);
+}
+
+// michele: [ALTERNATIVE]function that control if analog values sent by arduino
+// are in a range that was set by user 
+void set_finger_(Controller* cnt, int* vett_soglie, int* hand){
+	
+	int i = DIM_VETT_MANO, c = 0;
+	hand = hand + i; //vado alla fine del vettore
+	while (i >= 0 && c <= 4){
+		if (*hand >= *vett_soglie) {
+			setElemento(cnt, i);
+			printf("[set_finger]dito %d settato\n", i);
+		}
+		else {
+			resetElemento(cnt, i);
+		}
+		hand--;        // incremmento i valori
+		i--;		   // dei puntatori
+		vett_soglie++; // e dei contatori
+		c++;		   //	
 	}
 	setState(cnt);
 }
