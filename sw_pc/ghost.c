@@ -44,8 +44,9 @@ int vett[5];//debug
 char current_num[4];
 int current_finger = 0; //0,1,2,3,4
 int hand[5];
-int structure_ready = 0; //it will be set to 1 when hand is filled
+int structure_ready = 0;  //it will be set to 1 when hand is filled
 int calib_threesholds[5]; //in case of calibration request
+int calib_request = 0;    //it will be set to 1 when at least one calibration was done
 
 
 /*
@@ -450,11 +451,14 @@ void *calibration(){
 	}
 	printf("DONE!\n");
 	
-	//davide: set global variable
+	//davide: set global variable and trigger
 	for(i=0; i<5; i++){
 		int val = (min[i] + max[i]) / 2;
 		calib_threesholds[i] = val;
+		printf("%d > %d\n", i, calib_threesholds[i]);
 	}
+	calib_request = 1;
+	
 	printf("\n----------CALIBRATION SUCCESFULLY COMPLETED!----------\n");
 	
 	//davide: free allocated memory and return to shell
