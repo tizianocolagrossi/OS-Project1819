@@ -473,6 +473,7 @@ void *calibration(){
 // da erroe nella free();
 void calib_(){
 	pthread_t thread_id;
+	printf("entro qua\n");
 	pthread_create(&thread_id, NULL, calibration, NULL);
 }
 
@@ -642,7 +643,9 @@ void quitShell(Controller* cnt){
 	//per sicurezza rilascia tutti i tasti del controller
 	clearCnt(cnt);
 	for(int i = 0; i<cnt->size;i++){
+		printf("libero il comando %d\n", i);
 		free(cnt->elementi[i].sAss);
+		printf("liberato\n");
 	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);

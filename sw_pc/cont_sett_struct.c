@@ -86,7 +86,12 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].tipo = pollice;
 				cnt->elementi[i].charAss = POL;
 				if(POL=='1'){
-					cnt->elementi[i].sAss = "space";
+					cnt->elementi[i].sAss[0] = 's';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[2] = 'a';
+					cnt->elementi[i].sAss[3] = 'c';
+					cnt->elementi[i].sAss[4] = 'e';
+					cnt->elementi[i].sAss[5] = '\0';
 				}else{
 					cnt->elementi[i].sAss[0] = POL;
 					cnt->elementi[i].sAss[1] = '\0';
