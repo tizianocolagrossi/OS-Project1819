@@ -492,8 +492,9 @@ void clearCnt(Controller* cnt){
 }
 
 /*
- * michele
+ * Tiziano:
  * funzione che lancia un thread per il controller
+ * Michele:
  * se digitato in aggiunta "-t" lancia il thread di debug
  */
 void start(Controller* cnt, char **parsed){
