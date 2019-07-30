@@ -362,10 +362,10 @@ void *playCnt(void* cnt) {
 	while(1){
 		read_(fd);
 		if(structure_ready){
-			//michele: se calib_requrest è settato lancio set_finger_()
-			if(calib_request == 1) set_finger_(cnt, calib_threesholds, hand);
+			//michele: se calib_request è settato lancio set_finger_()
+			if(calib_request) set_finger_(cnt, calib_threesholds, hand);
 			//michele: altrimenti lancio set_finger()
-			else if(calib_request == 0)set_finger(cnt, MIN_SOGL_VAL, hand);
+			else set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;
 		}
 	}
