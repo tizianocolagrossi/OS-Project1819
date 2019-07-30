@@ -463,6 +463,7 @@ void *calibration(){
 		calib_threesholds[i] = val;
 		printf("%d > %d\n", i, calib_threesholds[i]);
 	}
+	//calib_threesholds[3] += 30; 
 	calib_request = 1;
 	
 	printf("\n----------CALIBRATION SUCCESFULLY COMPLETED!----------\n");
