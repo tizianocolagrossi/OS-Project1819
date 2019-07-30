@@ -15,8 +15,8 @@
 // '1' equivale a spacebar
 #define MIG 's'
 #define ANU 'w'
-#define MED 'a'
-#define IND 'd'
+#define MED '3'
+#define IND '2'
 #define POL '1'
 #define SOGLIA 800
 
@@ -46,7 +46,35 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].tipo = mignolo;
 				cnt->elementi[i].charAss = MIG;
 				if(MIG=='1'){
-					cnt->elementi[i].sAss = "space";
+					cnt->elementi[i].sAss[0] = 's';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[2] = 'a';
+					cnt->elementi[i].sAss[3] = 'c';
+					cnt->elementi[i].sAss[4] = 'e';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(MIG == '2'){
+					cnt->elementi[i].sAss[0] = 'L';
+					cnt->elementi[i].sAss[1] = 'e';
+					cnt->elementi[i].sAss[2] = 'f';
+					cnt->elementi[i].sAss[3] = 't';
+					cnt->elementi[i].sAss[4] = '\0';
+				}else if(MIG == '3'){
+					cnt->elementi[i].sAss[0] = 'R';
+					cnt->elementi[i].sAss[1] = 'i';
+					cnt->elementi[i].sAss[2] = 'g';
+					cnt->elementi[i].sAss[3] = 'h';
+					cnt->elementi[i].sAss[4] = 't';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(MIG == '4'){
+					cnt->elementi[i].sAss[0] = 'U';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[3] = '\0';
+				}else if(MIG == '5'){
+					cnt->elementi[i].sAss[0] = 'D';
+					cnt->elementi[i].sAss[1] = 'o';
+					cnt->elementi[i].sAss[2] = 'w';
+					cnt->elementi[i].sAss[3] = 'n';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else{
 					cnt->elementi[i].sAss[0] = MIG;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -56,7 +84,35 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].tipo = anulare;
 				cnt->elementi[i].charAss = ANU;
 				if(ANU=='1'){
-					cnt->elementi[i].sAss = "space";
+					cnt->elementi[i].sAss[0] = 's';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[2] = 'a';
+					cnt->elementi[i].sAss[3] = 'c';
+					cnt->elementi[i].sAss[4] = 'e';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(ANU == '2'){
+					cnt->elementi[i].sAss[0] = 'L';
+					cnt->elementi[i].sAss[1] = 'e';
+					cnt->elementi[i].sAss[2] = 'f';
+					cnt->elementi[i].sAss[3] = 't';
+					cnt->elementi[i].sAss[4] = '\0';
+				}else if(ANU == '3'){
+					cnt->elementi[i].sAss[0] = 'R';
+					cnt->elementi[i].sAss[1] = 'i';
+					cnt->elementi[i].sAss[2] = 'g';
+					cnt->elementi[i].sAss[3] = 'h';
+					cnt->elementi[i].sAss[4] = 't';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(ANU == '4'){
+					cnt->elementi[i].sAss[0] = 'U';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[3] = '\0';
+				}else if(ANU == '5'){
+					cnt->elementi[i].sAss[0] = 'D';
+					cnt->elementi[i].sAss[1] = 'o';
+					cnt->elementi[i].sAss[2] = 'w';
+					cnt->elementi[i].sAss[3] = 'n';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else{
 					cnt->elementi[i].sAss[0] = ANU;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -66,7 +122,35 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].tipo = medio;
 				cnt->elementi[i].charAss = MED;
 				if(MED=='1'){
-					cnt->elementi[i].sAss = "space";
+					cnt->elementi[i].sAss[0] = 's';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[2] = 'a';
+					cnt->elementi[i].sAss[3] = 'c';
+					cnt->elementi[i].sAss[4] = 'e';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(MED == '2'){
+					cnt->elementi[i].sAss[0] = 'L';
+					cnt->elementi[i].sAss[1] = 'e';
+					cnt->elementi[i].sAss[2] = 'f';
+					cnt->elementi[i].sAss[3] = 't';
+					cnt->elementi[i].sAss[4] = '\0';
+				}else if(MED == '3'){
+					cnt->elementi[i].sAss[0] = 'R';
+					cnt->elementi[i].sAss[1] = 'i';
+					cnt->elementi[i].sAss[2] = 'g';
+					cnt->elementi[i].sAss[3] = 'h';
+					cnt->elementi[i].sAss[4] = 't';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(MED == '4'){
+					cnt->elementi[i].sAss[0] = 'U';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[3] = '\0';
+				}else if(MED == '5'){
+					cnt->elementi[i].sAss[0] = 'D';
+					cnt->elementi[i].sAss[1] = 'o';
+					cnt->elementi[i].sAss[2] = 'w';
+					cnt->elementi[i].sAss[3] = 'n';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else{
 					cnt->elementi[i].sAss[0] = MED;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -76,7 +160,35 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].tipo = indice;
 				cnt->elementi[i].charAss = IND;
 				if(IND=='1'){
-					cnt->elementi[i].sAss = "space";
+					cnt->elementi[i].sAss[0] = 's';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[2] = 'a';
+					cnt->elementi[i].sAss[3] = 'c';
+					cnt->elementi[i].sAss[4] = 'e';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(IND == '2'){
+					cnt->elementi[i].sAss[0] = 'L';
+					cnt->elementi[i].sAss[1] = 'e';
+					cnt->elementi[i].sAss[2] = 'f';
+					cnt->elementi[i].sAss[3] = 't';
+					cnt->elementi[i].sAss[4] = '\0';
+				}else if(IND == '3'){
+					cnt->elementi[i].sAss[0] = 'R';
+					cnt->elementi[i].sAss[1] = 'i';
+					cnt->elementi[i].sAss[2] = 'g';
+					cnt->elementi[i].sAss[3] = 'h';
+					cnt->elementi[i].sAss[4] = 't';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(IND == '4'){
+					cnt->elementi[i].sAss[0] = 'U';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[3] = '\0';
+				}else if(IND == '5'){
+					cnt->elementi[i].sAss[0] = 'D';
+					cnt->elementi[i].sAss[1] = 'o';
+					cnt->elementi[i].sAss[2] = 'w';
+					cnt->elementi[i].sAss[3] = 'n';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else{
 					cnt->elementi[i].sAss[0] = IND;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -92,6 +204,29 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[3] = 'c';
 					cnt->elementi[i].sAss[4] = 'e';
 					cnt->elementi[i].sAss[5] = '\0';
+				}else if(POL == '2'){
+					cnt->elementi[i].sAss[0] = 'L';
+					cnt->elementi[i].sAss[1] = 'e';
+					cnt->elementi[i].sAss[2] = 'f';
+					cnt->elementi[i].sAss[3] = 't';
+					cnt->elementi[i].sAss[4] = '\0';
+				}else if(POL == '3'){
+					cnt->elementi[i].sAss[0] = 'R';
+					cnt->elementi[i].sAss[1] = 'i';
+					cnt->elementi[i].sAss[2] = 'g';
+					cnt->elementi[i].sAss[3] = 'h';
+					cnt->elementi[i].sAss[4] = 't';
+					cnt->elementi[i].sAss[5] = '\0';
+				}else if(POL == '4'){
+					cnt->elementi[i].sAss[0] = 'U';
+					cnt->elementi[i].sAss[1] = 'p';
+					cnt->elementi[i].sAss[3] = '\0';
+				}else if(POL == '5'){
+					cnt->elementi[i].sAss[0] = 'D';
+					cnt->elementi[i].sAss[1] = 'o';
+					cnt->elementi[i].sAss[2] = 'w';
+					cnt->elementi[i].sAss[3] = 'n';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else{
 					cnt->elementi[i].sAss[0] = POL;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -140,6 +275,12 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 		"\n"
 		"CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER\n"
 		"OLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT\n"
+		"caratteri speciali\n"
+		"1 = spazio\n"
+		"2 = sinistra\n"
+		"3 = destra\n"
+		"4 = sopra\n"
+		"5 = sotto\n\n"
 	);
 	if(cnt->elementi[tipo].charAss == newCharAss){
 		printf("\n\tzi non me fa fa cose inutili il carattere è gia impostato\n\n");
@@ -147,8 +288,36 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	}
 	cnt->elementi[tipo].charAss = newCharAss;
 	if(newCharAss=='1'){
-		cnt->elementi[tipo].sAss = "space";
-	}else{
+					cnt->elementi[tipo].sAss[0] = 's';
+					cnt->elementi[tipo].sAss[1] = 'p';
+					cnt->elementi[tipo].sAss[2] = 'a';
+					cnt->elementi[tipo].sAss[3] = 'c';
+					cnt->elementi[tipo].sAss[4] = 'e';
+					cnt->elementi[tipo].sAss[5] = '\0';
+				}else if(newCharAss == '2'){
+					cnt->elementi[tipo].sAss[0] = 'L';
+					cnt->elementi[tipo].sAss[1] = 'e';
+					cnt->elementi[tipo].sAss[2] = 'f';
+					cnt->elementi[tipo].sAss[3] = 't';
+					cnt->elementi[tipo].sAss[4] = '\0';
+				}else if(newCharAss == '3'){
+					cnt->elementi[tipo].sAss[0] = 'R';
+					cnt->elementi[tipo].sAss[1] = 'i';
+					cnt->elementi[tipo].sAss[2] = 'g';
+					cnt->elementi[tipo].sAss[3] = 'h';
+					cnt->elementi[tipo].sAss[4] = 't';
+					cnt->elementi[tipo].sAss[5] = '\0';
+				}else if(newCharAss == '4'){
+					cnt->elementi[tipo].sAss[0] = 'U';
+					cnt->elementi[tipo].sAss[1] = 'p';
+					cnt->elementi[tipo].sAss[3] = '\0';
+				}else if(newCharAss == '5'){
+					cnt->elementi[tipo].sAss[0] = 'D';
+					cnt->elementi[tipo].sAss[1] = 'o';
+					cnt->elementi[tipo].sAss[2] = 'w';
+					cnt->elementi[tipo].sAss[3] = 'n';
+					cnt->elementi[tipo].sAss[4] = '\0';
+				}else{
 		cnt->elementi[tipo].sAss[0] = newCharAss;
 		cnt->elementi[tipo].sAss[1] = '\0';
 	}

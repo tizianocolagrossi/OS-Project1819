@@ -182,6 +182,12 @@ void help(){
 		"\n\n"
 		"- controller -m [mignolo|anulare|medio|indice|pollice] [newChar]\n"
 		"\tnewChar -> nuovo carattere da associare al dito in [mignolo|...]\n"
+		"caratteri speciali\n"
+		"1 = spazio\n"
+		"2 = sinistra\n"
+		"3 = destra\n"
+		"4 = sopra\n"
+		"5 = sotto\n\n
 		"\n\n"
 		"- controller -s [valore soglia (intero compreso tra %d e %d)]\n"
 		"\tSetta il valore minimo [angolo piega] per l'attivazione del tasto\n"
