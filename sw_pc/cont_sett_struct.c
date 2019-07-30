@@ -57,7 +57,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = 'e';
 					cnt->elementi[i].sAss[2] = 'f';
 					cnt->elementi[i].sAss[3] = 't';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else if(MIG == '3'){
 					cnt->elementi[i].sAss[0] = 'R';
 					cnt->elementi[i].sAss[1] = 'i';
@@ -95,7 +95,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = 'e';
 					cnt->elementi[i].sAss[2] = 'f';
 					cnt->elementi[i].sAss[3] = 't';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else if(ANU == '3'){
 					cnt->elementi[i].sAss[0] = 'R';
 					cnt->elementi[i].sAss[1] = 'i';
@@ -133,7 +133,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = 'e';
 					cnt->elementi[i].sAss[2] = 'f';
 					cnt->elementi[i].sAss[3] = 't';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else if(MED == '3'){
 					cnt->elementi[i].sAss[0] = 'R';
 					cnt->elementi[i].sAss[1] = 'i';
@@ -209,7 +209,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = 'e';
 					cnt->elementi[i].sAss[2] = 'f';
 					cnt->elementi[i].sAss[3] = 't';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[i].sAss[4] = '\0';
 				}else if(POL == '3'){
 					cnt->elementi[i].sAss[0] = 'R';
 					cnt->elementi[i].sAss[1] = 'i';
@@ -288,35 +288,35 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	}
 	cnt->elementi[tipo].charAss = newCharAss;
 	if(newCharAss=='1'){
-					cnt->elementi[i].sAss[0] = 's';
-					cnt->elementi[i].sAss[1] = 'p';
-					cnt->elementi[i].sAss[2] = 'a';
-					cnt->elementi[i].sAss[3] = 'c';
-					cnt->elementi[i].sAss[4] = 'e';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[tipo].sAss[0] = 's';
+					cnt->elementi[tipo].sAss[1] = 'p';
+					cnt->elementi[tipo].sAss[2] = 'a';
+					cnt->elementi[tipo].sAss[3] = 'c';
+					cnt->elementi[tipo].sAss[4] = 'e';
+					cnt->elementi[tipo].sAss[5] = '\0';
 				}else if(newCharAss == '2'){
-					cnt->elementi[i].sAss[0] = 'L';
-					cnt->elementi[i].sAss[1] = 'e';
-					cnt->elementi[i].sAss[2] = 'f';
-					cnt->elementi[i].sAss[3] = 't';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[tipo].sAss[0] = 'L';
+					cnt->elementi[tipo].sAss[1] = 'e';
+					cnt->elementi[tipo].sAss[2] = 'f';
+					cnt->elementi[tipo].sAss[3] = 't';
+					cnt->elementi[tipo].sAss[4] = '\0';
 				}else if(newCharAss == '3'){
-					cnt->elementi[i].sAss[0] = 'R';
-					cnt->elementi[i].sAss[1] = 'i';
-					cnt->elementi[i].sAss[2] = 'g';
-					cnt->elementi[i].sAss[3] = 'h';
-					cnt->elementi[i].sAss[4] = 't';
-					cnt->elementi[i].sAss[5] = '\0';
+					cnt->elementi[tipo].sAss[0] = 'R';
+					cnt->elementi[tipo].sAss[1] = 'i';
+					cnt->elementi[tipo].sAss[2] = 'g';
+					cnt->elementi[tipo].sAss[3] = 'h';
+					cnt->elementi[tipo].sAss[4] = 't';
+					cnt->elementi[tipo].sAss[5] = '\0';
 				}else if(newCharAss == '4'){
-					cnt->elementi[i].sAss[0] = 'U';
-					cnt->elementi[i].sAss[1] = 'p';
-					cnt->elementi[i].sAss[3] = '\0';
+					cnt->elementi[tipo].sAss[0] = 'U';
+					cnt->elementi[tipo].sAss[1] = 'p';
+					cnt->elementi[tipo].sAss[3] = '\0';
 				}else if(newCharAss == '5'){
-					cnt->elementi[i].sAss[0] = 'D';
-					cnt->elementi[i].sAss[1] = 'o';
-					cnt->elementi[i].sAss[2] = 'w';
-					cnt->elementi[i].sAss[3] = 'n';
-					cnt->elementi[i].sAss[4] = '\0';
+					cnt->elementi[tipo].sAss[0] = 'D';
+					cnt->elementi[tipo].sAss[1] = 'o';
+					cnt->elementi[tipo].sAss[2] = 'w';
+					cnt->elementi[tipo].sAss[3] = 'n';
+					cnt->elementi[tipo].sAss[4] = '\0';
 				}else{
 		cnt->elementi[tipo].sAss[0] = newCharAss;
 		cnt->elementi[tipo].sAss[1] = '\0';
