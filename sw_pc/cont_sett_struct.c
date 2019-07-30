@@ -15,8 +15,8 @@
 // '1' equivale a spacebar
 #define MIG 's'
 #define ANU 'w'
-#define MED 'a'
-#define IND 'd'
+#define MED '3'
+#define IND '2'
 #define POL '1'
 #define SOGLIA 800
 
@@ -47,6 +47,10 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].charAss = MIG;
 				if(MIG=='1'){
 					cnt->elementi[i].sAss = "space";
+				}else if(MIG == '2'){
+					cnt->elementi[i].sAss = "Left";
+				}else if(MIG == '3'){
+					cnt->elementi[i].sAss = "Right";
 				}else{
 					cnt->elementi[i].sAss[0] = MIG;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -57,6 +61,10 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].charAss = ANU;
 				if(ANU=='1'){
 					cnt->elementi[i].sAss = "space";
+				}else if(ANU == '2'){
+					cnt->elementi[i].sAss = "Left";
+				}else if(ANU == '3'){
+					cnt->elementi[i].sAss = "Right";
 				}else{
 					cnt->elementi[i].sAss[0] = ANU;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -67,6 +75,10 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].charAss = MED;
 				if(MED=='1'){
 					cnt->elementi[i].sAss = "space";
+				}else if(MED == '2'){
+					cnt->elementi[i].sAss = "Left";
+				}else if(MED == '3'){
+					cnt->elementi[i].sAss = "Right";
 				}else{
 					cnt->elementi[i].sAss[0] = MED;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -77,6 +89,10 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].charAss = IND;
 				if(IND=='1'){
 					cnt->elementi[i].sAss = "space";
+				}else if(IND == '2'){
+					cnt->elementi[i].sAss = "Left";
+				}else if(IND == '3'){
+					cnt->elementi[i].sAss = "Right";
 				}else{
 					cnt->elementi[i].sAss[0] = IND;
 					cnt->elementi[i].sAss[1] = '\0';
@@ -87,6 +103,10 @@ void Controller_init(Controller* cnt) {
 				cnt->elementi[i].charAss = POL;
 				if(POL=='1'){
 					cnt->elementi[i].sAss = "space";
+				}else if(POL == '2'){
+					cnt->elementi[i].sAss = "Left";
+				}else if(POLs == '3'){
+					cnt->elementi[i].sAss = "Right";
 				}else{
 					cnt->elementi[i].sAss[0] = POL;
 					cnt->elementi[i].sAss[1] = '\0';
