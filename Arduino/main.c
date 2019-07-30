@@ -10,7 +10,7 @@
 #define MAX_BUF_SIZE 6    //it will store values in [0:1023], so 4 + (1 "\0") cells would be enough
 #define SERIAL_SIZE 25    //4 digits * 5 fingers + 4 commas + 1 "\0"
 
-#define TIMER_DURATION_MS 500
+#define TIMER_DURATION_MS 10
 
 char* itoa (int value, unsigned char * str, int base);
 //char *strcat(unsigned char *dest, unsigned char *src);
