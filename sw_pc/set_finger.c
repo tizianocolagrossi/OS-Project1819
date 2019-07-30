@@ -48,7 +48,7 @@ int serial_string(char* buffer){
 void set_finger(Controller* cnt, int soglia, int* hand){
 	
 	int i = DIM_VETT_MANO;
-	hand = hand + i; //vado alla fine del vettore
+	//hand = hand + i; //vado alla fine del vettore
 	while (i >= 0){
 		if (*hand >= soglia) {
 			setElemento(cnt, i);
@@ -57,7 +57,7 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 		else {
 			resetElemento(cnt, i);
 		}
-		hand--;
+		hand++;
 		i--;
 	}
 	setState(cnt);
@@ -68,7 +68,7 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 void set_finger_calib(Controller* cnt, int* vett_soglie, int* hand){
 	
 	int i = DIM_VETT_MANO, c = 0;
-	hand = hand + i; //vado alla fine del vettore
+	//hand = hand + i; //vado alla fine del vettore
 	while (i >= 0 && c <= 4){
 		if (*hand >= *vett_soglie) {
 			setElemento(cnt, i);
@@ -77,7 +77,7 @@ void set_finger_calib(Controller* cnt, int* vett_soglie, int* hand){
 		else {
 			resetElemento(cnt, i);
 		}
-		hand--;        // incremento i valori
+		hand++;        // incremento i valori
 		i--;		   // dei puntatori
 		vett_soglie++; // e dei contatori
 		c++;		   //	
