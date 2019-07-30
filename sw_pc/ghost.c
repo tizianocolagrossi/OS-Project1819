@@ -363,7 +363,7 @@ void *playCnt(void* cnt) {
 		read_(fd);
 		if(structure_ready){
 			//michele: se calib_request è settato lancio set_finger_()
-			if(calib_request) set_finger_(cnt, calib_threesholds, hand);
+			if(calib_request) set_finger_calib(cnt, calib_threesholds, hand);
 			//michele: altrimenti lancio set_finger()
 			else set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;

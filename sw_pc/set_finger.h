@@ -6,4 +6,4 @@
 int str_len(char* buffer);
 int serial_string(char* buffer);
 void set_finger(Controller* cnt, int soglia, int* hand);
-void set_finger_(Controller* cnt, int* vett_soglie, int* hand);
+void set_finger_calib(Controller* cnt, int* vett_soglie, int* hand);
