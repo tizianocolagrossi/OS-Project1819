@@ -1,44 +1,35 @@
 /*
- * SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL
  *
- * OS-prj1819
- * 
- * shell per il progetto di sistemi operativi anno 2018/19
+ * SHELL for OS-prj1819
  * 
  */
 
-//tiziano
 #include "cont_sett_struct.h"
-#include <signal.h> // POSIX signal handler
+#include "set_finger.h"
+#include <signal.h>  // POSIX signal handler
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h> // per la sleep
+#include <unistd.h>  // For sleep()
 #include <pthread.h>
+#include <fcntl.h>   // File control definitions
+#include <errno.h>   // Error number definitions
+#include <termios.h> // POSIX terminal control definitions
 
-#define MAX_SIZE 150 // max caratteri in input
-#define MAX_CMD 10  // max comandi per linea supportati
-#define DEBUG 1
-
-#define MIN_SOGL_VAL 700
+#define MAX_SIZE 150 // max input characters 
+#define MAX_CMD 10   // max commands supported
+#define MIN_SOGL_VAL 600
 #define MAX_SOGL_VAL 999 
 #define NUM_CALIB_SAMPLES 1000
-
-volatile sig_atomic_t termReq = 0; //Flag per terminazione 
-
-//michele
-#include "set_finger.h"
-#include <fcntl.h>   /* File control definitions */
-#include <errno.h>   /* Error number definitions */
-#include <termios.h> /* POSIX terminal control definitions */
-
 #define MAX_SIZE_ 25
 #define BAUDRATE B19200
+#define DEBUG 0      // set to 1 for debug prints
 
+volatile sig_atomic_t termReq = 0; //termination flag
 
-//michele: struct per inizializzazione porta seriale
+//michele: struct for initialization of the serial port
 struct termios current;
-int vett[5];//debug
+int vett[5]; //debug
 
 //davide: global variables to handle data read from serial
 char current_num[4];
@@ -51,7 +42,7 @@ int calib_request = 0;    //it will be set to 1 when at least one calibration wa
 
 /*
  * Tiziano
- * funzione per printate di debug
+ * functions for debug prints
  */
  
 void debugPrint(char *msg, char *val){
@@ -65,8 +56,8 @@ void debugPrintMsg(char *msg){
 }
 
 /*
- * Tiziano handler per SIGKILL o SIGINT o SIGTERM
- * setta un flag che viene controllato sempre dal main 
+ * Tiziano: handler for SIGKILL, SIGINT or SIGTERM
+ * sets a flag checked by main 
  */
  void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
 	//handler
@@ -75,7 +66,7 @@ void debugPrintMsg(char *msg){
 }
 
 /*
- * Tiziano test per il controller
+ * Tiziano: test for controller
  */
 void test(Controller* cnt, char** parsed){
 		xdo_t * x = cnt->xdo;
@@ -147,7 +138,7 @@ void init_shell(){
 			" SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL S\n"
 			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
 			"##########################################################################\n"
-			"#                     SISTEMI OPERATIVI PRJ SHELL                        #\n"                                                   
+			"#                     OPERATIVE SYSTEMS PRJ SHELL                        #\n"                                                   
 			"##########################################################################\n"
 			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
 			"HELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHE\n"
@@ -157,16 +148,16 @@ void init_shell(){
 			" SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL S\n"
 			"SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SHELL SH\n"
 			"\n\n"
-			"Digita \"help\" o \"h\" per ricevere informazioni per l'utilizzo della shell\n"
+			"Type \"help\" o \"h\" to get information about shell commands\n"
 			"\n\n"
-			"Digita \"quit\" ,\"q\" o \"exit\" per chiuedere la shell\n"
+			"Type \"quit\" ,\"q\" or \"exit\" to close the shell\n"
 			"\n\n\n"
 			);                                                     
 }
 
 /*
  * Tiziano
- * HELP per la shell
+ * HELP for the shell
  */
 
 void help(){
@@ -177,32 +168,32 @@ void help(){
 		"P HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HEL\n"
 		"\n\n"
 		"- controller\n"
-		"\tVisualizza stato controller [ATTIVO o NON ATTIVO]\n"
-		"\tVisualizza la configurazione corrente del controller\n"
+		"\tDisplays state of controller [ACTIVE or NOT ACTIVE]\n"
+		"\tDisplays current configuration of controller\n"
 		"\n\n"
-		"- controller -m [mignolo|anulare|medio|indice|pollice] [newChar]\n"
-		"\tnewChar -> nuovo carattere da associare al dito in [mignolo|...]\n"
-		"caratteri speciali\n"
+		"- controller -m {pinkie|ring|middle|index|thumb} {new character}\n"
+		"\tnewChar -> new character to associate to finger in {pinkie|...]\n"
+		"Special characters:\n"
 		"1 = spazio\n"
 		"2 = sinistra\n"
 		"3 = destra\n"
 		"4 = sopra\n"
-		"5 = sotto\n\n
+		"5 = sotto\n\n"
 		"\n\n"
-		"- controller -s [valore soglia (intero compreso tra %d e %d)]\n"
-		"\tSetta il valore minimo [angolo piega] per l'attivazione del tasto\n"
+		"- controller -s {threeshold value (integer in [%d , %d]) }\n"
+		"\tSet minimum value [bend angle] to trigger the key\n"
 		"\n\n"
 		"- calibrate\n"
-		"\tInizio processo di calibrazione sensori\n"
+		"\tStarts process of calibration of sensors\n"
 		"\n\n"
 		"- start\n" 
-		"\tAvvia il controller\n"
+		"\tStarts the controller\n"
 		"\n\n"
 		"- stop\n"
-		"\tarresta il controller\n"
+		"\tStops the controller\n"
 		"\n\n"
-		"- quit o exit\n"
-		"\tesce dalla shell\n"
+		"- quit, q, exit\n"
+		"\tQuits the shell\n"
 		"\n\n"
 		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
 		"LP HELP HELP HELP HELP HELP HinteroELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
@@ -213,51 +204,15 @@ void help(){
 
 void sayHi(char **parsed){
 	if(parsed[1]==NULL){
-		printf("ERRORE: nessun argomento. Consulta la sezione help per la guida\n");
+		printf("ERROR: no argument. Type help or h to display the guide\n");
 	} else{
-		printf("Ciao %s\n", parsed[1]);
+		printf("Hello %s\n", parsed[1]);
 	}
 }
 
-/*
- * funzione che gestisce il thread (valori virtualizzazione etc)______________________________________________________________________
- * ###################################################################################################################################
- * MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MICHELE MIC
- *
- * le funzioni che te servono:
- * void setElemento(Controller* cnt, enum tipoElemento tipo);
- * void resetElemento(Controller* cnt, enum tipoElemento tipo);
- * void setState(Controller* cnt);
- *
- * cnt è quello che ti passo nella funzione void *playCnt(void* cnt <QUESTO QUA)
- * enum tipoElemento tipo è > enum tipoElemento{mignolo, anulare, medio, indice, pollice};
- * quindi se vuoi settare im mignolo attivo fai
- * 		setElemento(cnt, mignolo);
- * idem se vuoi resettarlo (ovvero rilasciare il tasto associato)
- * 		resetElemento(cnt, mignolo);
- * cosa importante è che alla fine te lanci la funzione setState(cnt);
- * perche serve per rendere effettive le modifiche che te hai fatto alla struttura
- * ovvero serve per virtualizzare il premere dei tasti della tastiera
- * esempio:
- * 		leggi da seriale;
- * 
- * 		setElemento(cnt, mignolo);
- * 		setElemento(cnt, pollice);
- * 		resetElemento(cnt, indice);
- * 		resetElemento(cnt, medio);
- * 		resetElemento(cnt, anulare);
- * 
- * 		setState(cnt);
- *
- * 		ripeti poi per ogni volta che ricevi dati
- *
- * puoi anche non settare o resettare tutte le dita insieme puoi anche solo modificare le dita che cambiano
- * ovvero non è necessario che imposti ogni volta lo stato di ogni dito, il dito mantiene lo stato che ha fino
- * a che non lo cambi te		
- */
  
-// michele: function to set the right bit in termios structure
-// to enable the comunication throught the serial port
+// michele: function to set the right bits in termios structure
+// to enable the comunication through the serial port
 int port_configure(void){
 
 	int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
@@ -265,17 +220,17 @@ int port_configure(void){
 	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
-		fcntl(fd, F_SETFL, 0); // ho aggiunto solo questo ma mannaggia alla madonna seriale non ha senso 
-		tcgetattr(fd, &current);//salvo valori correnti porta seriale 
-		cfsetispeed(&current, B19200);//setto baud rate
-		current.c_iflag &= ~IXOFF; //disabilito hw input flow control
-		current.c_cflag &= ~PARENB; //nessun bit di parità
- 		current.c_cflag &= ~CSTOPB; //1 bit di stop
+		fcntl(fd, F_SETFL, 0);
+		tcgetattr(fd, &current); //save current values of serial port 
+		cfsetispeed(&current, B19200);//set baud rate
+		current.c_iflag &= ~IXOFF; //disable hw input flow control
+		current.c_cflag &= ~PARENB; //no parity bit
+ 		current.c_cflag &= ~CSTOPB; //1 stop bit
         current.c_cflag &= ~CSIZE;//
 		current.c_cflag |= CS8; //8-bit data
-		current.c_cflag |= ( CLOCAL | CREAD ); //abilito ricevitore porta seriale
+		current.c_cflag |= ( CLOCAL | CREAD ); //enable serial port receiver
 		current.c_cc[VMIN] = 0; //
-		current.c_cc[VTIME] = 0; // se VTIME & VMIN sono == 0 la read funzionerà in polling
+		current.c_cc[VTIME] = 0; // if VTIME & VMIN are == 0 the read will work in polling
 		tcsetattr(fd, TCSANOW, &current);
 	}
 	return fd;
@@ -293,7 +248,7 @@ void read_(int fd){
 		if (byte_read < 0) perror("error during read process");
 		else if(br > 0){
 			byte_read += br;
-			//printf("HO LETTO %d BYTES\n", byte_read);
+			//printf("READ %d BYTES\n", byte_read);
 		}
 	}
 	for(i=0; i<20; i++){
@@ -327,7 +282,7 @@ void read_(int fd){
 	}
 }
 
-//michele: funzione di debug per scrittura
+//michele: debug function for writing
 int* debug_(Controller* cnt){
 	
 	sleep(5);
@@ -345,14 +300,12 @@ int* debug_(Controller* cnt){
 	}
 }
 
-//michele: thread di debug
-void *playCnt_(void* cnt){
-	while(1){
-		debug_(cnt); 
-	}
+//michele: debug thread
+void *debug_thread(void* cnt){
+	debug_(cnt); 
 }
 
-//michele: thread quello buono
+//davide: main thread
 void *playCnt(void* cnt) {
 	
 	int fd = port_configure();
@@ -361,16 +314,14 @@ void *playCnt(void* cnt) {
 		printf("Please verify connection of your controller");
 		return NULL;
 	}
-	// davide: set to empty string
+	//davide: set to empty string
 	strcpy(current_num, "");
-	//davide: reading from serial forever
 	
+	//davide: reading from serial forever
 	while(1){
 		read_(fd);
 		if(structure_ready){
-			//michele: se calib_request è settato lancio set_finger_()
 			if(calib_request) set_finger_calib(cnt, calib_threesholds, hand);
-			//michele: altrimenti lancio set_finger()
 			else set_finger(cnt, MIN_SOGL_VAL, hand);
 			structure_ready = 0;
 		}
@@ -388,7 +339,7 @@ int average(int* array, int size){
 	return sum/size;
 }
 
-//davide: thread for initial calibration
+//davide: function for calibrate threesholds for each finger
 //TODO - POSSO CAMBIARE APPROCCIO, FORSE è LEGGERMENTE PIù VELOCE
 //TODO - CHIEDETEMI COME APPENA SPIZZATE LA FUNZIONE CHE VI SPIEGO L'ALTRA OPZIONE
 //prova
@@ -416,7 +367,7 @@ void *calibration(){
 	
 	//davide: set to empty string
 	strcpy(current_num, "");
-	printf("Please keep you hand opened and firm\n");
+	printf("Please keep your hand opened and firm\n");
 	sleep(2);
 	while(counter < NUM_CALIB_SAMPLES){
 		//davide: read from serial and fill calib_matrix with minimum values
@@ -436,13 +387,14 @@ void *calibration(){
 		min[i] = val;
 	}
 	printf("DONE!\n");
+	sleep(1);
 	
 	//davide: restart and get maximum values
 	counter = 0;
 	
 	//davide: reset to empty string, just to be sure
 	strcpy(current_num, "");
-	printf("Please keep you hand close and firm\n");
+	printf("Please keep your hand close and firm\n");
 	sleep(2);
 	while(counter < NUM_CALIB_SAMPLES){
 		//davide: read from serial and fill calib_matrix with maximum values
@@ -469,7 +421,7 @@ void *calibration(){
 		calib_threesholds[i] = val;
 		printf("%d > %d\n", i, calib_threesholds[i]);
 	}
-	//calib_threesholds[3] += 30; 
+	//calib_threesholds[3] += 30; //uncomment to make ring finger less sensitive (due to pinkie bending)
 	calib_request = 1;
 	
 	printf("\n----------CALIBRATION SUCCESFULLY COMPLETED!----------\n");
@@ -481,15 +433,15 @@ void *calibration(){
 	return NULL;
 }
 
+//michele: calibration thread
 void calib_(){
 	pthread_t thread_id;
-	printf("entro qua\n");
 	pthread_create(&thread_id, NULL, calibration, NULL);
 }
 
 /*
  * Tiziano
- * funzione che resetta lo stato a tutti i tasti del controller
+ * function that resets the state of all controller's keys
  */
 void clearCnt(Controller* cnt){
 	for(int i = 0; i<cnt->size; i++){
@@ -500,22 +452,21 @@ void clearCnt(Controller* cnt){
 
 /*
  * Tiziano:
- * funzione che lancia un thread per il controller
- * Michele:
- * se digitato in aggiunta "-t" lancia il thread di debug
+ * function that calls the thread for the controller
  */
 void start(Controller* cnt, char **parsed){
 	pthread_t thread_id_; 
 	pthread_t thread_id; 
-    debugPrintMsg("Sto per lanciare il thread"); 
+    debugPrintMsg("Starting thread"); 
     
     if (parsed[1] == NULL){
     	pthread_create(&thread_id, NULL, playCnt, cnt);
     	cnt->t_id = (void*) thread_id;
-    }
     
+    }
+    //Michele: if "-t" is added, debug thread is called
     else if(strcmp(parsed[1],"-t")==0){
-    	pthread_create(&thread_id, NULL, playCnt_, cnt);
+    	pthread_create(&thread_id, NULL, debug_thread, cnt);
     	cnt->t_id = (void*) thread_id_;
     }
 
@@ -523,19 +474,19 @@ void start(Controller* cnt, char **parsed){
 
 /*
  * Tiziano
- * funzione che ferma il thread per il controller
+ * function that stops controller's thread
  */
 void stop(Controller* cnt){
 	pthread_t thread_id = (pthread_t)cnt->t_id;
 	pthread_cancel(thread_id);
-	debugPrintMsg("Controller fermato\n");
+	debugPrintMsg("Controller stopped\n");
 	//per sicurezza rilascia tutti i tasti del controller
 	clearCnt(cnt);
 }
 
 /*
  * Tiziano
- * funzione per il controllo del controller
+ * function to control the controller (lol)
  */
 void controller(char **parsed, Controller *cnt){
 	if(parsed[1]==NULL){
@@ -544,18 +495,18 @@ void controller(char **parsed, Controller *cnt){
 	}
 	if(strcmp(parsed[1],"-m")==0){
 		if(parsed[2]==NULL){
-			printf("\t[USAGE] controller -m [mignolo|anulare|...] [carattere da assegnare]\n\n");
+			printf("\t[USAGE] controller -m {pinkie|ring|...} {new character}\n\n");
 			return;
 		}
 		enum tipoElemento sw1 = -1;
-		if(strcmp(parsed[2],"mignolo")==0)sw1=mignolo;
-		if(strcmp(parsed[2],"anulare")==0)sw1=anulare;
-		if(strcmp(parsed[2],"medio")==0)sw1=medio;
-		if(strcmp(parsed[2],"indice")==0)sw1=indice;
-		if(strcmp(parsed[2],"pollice")==0)sw1=pollice;
+		if(strcmp(parsed[2],"pinkie")==0)sw1=mignolo;
+		if(strcmp(parsed[2],"ring")==0)sw1=anulare;
+		if(strcmp(parsed[2],"middle")==0)sw1=medio;
+		if(strcmp(parsed[2],"index")==0)sw1=indice;
+		if(strcmp(parsed[2],"thumb")==0)sw1=pollice;
 		
 		//michele 
-		if(parsed[3] == NULL) printf("\t[USAGE] controller -m [mignolo|anulare|...] [carattere da assegnare]\n\n");
+		if(parsed[3] == NULL) printf("\t[USAGE] controller -m {pinkie|ring|...} {new character}\n\n");
 		else {
 			switch (sw1){
 				case 0:
@@ -574,8 +525,8 @@ void controller(char **parsed, Controller *cnt){
 					editElemCharAss(cnt, pollice, parsed[3][0]);
 					break;
 				default:
-					printf("Le dita disponibili per modificare i settaggi sono:\n"
-						   "\tmignolo|anulare|medio|indice|pollice\n");
+					printf("Fingers available to be set are:\n"
+						   "\tpinkie|ring|middle|index|thumb\n");
 					break;
 			}
 		}
@@ -589,22 +540,22 @@ void controller(char **parsed, Controller *cnt){
 					"TROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTRO\n"
 					"\n"
 				);
-				setSoglia(cnt, val); //michele
-				printf("\tsoglia impostata a %d\n\n",val);
+				setSoglia(cnt, val);
+				printf("\tThreeshold set to %d\n\n",val);
 			
 			}else{
-				printf("\tIl valore deve essere compreso tra %d e %d\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+				printf("\tValue must be in [%d , %d]\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
 			}
 		}
 		else{
-			printf("\t[USAGE] controller -s [intero tra %d e %d]\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+			printf("\t[USAGE] controller -s {integer in [%d , %d] }\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
 		}
 	}
 }
 
 /*
  * Tiziano
- * funzione per prendere comandi
+ * function to get the commands
  */
 
 int getCmd(char* cmd){
@@ -612,8 +563,8 @@ int getCmd(char* cmd){
 	size_t bufsize = MAX_SIZE;
 
     printf("#> ");
-// la funzione getline prende i comandi da stdin e indico la dimensione del
-// buffer allocato sopra e l'indirizzo del buffer su cui scrivere    
+	// function getline takes commands from stdin, buffer dimension and
+	// address of buffer where to write 
 	characters = getline(&cmd,&bufsize,stdin);
 	if(characters != 0){
 		//strncpy(cmd, buf, characters);
@@ -627,14 +578,14 @@ int getCmd(char* cmd){
 
 /*
  * Tiziano
- * funzione per lo split della tringa in input
+ * function to split input string
  */
  
 int splitString(char *str, char **split){
 	int i;
 	int len = strlen(str);
-	str[len-1]='\0'; // elimino il carattere \n alla fine preso dalla getline
-	debugPrint("comando preso>",str);
+	str[len-1]='\0'; // erase character '\n' taken by getline
+	debugPrint("command taken >",str);
 	for(i = 0; i < MAX_CMD; i++){
 		split[i] = strsep(&str," ");
 		if(split[i]==NULL) break;
@@ -645,29 +596,29 @@ int splitString(char *str, char **split){
 
 /*
  * Tiziano
- * funzione per chiudere il programma
+ * function to close the program
  */
 void quitShell(Controller* cnt){
 	pthread_t id = (pthread_t)cnt->t_id;
 	pthread_cancel(id);
 	pthread_join(id, NULL);
-	//per sicurezza rilascia tutti i tasti del controller
+	//Tiziano: release every key of controller, just to be sure
 	clearCnt(cnt);
 	for(int i = 0; i<cnt->size;i++){
-		printf("libero il comando %d\n", i);
+		//printf("libero il comando %d\n", i);
 		free(cnt->elementi[i].sAss);
-		printf("liberato\n");
+		//printf("liberato\n");
 	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);
-	printf("\tARRIVEDERCI, NON FA DANNI ME RACCOMANDO !");
+	printf("\tGOODBYE, SEE YOU SOON !");
 	printf("\n\n");
 	exit(0);
 }
 
 /*
  * Tiziano
- * funzione per la gestione dei comandi della shell
+ * function to handle shell's commands
  */
  
 int cmdHandler(char** parsed, Controller *cnt){
@@ -679,7 +630,7 @@ int cmdHandler(char** parsed, Controller *cnt){
    	ListCmd[0]="help";
    	ListCmd[1]="h";
    	ListCmd[2]="quit";
-   	ListCmd[3]="q"; //michele: ho aggiunto questo, è più comodo
+   	ListCmd[3]="q";
    	ListCmd[4]="exit";
    	ListCmd[5]="hi";
    	ListCmd[6]="controller";
@@ -705,7 +656,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 		case 0:
 		case 1:
 			help();
-			return 1; // perche usato dall if che chiama cmdHandler!
+			return 1; //tiziano: because it's used by the if that calls cmdHandler!
 		case 2:
 		case 3:
 		case 4:
@@ -730,9 +681,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 			break;
 		default:
 			printf(
-				"CAPO LEGGI QUA SE NON SAI CHE FARE CAPO LEGGI QUA SE NON SAI CHE FARE CAPO\n"
-				"LEGGI QUA SE NON SAI CHE FARE CAPO LEGGI QUA SE NON SAI CHE FARECAPO LEGGI\n"
-				"\ncomando non riconosciuto, digit h o help per vedere la guida\n\n"
+				"Command not recognized, type h or help to display the guide\n\n"
 				"##########################################################################\n"
 			);
 			break;
@@ -741,7 +690,7 @@ int cmdHandler(char** parsed, Controller *cnt){
 
 /*
  * Tiziano
- * funzione per il parse della stringa in input
+ * function to parse input string
  */
  
 int parseString(char *str, char** parsed, Controller *cnt){
@@ -752,13 +701,13 @@ int parseString(char *str, char** parsed, Controller *cnt){
 
 
 /*
- * Tiziano: iniziallizzazione shell, struct e int_handler
+ * Tiziano: shell, struct and int_handler initialization
  */
 int main(int argc, char **argv){
 
 	struct sigaction act;
 	memset (&act, '\0', sizeof(act));
-	/* Use the sa_sigaction field because the handles has two additional parameters */
+	/* Use the sa_sigaction field because the handler has two additional parameters */
 	act.sa_sigaction = &interrupt_handler;
 	/* The SA_SIGINFO flag tells sigaction() to use the sa_sigaction field, not sa_handler. */
 	act.sa_flags = SA_SIGINFO;
@@ -779,8 +728,8 @@ int main(int argc, char **argv){
 		if(getCmd(inStr)) continue;
 		parseString(inStr, parsedArg, &cnt);
 	}
-	//Tiziano: se arriva qui è perche ha ricevito il segnale di SIGINT SIGKILL o SIGTERM
-	//	quindi pulisco quello che devo pulire
+	//Tiziano: if it arrives here is because it has received 
+	//  SIGINT SIGKILL or SIGTERM, therefore I clean
 	quitShell(&cnt);
 }
 

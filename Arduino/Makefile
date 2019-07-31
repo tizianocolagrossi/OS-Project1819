@@ -1,3 +1,5 @@
+## Davide: stolen from OS source codes :)
+
 # AVR makefile stub
 
 # to clean a folder
@@ -36,7 +38,7 @@ HEADERS=
 
 # the file below contains the actual rules
 
-include avr_common/avr.mk
+include avr.mk
 
 # !!!!!!!!!!!!!!!! MODIFY HERE !!!!!!!!!!!!!!!! 
 

@@ -1,10 +1,12 @@
+/*
+ * By Tiziano
+ */
+
 #pragma once
 #include <xdo.h>
 
-//Tiziano
 enum tipoElemento{mignolo, anulare, medio, indice, pollice};
 
-//Tiziano
 typedef struct Elemento{
 	int premuto;
 	int statoFisico;
@@ -14,7 +16,6 @@ typedef struct Elemento{
 }Elemento;
 
 
-//Tiziano
 typedef struct Controller{
 	Elemento* elementi;
 	int soglia;
@@ -23,7 +24,6 @@ typedef struct Controller{
 	void* t_id;
 }Controller;
 
-//Tiziano
 int getSoglia(Controller* cnt);
 void setSoglia(Controller* cnt, int newSgl);
 void cntXdoFree(Controller* cnt);

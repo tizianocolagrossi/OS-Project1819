@@ -1,7 +1,6 @@
 /*
- * CONTROLLER & DITO CONTROLLER & DITO CONTROLLER & DITO CONTROLLER  
  *
- * funzioni per controller e dito
+ * Functions for controller and fingers
  * 
  */
 
@@ -12,17 +11,17 @@
 
 #define DELAY 200000
 #define NUM_ELEMENTS 5
-// '1' equivale a spacebar
 #define MIG 's'
 #define ANU 'w'
 #define MED '3'
 #define IND '2'
-#define POL '1'
+#define POL 'z'
 #define SOGLIA 800
 
 /*
  * Tiziano
- * inizializza il controller 
+ * Controller initialization
+ *
  */
 void Controller_init(Controller* cnt) {
 	cnt->xdo = xdo_new(NULL);
@@ -30,7 +29,7 @@ void Controller_init(Controller* cnt) {
 	cnt->size = NUM_ELEMENTS;
 	cnt->t_id = NULL;
 	cnt->soglia = SOGLIA;
-	//settaggi di default
+	// default values:
 	// 0 mignolo
 	// 1 anulare
 	// 2 medio
@@ -240,7 +239,7 @@ void Controller_init(Controller* cnt) {
 
 /*
  * Tiziano
- * restituisce il valore della soglia del controller
+ * returns the threeshold of controller
  */
 int getSoglia(Controller* cnt){
 	int sgl = cnt->soglia;
@@ -248,42 +247,39 @@ int getSoglia(Controller* cnt){
 }
 /*
  * Tiziano
- * restituisce il valore della soglia del controller
+ * set the threeshold of controller
  */
 void setSoglia(Controller* cnt, int newSgl){
 	int sgl = cnt->soglia;
-	if(newSgl != sgl){ //michele
-			cnt->soglia = newSgl;
-	}
+	if(newSgl != sgl) cnt->soglia = newSgl;
 }
 
 /*
  * Tiziano
- * libera lo spazio allocato da xdo
+ * free space allocated by xdo
  */
 void cntXdoFree(Controller* cnt){
-	//dio cristo che non liberi un blocco libreria di merda
 	xdo_free(cnt->xdo);
 }
 
 /*
  * Tiziano
- * modofica il carattere associato all' elemento
+ * modify character associated to the element
  */
 void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 	printf(
 		"\n"
 		"CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER\n"
 		"OLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT\n"
-		"caratteri speciali\n"
-		"1 = spazio\n"
-		"2 = sinistra\n"
-		"3 = destra\n"
-		"4 = sopra\n"
-		"5 = sotto\n\n"
+		"Special characters:\n"
+		"1 = space\n"
+		"2 = left\n"
+		"3 = right\n"
+		"4 = up\n"
+		"5 = down\n\n"
 	);
 	if(cnt->elementi[tipo].charAss == newCharAss){
-		printf("\n\tzi non me fa fa cose inutili il carattere è gia impostato\n\n");
+		printf("\n\tCharacter already associated to this element\n\n");
 		return;
 	}
 	cnt->elementi[tipo].charAss = newCharAss;
@@ -321,13 +317,13 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 		cnt->elementi[tipo].sAss[0] = newCharAss;
 		cnt->elementi[tipo].sAss[1] = '\0';
 	}
-	printf("\tnuovo carattere impostato per l'elemento %d > %c\n", tipo, cnt->elementi[tipo].charAss);
+	printf("\tNew character associated to element %d > %c\n", tipo, cnt->elementi[tipo].charAss);
 	return;
 }
 
 /*
  * Tiziano
- * stampa lo stato del controller
+ * prints state of controller
  */
 void printControllerSetting(Controller* cnt){
 	printf(
@@ -336,21 +332,21 @@ void printControllerSetting(Controller* cnt){
 		"TROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTR\n"
 		"\n\n"
 	);
-	printf("\t0=mignolo, 1=anulare, 2=medio, 3=indice, 4=pollice\n\n");
+	printf("\t0=pinkie, 1=ring, 2=middle, 3=index, 4=thumb\n\n");
 	for(int i = 0; i<NUM_ELEMENTS; i++){
 		char tasto;
 		enum tipoElemento t;
 		tasto = cnt->elementi[i].charAss;
 		t = cnt->elementi[i].tipo;
-		printf("\tl'elemento %d ha il carattere associato %c\n", t, tasto);
+		printf("\tElement %d has associated character %c\n", t, tasto);
 	}
-	printf("\n\tla soglia del controller è impostata a %d\n\n\n", cnt->soglia);
+	printf("\n\tController's threeshold is %d\n\n\n", cnt->soglia);
 		
 }
 
 /*
  * Tiziano
- * setta lo stato (premuto) di un elemento del controller
+ * set the state (pressed) of an element of controller
  */
 void setElemento(Controller* cnt, enum tipoElemento tipo){
 	if(cnt->elementi[tipo].statoFisico == 0){
@@ -360,7 +356,7 @@ void setElemento(Controller* cnt, enum tipoElemento tipo){
 
 /*
  * Tiziano
- * setta lo stato (rilasciato) di un elemento del controller
+ * set the state (released) of an element of controller
  */
 void resetElemento(Controller* cnt, enum tipoElemento tipo){
 	if(cnt->elementi[tipo].statoFisico == 1){
@@ -370,7 +366,7 @@ void resetElemento(Controller* cnt, enum tipoElemento tipo){
 
 /*
  * Tiziano
- * controlla lo stato del controller e gestisce la virtualizzazione dei tasti
+ * check the state of the controller and handle key's virtualization
  */
 void setState(Controller* cnt){
 	xdo_t * x = cnt->xdo;
