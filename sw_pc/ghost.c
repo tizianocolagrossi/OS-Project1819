@@ -554,7 +554,6 @@ void controller(char **parsed, Controller *cnt){
 		if(strcmp(parsed[2],"indice")==0)sw1=indice;
 		if(strcmp(parsed[2],"pollice")==0)sw1=pollice;
 		
-		//michele 
 		if(parsed[3] == NULL) printf("\t[USAGE] controller -m [mignolo|anulare|...] [carattere da assegnare]\n\n");
 		else {
 			switch (sw1){
