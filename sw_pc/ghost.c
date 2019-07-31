@@ -540,11 +540,8 @@ void controller(char **parsed, Controller *cnt){
 					"\n"
 				);
 				setSoglia(cnt, val);
-<<<<<<< HEAD
+
 				printf("\tThreeshold set to %d\n\n",val);
-=======
-				printf("\tsoglia impostata a %d\n\n",val);
->>>>>>> f6870b386f6d79b5ba9c33571b31a1720c2ef0dd
 			
 			}else{
 				printf("\tValue must be in [%d , %d]\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
