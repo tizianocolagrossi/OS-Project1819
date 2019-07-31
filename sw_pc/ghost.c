@@ -339,7 +339,6 @@ int average(int* array, int size){
 //davide: function for calibrate threesholds for each finger
 //TODO - POSSO CAMBIARE APPROCCIO, FORSE è LEGGERMENTE PIù VELOCE
 //TODO - CHIEDETEMI COME APPENA SPIZZATE LA FUNZIONE CHE VI SPIEGO L'ALTRA OPZIONE
-//prova
 void *calibration(){
 	int counter;
 	int min[5];
@@ -425,6 +424,98 @@ void *calibration(){
 	
 	//davide: free allocated memory and return to shell
 	for(i=0; i<5; i++) free(calib_matrix[i]);
+	free(calib_matrix);
+	
+	return NULL;
+}
+
+//davide: optimized calibration, allocate much less memory and does much less memory accesses
+void *calibration_opt(){
+	int counter;
+	int min[5];
+	int max[5];
+	int i;
+	
+	int fd = port_configure();
+	//davide: if connection not created, return to shell
+	if(fd<0) {
+		printf("Please verify connection of your controller\n");
+		return NULL;
+	}
+	
+	//davide: allocate an array[5] and initialize to zero
+	int* calib_matrix = (int*) calloc(5, sizeof(int));
+	
+	//davide: first let's get minimum values
+	counter = 0;
+	
+	//davide: set to empty string
+	strcpy(current_num, "");
+	printf("Please keep your hand opened and firm\n");
+	sleep(2);
+	while(counter < NUM_CALIB_SAMPLES){
+		//davide: read from serial and fill calib_matrix with minimum values
+		read_(fd);
+		if(structure_ready){
+			for(i=0; i<5; i++){
+				calib_matrix[i] += hand[i];
+			}
+			counter++;
+			structure_ready = 0;
+		}
+	}
+	
+	//davide: get average minimum values for each finger
+	for(i=0; i<5; i++){
+		int val = (int) (calib_matrix[i] / NUM_CALIB_SAMPLES);
+		min[i] = val;
+		//davide: after saving the value, reset calib_matrix
+		calib_matrix[i] = 0;
+	}
+	printf("DONE!\n");
+	sleep(1);
+	
+	//davide: restart and get maximum values
+	counter = 0;
+	
+	//davide: reset to empty string, just to be sure
+	strcpy(current_num, "");
+	
+	printf("Please keep your hand close and firm\n");
+	sleep(2);
+	while(counter < NUM_CALIB_SAMPLES){
+		//davide: read from serial and fill calib_matrix with maximum values
+		read_(fd);
+		if(structure_ready){
+			for(i=0; i<5; i++){
+				calib_matrix[i] += hand[i];
+			}
+			counter++;
+			structure_ready = 0;
+		}
+	}
+	
+	//davide: get average maximum values for each finger
+	for(i=0; i<5; i++){
+		int val = (int) (calib_matrix[i] / NUM_CALIB_SAMPLES);
+		max[i] = val;
+	}
+	printf("DONE!\n");
+	
+	//davide: set global variable and trigger
+	for(i=0; i<5; i++){
+		//davide: we think that for our use-case, the middle value between
+		//        min and max should be a nice threeshold
+		int val = (min[i] + max[i]) / 2;
+		calib_threesholds[i] = val;
+		printf("%d > %d\n", i, calib_threesholds[i]);
+	}
+	//calib_threesholds[3] += 30; //uncomment to make ring finger less sensitive (due to pinkie bending)
+	calib_request = 1;
+	
+	printf("\n----------CALIBRATION SUCCESFULLY COMPLETED!----------\n");
+	
+	//davide: free allocated memory and return to shell
 	free(calib_matrix);
 	
 	return NULL;
