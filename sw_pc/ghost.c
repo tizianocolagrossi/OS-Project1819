@@ -588,7 +588,7 @@ void controller(char **parsed, Controller *cnt){
 					"TROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTRO\n"
 					"\n"
 				);
-				setSoglia(cnt, val); //michele
+				setSoglia(cnt, val);
 				printf("\tsoglia impostata a %d\n\n",val);
 			
 			}else{
