@@ -271,12 +271,6 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss){
 		"\n"
 		"CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER\n"
 		"OLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT CONTROLLER EDIT\n"
-		"Special characters:\n"
-		"1 = space\n"
-		"2 = left\n"
-		"3 = right\n"
-		"4 = up\n"
-		"5 = down\n\n"
 	);
 	if(cnt->elementi[tipo].charAss == newCharAss){
 		printf("\n\tCharacter already associated to this element\n\n");

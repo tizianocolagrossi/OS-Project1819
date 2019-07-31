@@ -171,17 +171,17 @@ void help(){
 		"\tDisplays state of controller [ACTIVE or NOT ACTIVE]\n"
 		"\tDisplays current configuration of controller\n"
 		"\n\n"
-		"- controller -m {pinkie|ring|middle|index|thumb} {new character}\n"
+		"- controller -m {pinkie|ring|middle|index|thumb} {newChar}\n"
 		"\tnewChar -> new character to associate to finger in {pinkie|...]\n"
 		"Special characters:\n"
-		"1 = spazio\n"
-		"2 = sinistra\n"
-		"3 = destra\n"
-		"4 = sopra\n"
-		"5 = sotto\n\n"
+		"1 = space\n"
+		"2 = left\n"
+		"3 = right\n"
+		"4 = up\n"
+		"5 = down\n\n"
 		"\n\n"
-		"- controller -s {threeshold value (integer in [%d , %d]) }\n"
-		"\tSet minimum value [bend angle] to trigger the key\n"
+		"- controller -s {threeshold_value (integer in [%d , %d]) }\n"
+		"\tSets minimum value [bend angle] to trigger the key\n"
 		"\n\n"
 		"- calibrate\n"
 		"\tStarts process of calibration of sensors\n"
@@ -195,9 +195,6 @@ void help(){
 		"- quit, q, exit\n"
 		"\tQuits the shell\n"
 		"\n\n"
-		"HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP\n"
-		"LP HELP HELP HELP HELP HELP HinteroELP HELP HELP HELP HELP HELP HELP HELP HELP H\n"
-		"P HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HEL\n"
 		,MIN_SOGL_VAL, MAX_SOGL_VAL
 	);
 }
@@ -533,7 +530,7 @@ void controller(char **parsed, Controller *cnt){
 	if(strcmp(parsed[1],"-s")==0){
 		if(parsed[2] != NULL){
 			int val = atoi(parsed[2]);
-			if(val!=0 && val > MIN_SOGL_VAL && val < MAX_SOGL_VAL ){
+			if(val!=0 && val >= MIN_SOGL_VAL && val <= MAX_SOGL_VAL ){
 				printf(
 					"CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CON\n"
 					"TROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTROLLER EDIT SOGLIA CONTRO\n"
@@ -544,7 +541,7 @@ void controller(char **parsed, Controller *cnt){
 				printf("\tThreeshold set to %d\n\n",val);
 			
 			}else{
-				printf("\tValue must be in [%d , %d]\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
+				printf("\tError: value must be in [%d , %d]\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
 			}
 		}
 		else{
@@ -611,7 +608,7 @@ void quitShell(Controller* cnt){
 	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);
-	printf("\tGOODBYE, SEE YOU SOON !");
+	printf("\n\tGOODBYE, SEE YOU SOON !");
 	printf("\n\n");
 	exit(0);
 }
