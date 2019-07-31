@@ -504,8 +504,7 @@ void controller(char **parsed, Controller *cnt){
 		if(strcmp(parsed[2],"middle")==0)sw1=medio;
 		if(strcmp(parsed[2],"index")==0)sw1=indice;
 		if(strcmp(parsed[2],"thumb")==0)sw1=pollice;
-		
-		//michele 
+		 
 		if(parsed[3] == NULL) printf("\t[USAGE] controller -m {pinkie|ring|...} {new character}\n\n");
 		else {
 			switch (sw1){
@@ -541,7 +540,11 @@ void controller(char **parsed, Controller *cnt){
 					"\n"
 				);
 				setSoglia(cnt, val);
+<<<<<<< HEAD
 				printf("\tThreeshold set to %d\n\n",val);
+=======
+				printf("\tsoglia impostata a %d\n\n",val);
+>>>>>>> f6870b386f6d79b5ba9c33571b31a1720c2ef0dd
 			
 			}else{
 				printf("\tValue must be in [%d , %d]\n\n\n", MIN_SOGL_VAL, MAX_SOGL_VAL);
