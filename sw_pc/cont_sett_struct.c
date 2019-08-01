@@ -41,7 +41,7 @@ void Controller_init(Controller* cnt) {
 		cnt->elementi[i].statoFisico=0;
 		cnt->elementi[i].sAss = (char*)malloc(10*sizeof(char));
 		switch(i){
-			case 0:
+			case 4:
 				cnt->elementi[i].tipo = mignolo;
 				cnt->elementi[i].charAss = MIG;
 				if(MIG=='1'){
@@ -79,7 +79,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = '\0';
 				}
 				break;
-			case 1:
+			case 3:
 				cnt->elementi[i].tipo = anulare;
 				cnt->elementi[i].charAss = ANU;
 				if(ANU=='1'){
@@ -155,7 +155,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = '\0';
 				}
 				break;
-			case 3:
+			case 1:
 				cnt->elementi[i].tipo = indice;
 				cnt->elementi[i].charAss = IND;
 				if(IND=='1'){
@@ -193,7 +193,7 @@ void Controller_init(Controller* cnt) {
 					cnt->elementi[i].sAss[1] = '\0';
 				}
 				break;
-			case 4:
+			case 0:
 				cnt->elementi[i].tipo = pollice;
 				cnt->elementi[i].charAss = POL;
 				if(POL=='1'){
