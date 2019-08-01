@@ -5,7 +5,7 @@
 #pragma once
 #include <xdo.h>
 
-enum tipoElemento{mignolo, anulare, medio, indice, pollice};
+enum tipoElemento{pollice, indice, medio, anulare, mignolo};
 
 typedef struct Elemento{
 	int premuto;
