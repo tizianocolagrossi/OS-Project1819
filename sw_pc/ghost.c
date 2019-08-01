@@ -524,7 +524,7 @@ void *calibration_opt(){
 //michele: calibration thread
 void calib_(){
 	pthread_t thread_id;
-	pthread_create(&thread_id, NULL, calibration, NULL);
+	pthread_create(&thread_id, NULL, calibration_opt, NULL);
 }
 
 /*
