@@ -2,8 +2,8 @@
 
 ## Controller w/flex sensors
 
-What do you need:
-	* a computer (lol)
+*What do you need:
+	*a computer (lol)
 	* an arduino (or another microcontroller, we used an ATMEGA2560)
 	* 5 flex sensors (we used one for each finger, but it's customizable changing a little bit source code)
 	* a breadboard
