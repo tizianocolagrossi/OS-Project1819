@@ -37,7 +37,7 @@ int current_finger = 0; //0,1,2,3,4
 int hand[5];
 int structure_ready = 0;  //it will be set to 1 when hand is filled
 int calib_threesholds[5]; //in case of calibration request
-int calib_request = 0;    //it will be set to 1 when at least one calibration was done
+int calib_request = 0;    //it will be set to 1 when a calibration has been done
 
 
 /*
@@ -169,22 +169,24 @@ void help(){
 		"\n\n"
 		"- controller\n"
 		"\tDisplays state of controller [ACTIVE or NOT ACTIVE]\n"
-		"\tDisplays current configuration of controller\n"
+		"\tand current configuration\n"
 		"\n\n"
 		"- controller -m {pinkie|ring|middle|index|thumb} {newChar}\n"
-		"\tnewChar -> new character to associate to finger in {pinkie|...]\n"
-		"Special characters:\n"
-		"1 = space\n"
-		"2 = left\n"
-		"3 = right\n"
-		"4 = up\n"
-		"5 = down\n\n"
+		"\tnewChar -> new character to associate to finger {pinkie|...]\n"
+		"\tSpecial characters:\n"
+		"\t1 -> space\n"
+		"\t2 -> left\n"
+		"\t3 -> right\n"
+		"\t4 -> up\n"
+		"\t5 -> down\n"
 		"\n\n"
 		"- controller -s {threeshold_value (integer in [%d , %d]) }\n"
-		"\tSets minimum value [bend angle] to trigger the key\n"
+		"\tSets minimum value [bend angle] to trigger the key. Default is %d.\n"
+		"\tOn success, this value will be used, despite previous calibrations\n"
 		"\n\n"
 		"- calibrate\n"
-		"\tStarts process of calibration of sensors\n"
+		"\tStarts process of calibration of sensors.\n"
+		"\tOn success, calibrated values will be used, despite previous threesholds sets\n"
 		"\n\n"
 		"- start\n" 
 		"\tStarts the controller\n"
@@ -192,10 +194,13 @@ void help(){
 		"- stop\n"
 		"\tStops the controller\n"
 		"\n\n"
+		"- help, h\n"
+		"\tDisplays this guide\n"
+		"\n\n"
 		"- quit, q, exit\n"
 		"\tQuits the shell\n"
 		"\n\n"
-		,MIN_SOGL_VAL, MAX_SOGL_VAL
+		,MIN_SOGL_VAL, MAX_SOGL_VAL, 800 //"SOGLIA" in cont_sett_struct.c
 	);
 }
 
@@ -628,6 +633,7 @@ void controller(char **parsed, Controller *cnt){
 					"\n"
 				);
 				setSoglia(cnt, val);
+				calib_request = 0;
 
 				printf("\tThreeshold set to %d\n\n",val);
 			
