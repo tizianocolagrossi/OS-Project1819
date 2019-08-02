@@ -5,14 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DIM_VETT_MANO 4
-
 // michele: function that controls if analog values sent by arduino
 // are in a range that was set by user 
 void set_finger(Controller* cnt, int soglia, int* hand){
 	
-	int i = DIM_VETT_MANO;
-	while (i >= 0){
+	int i = 0;
+	while (i <= 4){
 		if (*hand >= soglia) {
 			setElemento(cnt, i);
 			//printf("[set_finger]dito %d settato\n", i);
@@ -21,7 +19,7 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 			resetElemento(cnt, i);
 		}
 		hand++;
-		i--;
+		i++;
 	}
 	setState(cnt);
 }
@@ -30,8 +28,8 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 // are in the calibrated range
 void set_finger_calib(Controller* cnt, int* vett_soglie, int* hand){
 	
-	int i = DIM_VETT_MANO, c = 0;
-	while (i >= 0 && c <= 4){
+	int i = 0, c = 0;
+	while (i <=4 && c <= 4){
 		if (*hand >= *vett_soglie) {
 			setElemento(cnt, i);
 			//printf("[set_finger]: %d set\n", i);
@@ -40,7 +38,7 @@ void set_finger_calib(Controller* cnt, int* vett_soglie, int* hand){
 			resetElemento(cnt, i);
 		}
 		hand++;        
-		i--;		   
+		i++;		   
 		vett_soglie++; 
 		c++;	
 	}
