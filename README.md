@@ -30,6 +30,7 @@ To launch the code, follow these steps:
 2. To launch the shell go to /sw_pc folder, open a terminal and type:
 * make
 * ./ghost
+
 Be sure that arduino is connected to your pc and that the dedicated code has been uploaded into it (step 1).
 
 For more commands and how to use them type "help" or "h" in the shell.
