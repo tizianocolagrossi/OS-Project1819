@@ -23,14 +23,14 @@ We also wrote a shell for users, with every command that can be useful to intera
 
 To launch the code, follow these steps:
 
-1)To upload code in your arduino, go to /Arduino folder, open a terminal and type:
+1. To upload code in your arduino, go to /Arduino folder, open a terminal and type:
 * make
 * make main.hex 
 
-2)To launch the shell go to /sw_pc folder, open a terminal and type:
+2. To launch the shell go to /sw_pc folder, open a terminal and type:
 * make
 * ./ghost
-  Be sure that arduino is connected to your pc and that the dedicated code has been uploaded into it (step 1).
+Be sure that arduino is connected to your pc and that the dedicated code has been uploaded into it (step 1).
 
 For more commands and how to use them type "help" or "h" in the shell.
 
