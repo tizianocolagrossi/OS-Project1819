@@ -2,6 +2,11 @@
 
 ## Controller w/flex sensors
 
+Created and coded by:
+* Davide Di Campi, 1754338
+* Michele Dilollo
+* Tiziano Colagrossi
+
 What do you need:
 * a computer (lol)
 * an arduino (or another microcontroller, we used an ATMEGA2560)
@@ -36,11 +41,3 @@ Be sure that arduino is connected to your pc and that the dedicated code has bee
 For more commands and how to use them type "help" or "h" in the shell.
 
 Enjoy!
-
-
-
-
-Created and coded by:
-* Davide Di Campi 1754338
-* Michele Dilollo
-* Tiziano Colagrossi
