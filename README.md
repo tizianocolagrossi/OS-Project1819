@@ -36,3 +36,11 @@ Be sure that arduino is connected to your pc and that the dedicated code has bee
 For more commands and how to use them type "help" or "h" in the shell.
 
 Enjoy!
+
+
+
+
+Created and coded by:
+* Davide Di Campi 1754338
+* Michele Dilollo
+* Tiziano Colagrossi
