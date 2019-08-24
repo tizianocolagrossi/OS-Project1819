@@ -603,19 +603,19 @@ void controller(char **parsed, Controller *cnt){
 		else {
 			switch (sw1){
 				case 0:
-					editElemCharAss(cnt, mignolo, parsed[3][0]);
+					editElemCharAss(cnt, pollice, parsed[3][0]);
 					break;
 				case 1:
-					editElemCharAss(cnt, anulare, parsed[3][0]);
+					editElemCharAss(cnt, indice, parsed[3][0]);
 					break;
 				case 2:
 					editElemCharAss(cnt, medio, parsed[3][0]);
 					break;
 				case 3:
-					editElemCharAss(cnt, indice, parsed[3][0]);
+					editElemCharAss(cnt, anulare, parsed[3][0]);
 					break;
 				case 4:
-					editElemCharAss(cnt, pollice, parsed[3][0]);
+					editElemCharAss(cnt, mignolo, parsed[3][0]);
 					break;
 				default:
 					printf("Fingers available to be set are:\n"
