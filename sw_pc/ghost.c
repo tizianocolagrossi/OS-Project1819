@@ -171,8 +171,8 @@ void help(){
 		"\tDisplays state of controller [ACTIVE or NOT ACTIVE]\n"
 		"\tand current configuration\n"
 		"\n\n"
-		"- controller -m {pinkie|ring|middle|index|thumb} {newChar}\n"
-		"\tnewChar -> new character to associate to finger {pinkie|...]\n"
+		"- controller -m {thumb|index|middle|ring|pinkie} {newChar}\n"
+		"\tnewChar -> new character to associate to finger {thumb|...]\n"
 		"\tSpecial characters:\n"
 		"\t1 -> space\n"
 		"\t2 -> left\n"
@@ -589,7 +589,7 @@ void controller(char **parsed, Controller *cnt){
 	}
 	if(strcmp(parsed[1],"-m")==0){
 		if(parsed[2]==NULL){
-			printf("\t[USAGE] controller -m {pinkie|ring|...} {new character}\n\n");
+			printf("\t[USAGE] controller -m {thumb|index|...} {new character}\n\n");
 			return;
 		}
 		enum tipoElemento sw1 = -1;
@@ -599,7 +599,7 @@ void controller(char **parsed, Controller *cnt){
 		if(strcmp(parsed[2],"index")==0)sw1=indice;
 		if(strcmp(parsed[2],"thumb")==0)sw1=pollice;
 		 
-		if(parsed[3] == NULL) printf("\t[USAGE] controller -m {pinkie|ring|...} {new character}\n\n");
+		if(parsed[3] == NULL) printf("\t[USAGE] controller -m {thumb|index|...} {new character}\n\n");
 		else {
 			switch (sw1){
 				case 0:
@@ -619,7 +619,7 @@ void controller(char **parsed, Controller *cnt){
 					break;
 				default:
 					printf("Fingers available to be set are:\n"
-						   "\tpinkie|ring|middle|index|thumb\n");
+						   "\tthumb|index|middle|ring|pinkie\n");
 					break;
 			}
 		}

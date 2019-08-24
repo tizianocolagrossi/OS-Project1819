@@ -30,11 +30,11 @@ void Controller_init(Controller* cnt) {
 	cnt->t_id = NULL;
 	cnt->soglia = SOGLIA;
 	// default values:
-	// 0 mignolo
-	// 1 anulare
-	// 2 medio
-	// 3 indice
-	// 4 pollice
+	// 0 thumb
+	// 1 index
+	// 2 middle
+	// 3 ring
+	// 4 pinkie
 
 	for(int i = 0; i<NUM_ELEMENTS; i++){
 		cnt->elementi[i].premuto=0;
@@ -326,7 +326,7 @@ void printControllerSetting(Controller* cnt){
 		"TROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTROLLER STATUS CONTR\n"
 		"\n\n"
 	);
-	printf("\t0=pinkie, 1=ring, 2=middle, 3=index, 4=thumb\n\n");
+	printf("\t0=thumb, 1=index, 2=middle, 3=ring, 4=pinkie\n\n");
 	for(int i = 0; i<NUM_ELEMENTS; i++){
 		char tasto;
 		enum tipoElemento t;
