@@ -549,8 +549,10 @@ void clearCnt(Controller* cnt){
  * function that calls the thread for the controller
  */
 void start(Controller* cnt, char **parsed){
-	pthread_t thread_id_; 
-	pthread_t thread_id; 
+    printf("Starting in 5 sec\n");
+    sleep(5);
+    pthread_t thread_id_; 
+    pthread_t thread_id; 
     debugPrintMsg("Starting thread"); 
     
     if (parsed[1] == NULL){
