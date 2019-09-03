@@ -16,7 +16,7 @@
 #define MED '3'
 #define IND '2'
 #define POL 'z'
-#define SOGLIA 800
+#define SOGLIA 900
 
 /*
  * Tiziano
@@ -259,7 +259,7 @@ void setSoglia(Controller* cnt, int newSgl){
  * free space allocated by xdo
  */
 void cntXdoFree(Controller* cnt){
-	xdo_free(cnt->xdo);
+	if(cnt->xdo) xdo_free(cnt->xdo);
 }
 
 /*

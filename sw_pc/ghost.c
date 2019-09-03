@@ -23,9 +23,10 @@
 #define NUM_CALIB_SAMPLES 1000
 #define MAX_SIZE_ 25
 #define BAUDRATE B19200
-#define DEBUG 0      // set to 1 for debug prints
+#define DEBUG 1      // set to 1 for debug prints
 
 volatile sig_atomic_t termReq = 0; //termination flag
+Controller* cnt;  //controller global variable for easy access from functions
 
 //michele: struct for initialization of the serial port
 struct termios current;
@@ -58,18 +59,23 @@ void debugPrintMsg(char *msg){
 /*
  * Tiziano: handler for SIGKILL, SIGINT or SIGTERM
  * sets a flag checked by main 
- */
- void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
+ *
+void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
+	//handler
+	debugPrintMsg("Dentro interrupt handler");
+	interrupt_routine(&cnt);
+}
+ void interrupt_ha(int sig){
 	//handler
 	debugPrintMsg("Dentro interrupt handler");
 	termReq = 1;
 }
+*/
 
 /*
  * Tiziano: test for controller
  */
-void test(Controller* cnt, char** parsed){
-		xdo_t * x = cnt->xdo;
+void test(char** parsed){
 		if(parsed[1]==NULL)return;
 		sleep(3);
 		if(strcmp(parsed[1],"-mSngStrk")==0){
@@ -286,30 +292,33 @@ void read_(int fd){
 }
 
 //michele: debug function for writing
-int* debug_(Controller* cnt){
+int* debug_(){
 	
 	sleep(5);
-	int i = 0;
-	while(1){
+	int i = 0, j = 0;
+	while(j <= 20){
 		vett[i] = rand() % 999;
 		if(i == 4){
 			set_finger(cnt, MIN_SOGL_VAL, vett);
 			memset(vett, 0, sizeof(vett));
 			i = 0;
+			j++;
 		}
 		else{
 			i++;
 		}
 	}
+	return 0;
 }
 
 //michele: debug thread
-void *debug_thread(void* cnt){
-	debug_(cnt); 
+void *debug_thread(){
+	debug_();
+	return NULL; 
 }
 
 //davide: main thread
-void *playCnt(void* cnt) {
+void *playCnt() {
 	
 	int fd = port_configure();
 	//davide: if connection not created, return to shell
@@ -344,7 +353,6 @@ int average(int* array, int size){
 
 //davide: function for calibrate threesholds for each finger
 //TODO - POSSO CAMBIARE APPROCCIO, FORSE è LEGGERMENTE PIù VELOCE
-//TODO - CHIEDETEMI COME APPENA SPIZZATE LA FUNZIONE CHE VI SPIEGO L'ALTRA OPZIONE
 void *calibration(){
 	int counter;
 	int min[5];
@@ -431,11 +439,11 @@ void *calibration(){
 	//davide: free allocated memory and return to shell
 	for(i=0; i<5; i++) free(calib_matrix[i]);
 	free(calib_matrix);
-	
+
 	return NULL;
 }
 
-//davide: optimized calibration, allocate much less memory and does much less memory accesses
+//davide: optimized calibration, allocate much less memory and does less memory accesses
 void *calibration_opt(){
 	int counter;
 	int min[5];
@@ -516,7 +524,7 @@ void *calibration_opt(){
 		calib_threesholds[i] = val;
 		printf("%d > %d\n", i, calib_threesholds[i]);
 	}
-	//calib_threesholds[3] += 30; //uncomment to make ring finger less sensitive (due to pinkie bending)
+	//calib_threesholds[3] += 30; // uncomment to make ring finger less sensitive (due to pinkie bending)
 	calib_request = 1;
 	
 	printf("\n----------CALIBRATION SUCCESFULLY COMPLETED!----------\n");
@@ -531,13 +539,16 @@ void *calibration_opt(){
 void calib_(){
 	pthread_t thread_id;
 	pthread_create(&thread_id, NULL, calibration_opt, NULL);
+	cnt->t_id = (void*) thread_id;
+	
+	pthread_join(thread_id, NULL);
 }
 
 /*
  * Tiziano
  * function that resets the state of all controller's keys
  */
-void clearCnt(Controller* cnt){
+void clearCnt(){
 	for(int i = 0; i<cnt->size; i++){
 		resetElemento(cnt, i);
 	}
@@ -548,23 +559,21 @@ void clearCnt(Controller* cnt){
  * Tiziano:
  * function that calls the thread for the controller
  */
-void start(Controller* cnt, char **parsed){
-    printf("Starting in 5 sec\n");
-    sleep(5);
-    pthread_t thread_id_; 
+void start(char **parsed){
     pthread_t thread_id; 
     debugPrintMsg("Starting thread"); 
     
     if (parsed[1] == NULL){
-    	pthread_create(&thread_id, NULL, playCnt, cnt);
+    	pthread_create(&thread_id, NULL, playCnt, NULL);
     	cnt->t_id = (void*) thread_id;
-    
     }
     //Michele: if "-t" is added, debug thread is called
     else if(strcmp(parsed[1],"-t")==0){
-    	pthread_create(&thread_id, NULL, debug_thread, cnt);
-    	cnt->t_id = (void*) thread_id_;
+    	pthread_create(&thread_id, NULL, debug_thread, NULL);
+    	cnt->t_id = (void*) thread_id;
     }
+    printf("%lu\n", thread_id);
+    pthread_join(thread_id, NULL);
 
 }
 
@@ -572,19 +581,19 @@ void start(Controller* cnt, char **parsed){
  * Tiziano
  * function that stops controller's thread
  */
-void stop(Controller* cnt){
-	pthread_t thread_id = (pthread_t)cnt->t_id;
-	pthread_cancel(thread_id);
+void stop(){
+	//pthread_t thread_id = (pthread_t)cnt->t_id;
+	//pthread_cancel(thread_id);
 	debugPrintMsg("Controller stopped\n");
-	//per sicurezza rilascia tutti i tasti del controller
-	clearCnt(cnt);
+	//release every key of controller, just to be sure
+	clearCnt();
 }
 
 /*
  * Tiziano
  * function to control the controller (lol)
  */
-void controller(char **parsed, Controller *cnt){
+void controller(char **parsed){
 	if(parsed[1]==NULL){
 		printControllerSetting(cnt);
 		return;
@@ -658,18 +667,27 @@ void controller(char **parsed, Controller *cnt){
 int getCmd(char* cmd){
 	size_t characters;
 	size_t bufsize = MAX_SIZE;
-
+	
+	debugPrintMsg("Dentro getCmd");
     printf("#> ");
 	// function getline takes commands from stdin, buffer dimension and
-	// address of buffer where to write 
+	// address of buffer where to write
 	characters = getline(&cmd,&bufsize,stdin);
-	if(characters != 0){
-		//strncpy(cmd, buf, characters);
-		debugPrint("FUN getCmd value >", cmd);
+	//printf("characters = %ld\n", characters);
+	printf("FUN getCmd value >%s", cmd);
+	if(termReq) return 0;
+	
+	if(characters == -1){
+		perror("");
 		return 0;
 	}
-	else {
+	else if(characters > 0){
+		//strncpy(cmd, buf, characters);
+		debugPrint("FUN getCmd value >", cmd);
 		return 1;
+	}
+	else {
+		return 0;
 	}
 }
 
@@ -678,7 +696,7 @@ int getCmd(char* cmd){
  * function to split input string
  */
  
-int splitString(char *str, char **split){
+void splitString(char *str, char **split){
 	int i;
 	int len = strlen(str);
 	str[len-1]='\0'; // erase character '\n' taken by getline
@@ -695,12 +713,12 @@ int splitString(char *str, char **split){
  * Tiziano
  * function to close the program
  */
-void quitShell(Controller* cnt){
-	pthread_t id = (pthread_t)cnt->t_id;
-	pthread_cancel(id);
-	pthread_join(id, NULL);
+void quitShell(){
+	//pthread_t id = (pthread_t)cnt->t_id;
+	//pthread_cancel(id);
+	//pthread_join(id, NULL);
 	//Tiziano: release every key of controller, just to be sure
-	clearCnt(cnt);
+	clearCnt();
 	for(int i = 0; i<cnt->size;i++){
 		//printf("libero il comando %d\n", i);
 		free(cnt->elementi[i].sAss);
@@ -708,9 +726,7 @@ void quitShell(Controller* cnt){
 	}
 	free(cnt->elementi);
 	cntXdoFree(cnt);
-	printf("\n\tGOODBYE, SEE YOU SOON !");
-	printf("\n\n");
-	exit(0);
+	termReq = 1;
 }
 
 /*
@@ -718,7 +734,7 @@ void quitShell(Controller* cnt){
  * function to handle shell's commands
  */
  
-int cmdHandler(char** parsed, Controller *cnt){
+void cmdHandler(char** parsed){
 	debugPrintMsg("dentroCmdHandler");
 	if(parsed[0]==NULL)parsed[0]="";
 	int nCmdSupportati=11, i, switchArg=100;
@@ -753,25 +769,26 @@ int cmdHandler(char** parsed, Controller *cnt){
 		case 0:
 		case 1:
 			help();
-			return 1; //tiziano: because it's used by the if that calls cmdHandler!
+			break;
 		case 2:
 		case 3:
 		case 4:
-			quitShell(cnt);
+			quitShell();
+			break;
 		case 5:
 			sayHi(parsed);
 			break;
 		case 6:
-			controller(parsed, cnt);
+			controller(parsed);
 			break;
 		case 7:
-			start(cnt, parsed);
+			start(parsed);
 			break;
 		case 8:
-			stop(cnt);
+			stop();
 			break;
 		case 9:
-			test(cnt, parsed);
+			test(parsed);
 			break;
 		case 10:
 			calib_();
@@ -790,12 +807,30 @@ int cmdHandler(char** parsed, Controller *cnt){
  * function to parse input string
  */
  
-int parseString(char *str, char** parsed, Controller *cnt){
+void parseString(char *str, char** parsed){
 	splitString(str, parsed);
-	if (cmdHandler(parsed, cnt)) return 0;
-	else return 1; 
+	cmdHandler(parsed); 
 }
 
+void interrupt_routine(){
+	printf("interrupt routine\n");
+	if(cnt->t_id){
+		pthread_t id = (pthread_t)cnt->t_id;
+		printf("%lu\n", id);
+		pthread_cancel(id);
+		clearCnt();
+		cnt->t_id = NULL;
+	}
+	else printf("Controller thread already closed\n");
+	fflush(stdout);
+	termReq = 0;
+	printf("interrupt routine done\n");
+}
+
+void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
+	debugPrintMsg("Dentro interrupt handler");
+	interrupt_routine();
+}
 
 /*
  * Tiziano: shell, struct and int_handler initialization
@@ -807,27 +842,29 @@ int main(int argc, char **argv){
 	/* Use the sa_sigaction field because the handler has two additional parameters */
 	act.sa_sigaction = &interrupt_handler;
 	/* The SA_SIGINFO flag tells sigaction() to use the sa_sigaction field, not sa_handler. */
-	act.sa_flags = SA_SIGINFO;
+	act.sa_flags = SA_RESTART;
 	
 	sigaction(SIGINT, &act, NULL);
 	sigaction(SIGKILL, &act, NULL);
 	sigaction(SIGTERM, &act, NULL);
-	
+	//signal(SIGINT | SIGKILL | SIGTERM, &interrupt_ha);
     
 	char inStr[MAX_SIZE], *parsedArg[MAX_CMD];
 	
 	init_shell();
-
-	Controller cnt;
-	Controller_init(&cnt);
+	
+	//alloc and initialize controller variable
+	cnt = (Controller*) malloc(sizeof(Controller));
+	Controller_init(cnt);
 	
 	while(!termReq){
-		if(getCmd(inStr)) continue;
-		parseString(inStr, parsedArg, &cnt);
+		if(!getCmd(inStr)) continue;  //getCmd returns 0 when an error has occurred or interrupt has been triggered
+		parseString(inStr, parsedArg);
 	}
-	//Tiziano: if it arrives here is because it has received 
-	//  SIGINT SIGKILL or SIGTERM, therefore I clean
-	quitShell(&cnt);
+	free(cnt);
+	printf("\n\tGOODBYE, SEE YOU SOON !");
+	printf("\n\n");
+	exit(0);
 }
 
 
