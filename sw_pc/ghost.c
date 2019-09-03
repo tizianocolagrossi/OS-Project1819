@@ -232,7 +232,7 @@ int port_configure(void){
 	
 	else{
 		
-		//setFd(cnt, fd);
+		setFd(cnt, fd);
 		
 		fcntl(fd, F_SETFL, 0);
 		tcgetattr(fd, &current); //save current values of serial port 
