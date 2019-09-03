@@ -198,9 +198,6 @@ void help(){
 		"- start\n" 
 		"\tStarts the controller\n"
 		"\n\n"
-		"- stop\n"
-		"\tStops the controller\n"
-		"\n\n"
 		"- help, h\n"
 		"\tDisplays this guide\n"
 		"\n\n"
@@ -542,15 +539,6 @@ void *calibration_opt(){
 	return NULL;
 }
 
-//michele: calibration thread
-void calib_(){
-	pthread_t thread_id;
-	pthread_create(&thread_id, NULL, calibration_opt, NULL);
-	cnt->t_id = (void*) thread_id;
-	
-	pthread_join(thread_id, NULL);
-}
-
 /*
  * Tiziano
  * function that resets the state of all controller's keys
@@ -592,7 +580,7 @@ void stop(){
 	//pthread_t thread_id = (pthread_t)cnt->t_id;
 	//pthread_cancel(thread_id);
 	debugPrintMsg("Controller stopped\n");
-	//release every key of controller, just to be sure
+	//"unstroke" every key of controller, just to be sure
 	clearCnt();
 }
 
@@ -724,7 +712,7 @@ void quitShell(){
 	//pthread_t id = (pthread_t)cnt->t_id;
 	//pthread_cancel(id);
 	//pthread_join(id, NULL);
-	//Tiziano: release every key of controller, just to be sure
+	//Tiziano: "unstroke" every key of controller, just to be sure
 	clearCnt();
 	for(int i = 0; i<cnt->size;i++){
 		//printf("libero il comando %d\n", i);
@@ -744,7 +732,7 @@ void quitShell(){
 void cmdHandler(char** parsed){
 	debugPrintMsg("dentroCmdHandler");
 	if(parsed[0]==NULL)parsed[0]="";
-	int nCmdSupportati=11, i, switchArg=100;
+	int nCmdSupportati=10, i, switchArg=100;
 	char* ListCmd[nCmdSupportati];
 
    	ListCmd[0]="help";
@@ -755,9 +743,8 @@ void cmdHandler(char** parsed){
    	ListCmd[5]="hi";
    	ListCmd[6]="controller";
    	ListCmd[7]="start";
-   	ListCmd[8]="stop";
-   	ListCmd[9]="test";
-   	ListCmd[10]="calibrate";
+   	ListCmd[8]="test";
+   	ListCmd[9]="calibrate";
    	
    	
 
@@ -792,13 +779,10 @@ void cmdHandler(char** parsed){
 			start(parsed);
 			break;
 		case 8:
-			stop();
-			break;
-		case 9:
 			test(parsed);
 			break;
-		case 10:
-			calib_();
+		case 9:
+			calibration_opt();
 			break;
 		default:
 			printf(
