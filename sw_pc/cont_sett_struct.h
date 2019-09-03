@@ -22,7 +22,7 @@ typedef struct Controller{
 	int size;
 	xdo_t* xdo;
 	void* t_id;
-	int* fd;
+	int fd;
 }Controller;
 
 int getSoglia(Controller* cnt);
