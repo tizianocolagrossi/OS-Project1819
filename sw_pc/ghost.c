@@ -25,7 +25,7 @@
 #define BAUDRATE B19200
 #define DEBUG 1      // set to 1 for debug prints
 
-volatile sig_atomic_t termReq = 0; //termination flag
+int termReq = 0; //termination flag
 Controller* cnt;  //controller global variable for easy access from functions
 
 //michele: struct for initialization of the serial port
@@ -55,22 +55,6 @@ void debugPrintInt(char *msg, int val){
 void debugPrintMsg(char *msg){
 	if(DEBUG) printf("\n%s\n", msg);
 }
-
-/*
- * Tiziano: handler for SIGKILL, SIGINT or SIGTERM
- * sets a flag checked by main 
- *
-void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
-	//handler
-	debugPrintMsg("Dentro interrupt handler");
-	interrupt_routine(&cnt);
-}
- void interrupt_ha(int sig){
-	//handler
-	debugPrintMsg("Dentro interrupt handler");
-	termReq = 1;
-}
-*/
 
 /*
  * Tiziano: test for controller
@@ -225,18 +209,9 @@ int port_configure(void){
 	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
-<<<<<<< HEAD
 		printf("questo è l'fd prima di set %d\n", fd);
 		setFd(cnt, fd);
 		printf("questo è l'fd dopo set %d\n", (cnt->fd));
-=======
-		
-<<<<<<< HEAD
-		setFd(cnt, fd);
-=======
-		//setFd(cnt, fd);
->>>>>>> 5a4a3e9251e168e879de1ab12d4ecea0424eed9d
->>>>>>> 3304c7c1dbe994fa032be4ec60491ba7c4c2a380
 		
 		fcntl(fd, F_SETFL, 0);
 		tcgetattr(fd, &current); //save current values of serial port 
@@ -338,8 +313,9 @@ void *playCnt() {
 	//davide: set to empty string
 	strcpy(current_num, "");
 	
-	//davide: reading from serial forever
+	//davide: reading from serial forever (until Ctrl+C)
 	while(1){
+		printf("sono nel while woohoo\n");
 		read_(fd);
 		if(structure_ready){
 			if(calib_request) set_finger_calib(cnt, calib_threesholds, hand);
@@ -504,7 +480,7 @@ void *calibration_opt(){
 	//davide: reset to empty string, just to be sure
 	strcpy(current_num, "");
 	
-	printf("Please keep your hand close and firm\n");
+	printf("Please keep your hand closed and firm\n");
 	sleep(2);
 	while(counter < NUM_CALIB_SAMPLES){
 		//davide: read from serial and fill calib_matrix with maximum values
@@ -550,9 +526,13 @@ void *calibration_opt(){
  */
 void clearCnt(){
 	for(int i = 0; i<cnt->size; i++){
+		printf("resetto i=%d\n", i);
 		resetElemento(cnt, i);
+		printf("ho resettato i=%d\n", i);
 	}
+	printf("vorrei settare\n");
 	setState(cnt);
+	printf("non so se ho settato\n");
 }
 
 /*
@@ -560,21 +540,53 @@ void clearCnt(){
  * function that calls the thread for the controller
  */
 void start(char **parsed){
+	int ret;
     pthread_t thread_id; 
     debugPrintMsg("Starting thread"); 
     
     if (parsed[1] == NULL){
-    	pthread_create(&thread_id, NULL, playCnt, NULL);
+    	ret = pthread_create(&thread_id, NULL, playCnt, NULL);
+    	if(ret) {
+    		perror("Create error in start-thread: ");
+    		exit(-1);
+    	}
     	cnt->t_id = (void*) thread_id;
     }
     //Michele: if "-t" is added, debug thread is called
     else if(strcmp(parsed[1],"-t")==0){
-    	pthread_create(&thread_id, NULL, debug_thread, NULL);
+    	ret = pthread_create(&thread_id, NULL, debug_thread, NULL);
+    	if(ret) {
+    		perror("Create error in start-thread: ");
+    		exit(-1);
+    	}
     	cnt->t_id = (void*) thread_id;
     }
     printf("Created thread %lu\n", thread_id);
-    pthread_join(thread_id, NULL);
-
+    ret = pthread_join(thread_id, NULL);
+    if(ret) {
+    	perror("Join error in start-thread: ");
+    	exit(-1);
+    }
+    
+    printf("Closed thread %lu\n", thread_id);
+    //davide: closing fd and clearing things
+    cnt->t_id = NULL;
+    
+    if(cnt->fd != -1){
+    	printf("chiudo fd %d\n", cnt->fd);
+		ret = close(cnt->fd);
+		if(ret) {
+    		perror("Close fd error in start-thread: ");
+    		exit(-1);
+    	}
+		cnt->fd = -1;
+	}
+	printf("pulisco cnt\n");
+	//clearCnt();
+	printf("ho pulito cnt\nflusho tutto\n");
+	fflush(stdout);
+	printf("ho flushato\nmo stampo:\n");
+	printf("ora dovrei tornare diocane\ntermReq = %d\n", termReq);
 }
 
 /*
@@ -663,7 +675,6 @@ int getCmd(char* cmd){
 	characters = getline(&cmd,&bufsize,stdin);
 	//printf("characters = %ld\n", characters);
 	printf("FUN getCmd value >%s", cmd);
-	if(termReq) return 0;
 	
 	if(characters == -1){
 		perror("");
@@ -793,28 +804,21 @@ void parseString(char *str, char** parsed){
 	cmdHandler(parsed); 
 }
 
-void interrupt_routine(){
-	printf("interrupt routine\n");
-	if(cnt->t_id){
-		int fd = cnt->fd;
-		
-		close(fd);
-		cnt->fd = NULL;
-		pthread_t id = (pthread_t)cnt->t_id;
-		printf("Closing thread %lu\n", id);
-		pthread_cancel(id);
-		clearCnt();
-		cnt->t_id = NULL;
-		
-	}
-	else printf("Controller thread already closed\n");
-	//fflush(stdout);
-	printf("interrupt routine done\n");
-}
 
 void interrupt_handler(int sig, siginfo_t *siginfo, void *context){
 	debugPrintMsg("Dentro interrupt handler");
-	interrupt_routine();
+	int ret;
+	if(cnt->t_id){
+		pthread_t id = (pthread_t)cnt->t_id;
+		printf("Closing thread %lu\n", id);
+		ret = pthread_cancel(id);
+		if(ret){
+			perror("Cancel failed: ");
+			exit(-1);
+		}
+		cnt->t_id = NULL;
+	}
+	else printf("Controller thread already closed\n");
 }
 
 /*
