@@ -401,7 +401,7 @@ void *calibration(){
 	
 	//davide: reset to empty string, just to be sure
 	strcpy(current_num, "");
-	printf("Please keep your hand close and firm\n");
+	printf("Please keep your hand closed and firm\n");
 	sleep(2);
 	while(counter < NUM_CALIB_SAMPLES){
 		//davide: read from serial and fill calib_matrix with maximum values
@@ -436,7 +436,7 @@ void *calibration(){
 	//davide: free allocated memory and return to shell
 	for(i=0; i<5; i++) free(calib_matrix[i]);
 	free(calib_matrix);
-
+	
 	return NULL;
 }
 
@@ -560,21 +560,9 @@ void start(char **parsed){
     	pthread_create(&thread_id, NULL, debug_thread, NULL);
     	cnt->t_id = (void*) thread_id;
     }
-    printf("%lu\n", thread_id);
+    printf("Created thread %lu\n", thread_id);
     pthread_join(thread_id, NULL);
 
-}
-
-/*
- * Tiziano
- * function that stops controller's thread
- */
-void stop(){
-	//pthread_t thread_id = (pthread_t)cnt->t_id;
-	//pthread_cancel(thread_id);
-	debugPrintMsg("Controller stopped\n");
-	//"unstroke" every key of controller, just to be sure
-	clearCnt();
 }
 
 /*
@@ -702,9 +690,6 @@ void splitString(char *str, char **split){
  * function to close the program
  */
 void quitShell(){
-	//pthread_t id = (pthread_t)cnt->t_id;
-	//pthread_cancel(id);
-	//pthread_join(id, NULL);
 	//Tiziano: "unstroke" every key of controller, just to be sure
 	clearCnt();
 	for(int i = 0; i<cnt->size;i++){
@@ -800,13 +785,13 @@ void interrupt_routine(){
 	printf("interrupt routine\n");
 	if(cnt->t_id){
 		pthread_t id = (pthread_t)cnt->t_id;
-		printf("%lu\n", id);
+		printf("Closing thread %lu\n", id);
 		pthread_cancel(id);
 		clearCnt();
 		cnt->t_id = NULL;
 	}
 	else printf("Controller thread already closed\n");
-	fflush(stdout);
+	//fflush(stdout);
 	termReq = 0;
 	printf("interrupt routine done\n");
 }
