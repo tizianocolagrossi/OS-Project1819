@@ -215,12 +215,6 @@ void sayHi(char **parsed){
 		printf("Hello %s\n", parsed[1]);
 	}
 }
-
-void setFd(Controller* cnt, int fd){
-
-	cnt->fd = &fd;
-	
-}
  
 // michele: function to set the right bits in termios structure
 // to enable the comunication through the serial port
@@ -231,8 +225,18 @@ int port_configure(void){
 	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
-		
+<<<<<<< HEAD
+		printf("questo è l'fd prima di set %d\n", fd);
 		setFd(cnt, fd);
+		printf("questo è l'fd dopo set %d\n", (cnt->fd));
+=======
+		
+<<<<<<< HEAD
+		setFd(cnt, fd);
+=======
+		//setFd(cnt, fd);
+>>>>>>> 5a4a3e9251e168e879de1ab12d4ecea0424eed9d
+>>>>>>> 3304c7c1dbe994fa032be4ec60491ba7c4c2a380
 		
 		fcntl(fd, F_SETFL, 0);
 		tcgetattr(fd, &current); //save current values of serial port 
@@ -792,9 +796,10 @@ void parseString(char *str, char** parsed){
 void interrupt_routine(){
 	printf("interrupt routine\n");
 	if(cnt->t_id){
-		//int* fd = cnt->fd;
-		//close(*fd);
-		//cnt->fd = NULL;
+		int fd = cnt->fd;
+		
+		close(fd);
+		cnt->fd = NULL;
 		pthread_t id = (pthread_t)cnt->t_id;
 		printf("Closing thread %lu\n", id);
 		pthread_cancel(id);

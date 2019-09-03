@@ -29,7 +29,7 @@ void Controller_init(Controller* cnt) {
 	cnt->size = NUM_ELEMENTS;
 	cnt->t_id = NULL;
 	cnt->soglia = SOGLIA;
-	cnt->fd =  NULL;
+	cnt->fd =  -1;
 	// default values:
 	// 0 thumb
 	// 1 index
@@ -373,4 +373,12 @@ void setState(Controller* cnt){
 			xdo_send_keysequence_window_up(x, CURRENTWINDOW, cnt->elementi[i].sAss, 0);
 		}
 	}
+}
+
+//michele: set cnt
+
+void setFd(Controller* cnt, int fd){
+
+	cnt->fd = fd;
+	
 }
