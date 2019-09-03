@@ -22,6 +22,7 @@ typedef struct Controller{
 	int size;
 	xdo_t* xdo;
 	void* t_id;
+	int fd;
 }Controller;
 
 int getSoglia(Controller* cnt);
@@ -33,3 +34,4 @@ void editElemCharAss(Controller* cnt, enum tipoElemento tipo, char newCharAss);
 void setElemento(Controller* cnt, enum tipoElemento tipo);
 void resetElemento(Controller* cnt, enum tipoElemento tipo);
 void setState(Controller* cnt);
+void setFd(Controller* cnt, int fd);

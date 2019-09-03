@@ -219,6 +219,11 @@ void sayHi(char **parsed){
 	}
 }
 
+void setFd(Controller* cnt, int fd){
+
+	cnt->fd = fd;
+	
+}
  
 // michele: function to set the right bits in termios structure
 // to enable the comunication through the serial port
@@ -229,6 +234,8 @@ int port_configure(void){
 	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
+		setFd(cnt, int fd);
+		
 		fcntl(fd, F_SETFL, 0);
 		tcgetattr(fd, &current); //save current values of serial port 
 		cfsetispeed(&current, B19200);//set baud rate
@@ -302,11 +309,11 @@ int* debug_(){
 			set_finger(cnt, MIN_SOGL_VAL, vett);
 			memset(vett, 0, sizeof(vett));
 			i = 0;
-			j++;
 		}
 		else{
 			i++;
 		}
+		j++;
 	}
 	return 0;
 }

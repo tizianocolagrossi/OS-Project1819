@@ -29,6 +29,7 @@ void Controller_init(Controller* cnt) {
 	cnt->size = NUM_ELEMENTS;
 	cnt->t_id = NULL;
 	cnt->soglia = SOGLIA;
+	cnt->fd = NULL;
 	// default values:
 	// 0 thumb
 	// 1 index
