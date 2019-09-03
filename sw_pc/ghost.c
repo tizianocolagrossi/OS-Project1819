@@ -225,9 +225,14 @@ int port_configure(void){
 	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
+<<<<<<< HEAD
 		printf("questo è l'fd prima di set %d\n", fd);
 		setFd(cnt, fd);
 		printf("questo è l'fd dopo set %d\n", (cnt->fd));
+=======
+		
+		//setFd(cnt, fd);
+>>>>>>> 5a4a3e9251e168e879de1ab12d4ecea0424eed9d
 		
 		fcntl(fd, F_SETFL, 0);
 		tcgetattr(fd, &current); //save current values of serial port 
@@ -800,7 +805,6 @@ void interrupt_routine(){
 	}
 	else printf("Controller thread already closed\n");
 	//fflush(stdout);
-	termReq = 0;
 	printf("interrupt routine done\n");
 }
 
