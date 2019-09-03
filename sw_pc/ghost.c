@@ -218,7 +218,7 @@ void sayHi(char **parsed){
 
 void setFd(Controller* cnt, int fd){
 
-	cnt->fd = fd;
+	cnt->fd = &fd;
 	
 }
  
@@ -231,7 +231,7 @@ int port_configure(void){
 	if(fd == -1) perror("cannot open dev/ttyACM0");
 	
 	else{
-		setFd(cnt, int fd);
+		setFd(cnt, fd);
 		
 		fcntl(fd, F_SETFL, 0);
 		tcgetattr(fd, &current); //save current values of serial port 
@@ -806,11 +806,15 @@ void parseString(char *str, char** parsed){
 void interrupt_routine(){
 	printf("interrupt routine\n");
 	if(cnt->t_id){
+		//int* fd = cnt->fd;
+		//close(*fd);
+		//cnt->fd = NULL;
 		pthread_t id = (pthread_t)cnt->t_id;
 		printf("%lu\n", id);
 		pthread_cancel(id);
 		clearCnt();
 		cnt->t_id = NULL;
+		
 	}
 	else printf("Controller thread already closed\n");
 	fflush(stdout);
