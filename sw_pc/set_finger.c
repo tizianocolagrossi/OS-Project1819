@@ -21,6 +21,7 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 		hand++;
 		i++;
 	}
+
 	setState(cnt);
 }
 
