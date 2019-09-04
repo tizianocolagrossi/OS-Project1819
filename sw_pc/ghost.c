@@ -19,7 +19,7 @@
 #define MAX_SIZE 150 // max input characters 
 #define MAX_CMD 10   // max commands supported
 #define MIN_SOGL_VAL 600
-#define MAX_SOGL_VAL 999 
+#define MAX_SOGL_VAL 999
 #define NUM_CALIB_SAMPLES 1000
 #define MAX_SIZE_ 25
 #define BAUDRATE B19200
@@ -283,7 +283,7 @@ int* debug_(){
 	while(j <= 20){
 		vett[i] = rand() % 999;
 		if(i == 4){
-			set_finger(cnt, MIN_SOGL_VAL, vett);
+			set_finger(cnt, cnt->soglia, vett);
 			memset(vett, 0, sizeof(vett));
 			i = 0;
 		}
@@ -307,7 +307,7 @@ void *playCnt() {
 	int fd = port_configure();
 	//davide: if connection not created, return to shell
 	if(fd<0) {
-		printf("Please verify connection of your controller");
+		printf("Please verify connection of your controller\n");
 		return NULL;
 	}
 	//davide: set to empty string
@@ -319,7 +319,7 @@ void *playCnt() {
 		read_(fd);
 		if(structure_ready){
 			if(calib_request) set_finger_calib(cnt, calib_threesholds, hand);
-			else set_finger(cnt, MIN_SOGL_VAL, hand);
+			else set_finger(cnt, cnt->soglia, hand);
 			structure_ready = 0;
 		}
 	}

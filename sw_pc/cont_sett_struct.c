@@ -17,14 +17,16 @@
 #define IND '2'
 #define POL 'z'
 #define SOGLIA 900
-
+Elemento* elem_g;
 /*
  * Tiziano
  * Controller initialization
  *
  */
 void Controller_init(Controller* cnt) {
-	cnt->xdo = xdo_new(NULL);
+	cnt->xdo = NULL;
+	while(!cnt->xdo) cnt->xdo = xdo_new(NULL);
+	
 	cnt->elementi = (Elemento*) malloc(NUM_ELEMENTS*sizeof(Elemento));
 	cnt->size = NUM_ELEMENTS;
 	cnt->t_id = NULL;
@@ -38,7 +40,6 @@ void Controller_init(Controller* cnt) {
 	// 4 pinkie
 
 	for(int i = 0; i<NUM_ELEMENTS; i++){
-		cnt->elementi[i].premuto=0;
 		cnt->elementi[i].statoFisico=0;
 		cnt->elementi[i].sAss = (char*)malloc(10*sizeof(char));
 		switch(i){
@@ -234,6 +235,7 @@ void Controller_init(Controller* cnt) {
 				break;
 		}
 	}
+	elem_g = cnt->elementi;
 	
 	
 }
@@ -344,7 +346,14 @@ void printControllerSetting(Controller* cnt){
  * set the state (pressed) of an element of controller
  */
 void setElemento(Controller* cnt, enum tipoElemento tipo){
+<<<<<<< HEAD
 	printf("setto tipo %d\n", cnt->elementi[tipo]);
+=======
+	printf("set\n");
+	printf("%p\n", cnt->elementi);
+	printf("tipo: %d\n", tipo);
+	printf("stato: %d\n", cnt->elementi[tipo].statoFisico);
+>>>>>>> 3174f1e5742dc7fce5500ed3ab3d126dfa3de1ff
 	if(cnt->elementi[tipo].statoFisico == 0){
 		cnt->elementi[tipo].statoFisico = 1;
 	}
@@ -355,6 +364,10 @@ void setElemento(Controller* cnt, enum tipoElemento tipo){
  * set the state (released) of an element of controller
  */
 void resetElemento(Controller* cnt, enum tipoElemento tipo){
+	printf("reset\n");
+	printf("%p\n", cnt->elementi);
+	printf("tipo: %d\n", tipo);
+	printf("stato: %d\n", cnt->elementi[tipo].statoFisico);
 	if(cnt->elementi[tipo].statoFisico == 1){
 		printf("resetto tipo %d\n", cnt->elementi[tipo]);
 		cnt->elementi[tipo].statoFisico = 0;

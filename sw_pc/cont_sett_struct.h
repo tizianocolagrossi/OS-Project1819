@@ -8,11 +8,10 @@
 enum tipoElemento{pollice, indice, medio, anulare, mignolo};
 
 typedef struct Elemento{
-	int premuto;
+	enum tipoElemento tipo;
 	int statoFisico;
 	char charAss;
 	char *sAss;
-	enum tipoElemento tipo;
 }Elemento;
 
 
