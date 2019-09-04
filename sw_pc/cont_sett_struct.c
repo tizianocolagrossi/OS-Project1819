@@ -346,14 +346,10 @@ void printControllerSetting(Controller* cnt){
  * set the state (pressed) of an element of controller
  */
 void setElemento(Controller* cnt, enum tipoElemento tipo){
-<<<<<<< HEAD
-	printf("setto tipo %d\n", cnt->elementi[tipo]);
-=======
 	printf("set\n");
 	printf("%p\n", cnt->elementi);
 	printf("tipo: %d\n", tipo);
 	printf("stato: %d\n", cnt->elementi[tipo].statoFisico);
->>>>>>> 3174f1e5742dc7fce5500ed3ab3d126dfa3de1ff
 	if(cnt->elementi[tipo].statoFisico == 0){
 		cnt->elementi[tipo].statoFisico = 1;
 	}
