@@ -12,11 +12,11 @@ void set_finger(Controller* cnt, int soglia, int* hand){
 	int i = 0;
 	while (i <= 4){
 		if (*hand >= soglia) {
-			setElemento(cnt, i);
+			setElemento(cnt, (enum tipoElemento) i);
 			printf("[set_finger]dito %d settato\n", i);
 		}
 		else {
-			resetElemento(cnt, i);
+			resetElemento(cnt, (enum tipoElemento) i);
 		}
 		hand++;
 		i++;
